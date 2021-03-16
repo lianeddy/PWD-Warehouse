@@ -1,11 +1,11 @@
 const express = require("express");
 const cors = require("cors");
-// const { sequelize } = require('./models');
 const { userRouter } = require("./routes");
-const { keepLogin } = require("./controllers/userControllers");
+const bearerToken = require("express-bearer-token");
 
 const app = express();
 
+app.use(bearerToken());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());

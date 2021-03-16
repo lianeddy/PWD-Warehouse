@@ -22,7 +22,8 @@ const login = async (req, res) => {
 			...getUser[0].dataValues,
 			token: encryptToken(getUser[0].dataValues),
 		};
-		return res.status(200).send(getUser);
+		// console.log(response.token)
+		return res.status(200).send(response);
 	} catch (err) {
 		console.log(err);
 		return res.status(500).send(err);
@@ -32,7 +33,7 @@ const login = async (req, res) => {
 const keepLogin = async (req, res) => {
 	try {
 		const id = req.user.id;
-		const getUser = await users.findByPk(id);
+		const getUser = await user.findByPk(id);
 		return res.status(200).send(getUser);
 	} catch (err) {
 		return res.status(500).send(err);

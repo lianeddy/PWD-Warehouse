@@ -2,16 +2,16 @@ import React, { Component } from "react";
 import { Route } from "react-router-dom";
 import { Header } from "./components";
 import { LandingPage, LoginPage } from "./pages";
-// import { keepLoginAction } from "./redux/actions";
-// import { connect } from "react-redux";
+import { keepLoginAction } from "./redux/action";
+import { connect } from "react-redux";
 
 class App extends Component {
 	state = {};
 	componentDidMount() {
-		// const { keepLoginAction } = this.props;
+		const { keepLoginAction } = this.props;
 		const token = localStorage.getItem("token");
 		if (token) {
-			// keepLoginAction();
+			keepLoginAction();
 		}
 	}
 	render() {
@@ -25,5 +25,4 @@ class App extends Component {
 	}
 }
 
-// export default connect(null, { keepLoginAction })(App);
-export default App;
+export default connect(null, { keepLoginAction })(App);
