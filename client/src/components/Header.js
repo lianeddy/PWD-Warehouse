@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-// import { connect } from "react-redux";
+import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import {
 	Collapse,
@@ -12,7 +12,7 @@ import {
 	NavbarToggler,
 	UncontrolledDropdown,
 } from "reactstrap";
-// import { logoutAction } from "../redux/action";
+import { logoutAction } from "../redux/action";
 
 class Header extends Component {
 	state = {
@@ -26,7 +26,7 @@ class Header extends Component {
 	};
 
 	render() {
-		const { username, logoutAction } = this.props;
+		const { email, logoutAction, username } = this.props;
 		return (
 			<div>
 				<Navbar color="light" light expand="md">
@@ -38,7 +38,7 @@ class Header extends Component {
 								<DropdownToggle nav caret>
 									Options
 								</DropdownToggle>
-								{username ? (
+								{email ? (
 									<DropdownMenu right>
 										<DropdownItem>
 											<Link to="/" onClick={logoutAction}>
@@ -58,7 +58,7 @@ class Header extends Component {
 								)}
 							</UncontrolledDropdown>
 						</Nav>
-						<NavbarText>{username ? username : null}</NavbarText>
+						<NavbarText>{email ? username : null}</NavbarText>
 					</Collapse>
 				</Navbar>
 			</div>
@@ -66,11 +66,12 @@ class Header extends Component {
 	}
 }
 
-// const mapStatetoProps = ({ user: { username } }) => {
-// 	return {
-// 		username,
-// 	};
-// };
+const mapStatetoProps = ({ user: { email, username } }) => {
+	return {
+		email,
+		username,
+	};
+};
 
-// export default connect(mapStatetoProps, { logoutAction })(Header);
-export default Header;
+export default connect(mapStatetoProps, { logoutAction })(Header);
+// export default Header;

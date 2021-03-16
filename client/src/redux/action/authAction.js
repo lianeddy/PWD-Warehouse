@@ -5,7 +5,7 @@ import {
 	API_USER_SUCCESS,
 	API_USER_FAILED,
 	LOGIN,
-	// LOGOUT,
+	LOGOUT,
 } from "../types";
 import Swal from "sweetalert2";
 
@@ -102,5 +102,14 @@ export const keepLoginAction = () => {
 				payload: err.message,
 			});
 		}
+	};
+};
+
+export const logoutAction = () => {
+	return (dispatch) => {
+		localStorage.removeItem("token");
+		dispatch({
+			type: LOGOUT,
+		});
 	};
 };
