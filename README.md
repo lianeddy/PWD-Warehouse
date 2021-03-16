@@ -1,12 +1,14 @@
 # nature_goods_warehouse_web_app
 
-PW - 22 Changelogs:
+PW - 22 Product
+Changelogs:
 
 - PW23 Filter Harga
+- PW24 Sort by (Terbaru, Terlama, Harga Terendah, Harga Tertinggi)
 
-PW - 14 Changelogs:
+PW - 14 Register
+Changelogs:
 
-- Register
 - Error handler
 - Encrypt Password
 - Encrypt & decript token

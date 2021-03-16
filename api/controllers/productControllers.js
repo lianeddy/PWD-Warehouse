@@ -47,15 +47,22 @@ const getProducts = async (req, res, next) => {
         is_available: 1,
       },
     };
+
     if (req.query.min)
       query.where = { ...query.where, price: { [Op.gte]: parseInt(req.query.min) } };
     if (req.query.max)
-      query.where = { ...query.where, price: { [Op.gte]: parseInt(req.query.max) } };
+      query.where = { ...query.where, price: { [Op.lte]: parseInt(req.query.max) } };
     if (req.query.max && req.query.min)
       query.where = {
         ...query.where,
         price: { [Op.between]: [parseInt(req.query.min), parseInt(req.query.max)] },
       };
+
+    if (req.query.sort == 1) query = { ...query, order: [['created_at', 'DESC']] };
+    if (req.query.sort == 2) query = { ...query, order: [['created_at', 'ASC']] };
+    if (req.query.sort == 3) query = { ...query, order: [['price', 'ASC']] };
+    if (req.query.sort == 4) query = { ...query, order: [['price', 'DESC']] };
+
     query = {
       ...query,
       attributes: [
@@ -77,6 +84,7 @@ const getProducts = async (req, res, next) => {
         },
       ],
     };
+    console.log(query);
     const response = await product.findAll(query);
     return res.status(200).send(response);
   } catch (err) {
