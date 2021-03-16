@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { connect } from "react-redux";
+// import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import {
 	Collapse,
@@ -66,11 +66,11 @@ class Header extends Component {
 	}
 }
 
-const mapStatetoProps = ({ user: { username } }) => {
-	return {
-		username,
-	};
-};
+// const mapStatetoProps = ({ user: { username } }) => {
+// 	return {
+// 		username,
+// 	};
+// };
 
 // export default connect(mapStatetoProps, { logoutAction })(Header);
 export default Header;
