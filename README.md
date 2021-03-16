@@ -6,6 +6,7 @@ Changelogs:
 - PW23 Filter by Harga
 - PW24 Sort by (Terbaru, Terlama, Harga Terendah, Harga Tertinggi)
 - PW25 Filter by Category
+- PW26 Pagination
 
 PW - 14 Register
 Changelogs:

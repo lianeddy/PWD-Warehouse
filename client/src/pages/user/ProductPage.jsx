@@ -6,6 +6,7 @@ import { Input } from 'reactstrap';
 import Select from 'react-select';
 import axios from 'axios';
 import { apiUrl_product } from '../../helpers';
+import Paginate from 'react-reactstrap-pagination';
 
 const sortBy = [
   { value: 1, label: 'Terbaru' },
@@ -20,17 +21,15 @@ const ProductPage = () => {
   const [minimum, setMinimum] = useState('');
   const [maximum, setMaximum] = useState('');
   const [category, setCategory] = useState(0);
-
   const [categories, setCategories] = useState([]);
-
   const [sort, setSort] = useState(1);
+  const [currentPage, setCurrentPage] = useState(0);
 
   useEffect(async () => {
     dispatch(getProductsAction());
     const response = await axios.get(`${apiUrl_product}/categories`);
     setCategories([{ value: 0, label: 'All' }, ...response.data]);
   }, []);
-  console.log(category);
   useEffect(() => {
     let query;
     if (minimum !== '') query = `min=${minimum}`;
@@ -41,8 +40,12 @@ const ProductPage = () => {
     dispatch(getProductsAction(query));
   }, [minimum, maximum, sort, category]);
 
+  const totalItem = products.length;
+  const limit = 10;
+  const offset = currentPage * limit;
+  console.log(currentPage);
   const renderCard = () => {
-    return products.map((value) => {
+    return products.slice(offset, offset + limit).map((value) => {
       return (
         <div>
           <div key={value.id}>
@@ -58,6 +61,7 @@ const ProductPage = () => {
       );
     });
   };
+
   return (
     <div>
       <div className="my-3">
@@ -87,6 +91,7 @@ const ProductPage = () => {
         </div>
       </div>
       <div>{renderCard()}</div>
+      <Paginate totalItems={totalItem} pageSize={limit} onSelect={(e) => setCurrentPage(e - 1)} />
     </div>
   );
 };

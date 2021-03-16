@@ -41,7 +41,7 @@ product.hasOne(inventory, {
 
 const getProducts = async (req, res, next) => {
   try {
-    console.log(req.query);
+    // console.log(req.query);
     let query = {
       raw: true,
       where: {
