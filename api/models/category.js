@@ -1,10 +1,10 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../database');
 
-const userStatus = sequelize.define(
-  'user_status',
+const category = sequelize.define(
+  'category',
   {
-    status: DataTypes.STRING,
+    category: DataTypes.STRING,
   },
   {
     timestamps: false,
@@ -12,4 +12,4 @@ const userStatus = sequelize.define(
   }
 );
 
-module.exports = userStatus;
+module.exports = category;

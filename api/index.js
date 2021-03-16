@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const { errorHandler } = require('./handlers');
-const { userRoutes } = require('./routes');
+const { userRoutes, productRoutes } = require('./routes');
 
 const app = express();
 
@@ -11,6 +11,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.get('/api/', (req, res) => res.status(200).send('nature goods api'));
 app.use('/api/user', userRoutes);
+app.use('/api/product', productRoutes);
 
 app.use(errorHandler);
 const API_PORT = process.env.API_PORT;

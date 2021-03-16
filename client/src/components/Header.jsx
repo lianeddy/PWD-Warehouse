@@ -29,7 +29,9 @@ const Header = () => {
         <Collapse isOpen={isOpen} navbar className="justify-content-between">
           <Nav className="me-auto" navbar>
             <NavItem>
-              <NavLink>products</NavLink>
+              <Link to="/products">
+                <NavLink>products</NavLink>
+              </Link>
             </NavItem>
           </Nav>
           <Nav className="me-auto" navbar>

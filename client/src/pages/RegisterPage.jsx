@@ -2,9 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { Button, Form, FormGroup, Label, Input, FormText } from 'reactstrap';
 import Select from 'react-select';
 import axios from 'axios';
-import { apiUrl } from '../../helpers';
 import { useDispatch } from 'react-redux';
-import { authRegisterAction } from '../../redux/action';
+import { apiUrl_user } from '../helpers';
+import { authRegisterAction } from '../redux/actions';
 
 const RegisterPage = () => {
   const [username, setUsername] = useState(null);
@@ -16,7 +16,7 @@ const RegisterPage = () => {
   const [securityQuestionId, setSecurityQuestionId] = useState(1);
   const dispatch = useDispatch();
   useEffect(async () => {
-    const response = await axios.get(`${apiUrl}/user/get-security-question`);
+    const response = await axios.get(`${apiUrl_user}/get-security-question`);
     setSecurityQuestion(response.data);
   }, []);
 
