@@ -30,7 +30,7 @@ class Header extends Component {
 		return (
 			<div>
 				<Navbar color="light" light expand="md">
-					<Link to="/">reactstrap</Link>
+					<Link to="/">Home</Link>
 					<NavbarToggler onClick={this.toggle} />
 					<Collapse isOpen={this.state.isOpen} navbar>
 						<Nav className="mr-auto" navbar>
