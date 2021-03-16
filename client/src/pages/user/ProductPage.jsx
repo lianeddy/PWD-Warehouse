@@ -4,8 +4,10 @@ import { CardProduct } from '../../components';
 import { getProductsAction } from '../../redux/actions/productActions';
 import { Input } from 'reactstrap';
 import Select from 'react-select';
+import axios from 'axios';
+import { apiUrl_product } from '../../helpers';
 
-const options = [
+const sortBy = [
   { value: 1, label: 'Terbaru' },
   { value: 2, label: 'Terlama' },
   { value: 3, label: 'Harga Terendah' },
@@ -17,21 +19,27 @@ const ProductPage = () => {
   const { products } = useSelector((state) => state.productReducer);
   const [minimum, setMinimum] = useState('');
   const [maximum, setMaximum] = useState('');
+  const [category, setCategory] = useState(0);
+
+  const [categories, setCategories] = useState([]);
+
   const [sort, setSort] = useState(1);
-  // console.log(sort);
 
-  useEffect(() => {
+  useEffect(async () => {
     dispatch(getProductsAction());
+    const response = await axios.get(`${apiUrl_product}/categories`);
+    setCategories([{ value: 0, label: 'All' }, ...response.data]);
   }, []);
-
+  console.log(category);
   useEffect(() => {
     let query;
     if (minimum !== '') query = `min=${minimum}`;
     if (maximum !== '') query = `max=${maximum}`;
     if (maximum !== '' && minimum !== '') query = `min=${minimum}&max=${maximum}`;
     query += `&sort=${sort}`;
+    if (category !== 0) query += `&category=${category}`;
     dispatch(getProductsAction(query));
-  }, [minimum, maximum, sort]);
+  }, [minimum, maximum, sort, category]);
 
   const renderCard = () => {
     return products.map((value) => {
@@ -55,9 +63,17 @@ const ProductPage = () => {
       <div className="my-3">
         <Select
           isSearchable={false}
-          options={options}
+          options={sortBy}
           defaultValue={{ value: 1, label: 'Terbaru' }}
           onChange={(e) => setSort(e.value)}
+        />
+      </div>
+      <div className="my-3">
+        <Select
+          isSearchable={false}
+          options={categories}
+          defaultValue={{ value: 0, label: 'All' }}
+          onChange={(e) => setCategory(e.value)}
         />
       </div>
       <div className="mb-5">

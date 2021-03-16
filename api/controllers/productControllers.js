@@ -4,11 +4,12 @@ const { product, inventory, category } = require('../models');
 // without image
 const addProduct = async (req, res, next) => {
   try {
-    const { name, price, category_id, stock, warehouse_id } = req.body;
+    const { name, price, category_id, stock, warehouse_id, description } = req.body;
     const newProduct = await product.create({
       name,
       price,
       category_id,
+      description,
     });
     await inventory.create({
       inventory: stock,
@@ -47,7 +48,8 @@ const getProducts = async (req, res, next) => {
         is_available: 1,
       },
     };
-
+    if (req.query.category)
+      query.where = { ...query.where, category_id: parseInt(req.query.category) };
     if (req.query.min)
       query.where = { ...query.where, price: { [Op.gte]: parseInt(req.query.min) } };
     if (req.query.max)
@@ -92,4 +94,15 @@ const getProducts = async (req, res, next) => {
   }
 };
 
-module.exports = { addProduct, getProducts };
+const getCategories = async (req, res, next) => {
+  try {
+    const categories = await category.findAll();
+    const response = [];
+    categories.forEach((value) => response.push({ value: value.id, label: value.category }));
+    return res.status(200).send(response);
+  } catch (err) {
+    next(err);
+  }
+};
+
+module.exports = { addProduct, getProducts, getCategories };
