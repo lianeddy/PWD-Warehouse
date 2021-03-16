@@ -7,6 +7,7 @@ import {
 	LOGIN,
 	// LOGOUT,
 } from "../types";
+import Swal from "sweetalert2";
 
 const url = api_url + "/users";
 
@@ -27,6 +28,8 @@ export const loginAction = (data) => {
 				emailVerificationID,
 				token,
 			} = response.data;
+			console.log(response.data.length);
+
 			localStorage.setItem("token", token);
 			dispatch({
 				type: LOGIN,
@@ -45,7 +48,13 @@ export const loginAction = (data) => {
 			});
 			dispatch({ type: API_USER_SUCCESS });
 		} catch (err) {
-			dispatch({ type: API_USER_FAILED, payload: err.message });
+			dispatch({ type: API_USER_FAILED, payload: err.response.data.message });
+			return Swal.fire({
+				icon: "error",
+				title: "Oops...",
+				text: "Something went wrong!",
+				footer: `Email and Password doesn't match`,
+			});
 		}
 	};
 };

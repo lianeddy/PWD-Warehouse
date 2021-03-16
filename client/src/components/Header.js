@@ -10,8 +10,6 @@ import {
 	Navbar,
 	NavbarText,
 	NavbarToggler,
-	NavItem,
-	NavLink,
 	UncontrolledDropdown,
 } from "reactstrap";
 // import { logoutAction } from "../redux/action";
