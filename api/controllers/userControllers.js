@@ -29,4 +29,14 @@ const login = async (req, res) => {
 	}
 };
 
-module.exports = { login };
+const keepLogin = async (req, res) => {
+	try {
+		const id = req.user.id;
+		const getUser = await users.findByPk(id);
+		return res.status(200).send(getUser);
+	} catch (err) {
+		return res.status(500).send(err);
+	}
+};
+
+module.exports = { login, keepLogin };
