@@ -19,8 +19,8 @@ const Header = () => {
   const toggle = () => setIsOpen(!isOpen);
 
   return (
-    <div style={{ boxShadow: '1px 0 12px 1px rgba(0,0,0,0.3)' }} className="px-5">
-      <Navbar expand="md" style={{ background: 'blue', padding: 0, margin: 0 }}>
+    <div style={{ boxShadow: '1px 0 12px 1px rgba(0,0,0,0.3)' }} className="px-5 py-2">
+      <Navbar expand="md" style={{ padding: 0, margin: 0 }}>
         <NavbarBrand href="/">
           <div>
             <img src="https://i.imgur.com/eKvfJEW.png" height="50" width="50" />
