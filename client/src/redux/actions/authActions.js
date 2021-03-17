@@ -19,7 +19,31 @@ const authRegisterAction = (payload) => {
       if (response.status === 202) {
         return alert(response.data.message);
       }
-      dispatch({ type: AUTH_SIGN, payload: response.data });
+      const {
+        id,
+        email,
+        full_name,
+        username,
+        imagepath,
+        phone,
+        role_id,
+        user_status_id,
+        email_verification_id,
+      } = response.data;
+      dispatch({
+        type: AUTH_SIGN,
+        payload: {
+          id,
+          email,
+          name: full_name,
+          username,
+          imagepath,
+          phone,
+          roleId: role_id,
+          userStatusId: user_status_id,
+          emailVerificationId: email_verification_id,
+        },
+      });
       dispatch({ type: API_LOADING_SUCCESS });
       alert('register success');
     } catch (err) {

@@ -16,15 +16,33 @@ const INITIAL_STATE = {
 const productReducer = (state = INITIAL_STATE, action) => {
   switch (action.type) {
     case API_LOADING_START:
-      return { ...state, isLoading: true };
+      return {
+        ...state,
+        isLoading: true,
+      };
     case API_LOADING_SUCCESS:
-      return { ...state, isLoading: false };
+      return {
+        ...state,
+        isLoading: false,
+      };
     case API_LOADING_ERROR:
-      return { ...state, isLoading: false, isError: true, errorMessage: action.payload };
+      return {
+        ...state,
+        isLoading: false,
+        isError: true,
+        errorMessage: action.payload,
+      };
     case NULLIFY_ERROR:
-      return { ...state, isError: false, errorMessage: null };
+      return {
+        ...state,
+        isError: false,
+        errorMessage: '',
+      };
     case GET_PRODUCTS:
-      return { ...state, products: action.payload };
+      return {
+        ...state,
+        products: action.payload,
+      };
     default:
       return state;
   }
