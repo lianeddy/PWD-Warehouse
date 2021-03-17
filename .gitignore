@@ -1,7 +1,8 @@
 /api/.env
 /api/node_modules
+/api/package-json
 /client/node_modules
-
+/client/package-json
 
 # Logs
 logs

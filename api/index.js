@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const { errorHandler } = require('./handlers');
-const { userRoutes } = require('./routes');
+const { userRouters } = require('./routers');
 const bearerToken = require("express-bearer-token")
 
 const app = express();
@@ -12,8 +12,8 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(bearerToken())
 
-app.get('/api/', (req, res) => res.status(200).send('nature goods api'));
-app.use('/api/user', userRoutes);
+app.get('/', (req, res) => res.status(200).send('nature goods api'));
+app.use('/user', userRouters);
 
 app.use(errorHandler);
 const API_PORT = process.env.API_PORT;

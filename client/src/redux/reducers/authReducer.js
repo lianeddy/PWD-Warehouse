@@ -1,3 +1,5 @@
+import {API_LOADING_SUCCESS, API_LOADING_START, API_LOADING_ERROR, NULLIFY_ERROR, RESET_INITIAL_STATE, REGISTERED_TRUE, CHANGE_PERMITTED} from "../types"
+
 const INITIAL_STATE = {
   id: null,
   email: "",
@@ -11,34 +13,43 @@ const INITIAL_STATE = {
 
 const authReducer = (state = INITIAL_STATE, action) => {
   switch (action.type) {
-    case "API_LOADING_START":
+    case API_LOADING_START:
       return {
         ...state,
         isLoading: true
       }
-    case "API_LOADING_SUCCESS":
+    case API_LOADING_SUCCESS:
       return {
         ...state,
-        ...action.payload,
         isLoading: false
     }
-    case "API_LOADING_ERROR":
+    case API_LOADING_ERROR:
       return {
         ...state,
         errorMessage: action.payload ,
         isError: true,
         isLoading: false
       }
-    case "NULLIFY_ERROR":
+    case NULLIFY_ERROR:
       return {
         ...state,
         errorMessage: "",
         isError: false
       }
-    case "NULLIFY_ALL":
+    case REGISTERED_TRUE:
+      return {
+        ...state,
+        ...action.payload
+      }
+    case CHANGE_PERMITTED:
+      return {
+        ...state,
+        changePermitted: true
+      }
+    case RESET_INITIAL_STATE:
       return INITIAL_STATE
     default:
-      return INITIAL_STATE
+      return state
     }
 };
 

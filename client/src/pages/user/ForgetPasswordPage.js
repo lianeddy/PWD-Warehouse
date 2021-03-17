@@ -1,7 +1,7 @@
 import React, { useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { Redirect } from "react-router"
-import { authRegisteredCheck, authSecurityAnswerCheck, authChangePasswordEmailRequest } from "../../redux/action/authAction"
+import { authRegisteredCheck, authSecurityAnswerCheck, authChangePasswordEmailRequest } from "../../redux/actions/authAction"
 
 const ForgetPasswordPage = () => {
     const [email, setEmail] = useState("")

@@ -166,7 +166,7 @@ const changePassword = async (req, res, next) => {
     if(req.user){
       await user.update(
         {
-          password: newPassword
+          password: encryptHandler(newPassword)
         },
         {
         where: {
@@ -176,7 +176,7 @@ const changePassword = async (req, res, next) => {
     }else {
       await user.update(
         {
-          password: newPassword
+          password: encryptHandler(newPassword)
         },
         {
         where: {
@@ -184,6 +184,8 @@ const changePassword = async (req, res, next) => {
         }
       })
     }
+
+
 
     return res.status(200).send({
       message: "Edited",

@@ -7,7 +7,8 @@ import { BrowserRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import reducer from './redux/reducer';
+import 'bootstrap-icons/font/bootstrap-icons.css';
+import reducer from './redux/reducers';
 
 const store = configureStore({
   devTools: true,

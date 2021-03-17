@@ -1,12 +1,7 @@
 import axios from 'axios';
 import { apiUrl_user } from '../../helpers';
-import {
-  API_LOADING_ERROR,
-  API_LOADING_START,
-  API_LOADING_SUCCESS,
-  AUTH_SIGN,
-  NULLIFY_ERROR,
-} from '../types';
+
+import {AUTH_SIGN, API_LOADING_SUCCESS, API_LOADING_START, API_LOADING_ERROR, NULLIFY_ERROR, RESET_INITIAL_STATE, REGISTERED_TRUE, CHANGE_PERMITTED} from "../types"
 
 const authRegisterAction = (payload) => {
   return async (dispatch) => {
@@ -33,19 +28,19 @@ const authRegisteredCheck = (payload) => {
   return async (dispatch) => {
     try{
       dispatch({
-        type: "NULLIFY_ERROR"
+        type: NULLIFY_ERROR
       })  
 
       dispatch({
-        type: "API_LOADING_START"
+        type: API_LOADING_START
       })  
 
       const response = await axios.post(`${apiUrl_user}/registered-checker`, payload)
       const {id, email} = response.data
       const security_question = response.data["security_question.question"]
-
+      
       dispatch({
-        type: "API_LOADING_SUCCESS",
+        type: REGISTERED_TRUE,
         payload: {
           id,
           email,
@@ -53,9 +48,13 @@ const authRegisteredCheck = (payload) => {
           registered: true,
         }
       })
+
+      dispatch({
+        type: API_LOADING_SUCCESS,
+      })
     }catch(err) {
       dispatch({
-        type: "API_LOADING_ERROR",
+        type: API_LOADING_ERROR,
         payload: err.response.data.message
       })
     }
@@ -63,27 +62,29 @@ const authRegisteredCheck = (payload) => {
 }
 
 const authSecurityAnswerCheck = (payload) => {
+  console.log(payload)
   return async (dispatch) => {
     try {
       dispatch({
-        type: "NULLIFY_ERROR"
+        type: NULLIFY_ERROR
       })  
 
       dispatch({
-        type: "API_LOADING_START"
+        type: API_LOADING_START
       })
 
       await axios.post(`${apiUrl_user}/security-question-checker`, payload)
 
       dispatch({
-        type: "API_LOADING_SUCCESS",
-        payload: {
-          changePermitted: true,
-        }
+        type: CHANGE_PERMITTED,
+      })
+
+      dispatch({
+        type: API_LOADING_SUCCESS,
       })
     }catch(err) {
       dispatch({
-        type: "API_LOADING_ERROR",
+        type: API_LOADING_ERROR,
         payload: err.response.data.message
       })
     }
@@ -94,11 +95,11 @@ const authChangePasswordEmailRequest = (payload) => {
   return async (dispatch) => {
     try {
       dispatch({
-        type: "NULLIFY_ERROR"
+        type: NULLIFY_ERROR
       })  
 
       dispatch({
-        type: "API_LOADING_START"
+        type: API_LOADING_START
       })
 
       await axios.post(`${apiUrl_user}/change-password-email-request`, payload)
@@ -106,11 +107,11 @@ const authChangePasswordEmailRequest = (payload) => {
       alert("Link untuk mengubah password sudah dikirim ke email anda. Silahkan cek email anda.")
 
       dispatch({
-        type: "API_LOADING_SUCCESS",
+        type: API_LOADING_SUCCESS,
       })
     }catch(err) {
       dispatch({
-        type: "API_LOADING_ERROR",
+        type: API_LOADING_ERROR,
         payload: err.response.data.message
       })
     }
@@ -124,11 +125,11 @@ const authChangePassword = (payload) => {
   return async (dispatch) => {
     try{
       dispatch({
-        type: "NULLIFY_ERROR"
+        type: NULLIFY_ERROR
       })  
 
       dispatch({
-        type: "API_LOADING_START"
+        type: API_LOADING_START
       })
 
       const headers = {
@@ -146,11 +147,11 @@ const authChangePassword = (payload) => {
       alert("Password berhasil diganti. Anda akan dialihkan ke halaman login.")
 
       dispatch({
-        type: "NULLIFY_ALL",
+        type: RESET_INITIAL_STATE,
       })
     }catch(err) {
       dispatch({
-        type: "API_LOADING_ERROR",
+        type: API_LOADING_ERROR,
         payload: err.response.data.message
       })
     }
