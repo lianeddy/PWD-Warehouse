@@ -10,11 +10,12 @@ const INITIAL_STATE = {
   isLoading: false,
   isLogin: false,
   isError: false,
-  errorMessage: null,
-  email: null,
-  name: null,
-  username: null,
-  imagepath: null,
+  id: null,
+  errorMessage: '',
+  email: '',
+  name: '',
+  username: '',
+  imagepath: '',
   phone: null,
   roleId: null,
   emailVerificationId: null,
@@ -26,7 +27,7 @@ const authReducer = (state = INITIAL_STATE, action) => {
     case API_LOADING_START:
       return { ...state, isLoading: true };
     case API_LOADING_SUCCESS:
-      return { ...state, isLoading: false };
+      return { ...state, isLoading: false, ...action.payload };
     case API_LOADING_ERROR:
       return { ...state, isLoading: false, isError: true, errorMessage: action.payload };
     case NULLIFY_ERROR:

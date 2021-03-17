@@ -2,9 +2,9 @@ const express = require('express');
 const { register, getSecurityQuestion } = require('../controllers/userControllers');
 const { registerValidator } = require('../middlewares');
 
-const route = express.Router();
+const router = express.Router();
 
-route.get('/get-security-question', getSecurityQuestion);
-route.post('/register', registerValidator, register);
+router.get('/get-security-question', getSecurityQuestion);
+router.post('/register', registerValidator, register);
 
-module.exports = route;
+module.exports = router;

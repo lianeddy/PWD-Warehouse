@@ -1,7 +1,9 @@
 import React from 'react';
 import { Route } from 'react-router-dom';
-import { Header } from './components';
-import { ProductPage, RegisterPage } from './pages';
+import './App.css';
+import { Header } from './components/user';
+import { ProductPage } from './pages/user';
+import { RegisterPage } from './pages';
 
 const App = () => {
   return (

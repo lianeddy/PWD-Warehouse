@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { CardProduct } from '../../components';
 import { getProductsAction } from '../../redux/actions/productActions';
 import { Input } from 'reactstrap';
 import Select from 'react-select';
 import axios from 'axios';
 import { apiUrl_product } from '../../helpers';
 import Paginate from 'react-reactstrap-pagination';
+import { CardProduct } from '../../components/user';
 
 const sortBy = [
   { value: 1, label: 'Terbaru' },

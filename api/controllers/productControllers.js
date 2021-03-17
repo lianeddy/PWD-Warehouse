@@ -27,6 +27,13 @@ product.belongsTo(category, {
     name: 'category_id',
   },
 });
+
+// category.hasOne(product, {
+//   foreignKey: {
+//     name: 'category_id',
+//   },
+// });
+
 product.hasOne(inventory, {
   foreignKey: {
     name: 'product_id',
