@@ -14,13 +14,13 @@ const INITIAL_STATE = {
 	id: null,
 	errorMessage: "",
 	email: "",
-	full_name: "",
+	name: "",
 	username: "",
 	imagepath: "",
 	phone: null,
-	role_id: null,
-	email_verification_id: null,
-	user_status_id: null,
+	roleId: null,
+	emailVerificationId: null,
+	userStatusId: null,
 };
 
 const authReducer = (state = INITIAL_STATE, action) => {

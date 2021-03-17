@@ -32,14 +32,14 @@ export const loginAction = (data) => {
 				payload: {
 					id,
 					email,
-					full_name,
+					name: full_name,
 					username,
 					imagepath,
 					phone,
-					role_id,
-					user_status_id,
+					roleId: role_id,
+					userStatusId: user_status_id,
 					isLogin: true,
-					email_verification_id,
+					emailVerificationId: email_verification_id,
 				},
 			});
 			dispatch({ type: API_LOADING_SUCCESS });
@@ -89,13 +89,13 @@ export const keepLoginAction = () => {
 				payload: {
 					id,
 					email,
-					full_name,
+					name: full_name,
 					username,
 					imagepath,
 					phone,
-					role_id,
-					user_status_id,
-					email_verification_id,
+					roleId: role_id,
+					userStatusid: user_status_id,
+					emailVerificationId: email_verification_id,
 				},
 			});
 			dispatch({
