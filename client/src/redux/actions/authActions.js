@@ -17,13 +17,13 @@ export const loginAction = (data) => {
 			const {
 				id,
 				email,
-				fullname,
+				full_name,
 				username,
 				imagepath,
 				phone,
-				roleID,
-				userStatusId,
-				emailVerificationID,
+				role_id,
+				user_status_id,
+				email_verification_id,
 				token,
 			} = response.data;
 			localStorage.setItem("token", token);
@@ -32,14 +32,14 @@ export const loginAction = (data) => {
 				payload: {
 					id,
 					email,
-					fullname,
+					full_name,
 					username,
 					imagepath,
 					phone,
-					roleID,
-					userStatusId,
+					role_id,
+					user_status_id,
 					isLogin: true,
-					emailVerificationID,
+					email_verification_id,
 				},
 			});
 			dispatch({ type: API_LOADING_SUCCESS });
@@ -76,26 +76,26 @@ export const keepLoginAction = () => {
 			const {
 				id,
 				email,
-				fullname,
+				full_name,
 				username,
 				imagepath,
 				phone,
-				roleID,
-				userStatusId,
-				emailVerificationID,
+				role_id,
+				user_status_id,
+				email_verification_id,
 			} = response.data;
 			dispatch({
 				type: AUTH_SIGN,
 				payload: {
 					id,
 					email,
-					fullname,
+					full_name,
 					username,
 					imagepath,
 					phone,
-					roleID,
-					userStatusId,
-					emailVerificationID,
+					role_id,
+					user_status_id,
+					email_verification_id,
 				},
 			});
 			dispatch({

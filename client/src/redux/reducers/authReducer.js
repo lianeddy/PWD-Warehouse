@@ -11,16 +11,16 @@ const INITIAL_STATE = {
 	isLoading: false,
 	isLogin: false,
 	isError: false,
-	id: "",
+	id: null,
 	errorMessage: "",
 	email: "",
-	name: "",
+	full_name: "",
 	username: "",
 	imagepath: "",
 	phone: null,
-	roleId: null,
-	emailVerificationId: null,
-	userStatusId: null,
+	role_id: null,
+	email_verification_id: null,
+	user_status_id: null,
 };
 
 const authReducer = (state = INITIAL_STATE, action) => {
