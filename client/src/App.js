@@ -1,8 +1,8 @@
 import React, { Component } from "react";
 import { Route } from "react-router-dom";
-import { Header } from "./components";
+import { Header } from "./components/user";
 import { LandingPage, LoginPage } from "./pages";
-import { keepLoginAction } from "./redux/action";
+import { keepLoginAction } from "./redux/actions";
 import { connect } from "react-redux";
 
 class App extends Component {

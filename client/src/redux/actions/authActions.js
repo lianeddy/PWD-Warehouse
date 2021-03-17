@@ -1,21 +1,19 @@
 import axios from "axios";
-import { api_url } from "../../helpers";
+import { apiUrl_user } from "../../helpers";
 import {
-	API_USER_START,
-	API_USER_SUCCESS,
-	API_USER_FAILED,
-	LOGIN,
-	LOGOUT,
+	API_LOADING_START,
+	API_LOADING_SUCCESS,
+	API_LOADING_ERROR,
+	AUTH_SIGN,
+	AUTH_LOGOUT,
 } from "../types";
 import Swal from "sweetalert2";
 
-const url = api_url + "/users";
-
 export const loginAction = (data) => {
 	return async (dispatch) => {
-		dispatch({ type: API_USER_START });
+		dispatch({ type: API_LOADING_START });
 		try {
-			const response = await axios.post(`${url}/login`, data);
+			const response = await axios.post(`${apiUrl_user}/login`, data);
 			const {
 				id,
 				email,
@@ -30,7 +28,7 @@ export const loginAction = (data) => {
 			} = response.data;
 			localStorage.setItem("token", token);
 			dispatch({
-				type: LOGIN,
+				type: AUTH_SIGN,
 				payload: {
 					id,
 					email,
@@ -44,9 +42,12 @@ export const loginAction = (data) => {
 					emailVerificationID,
 				},
 			});
-			dispatch({ type: API_USER_SUCCESS });
+			dispatch({ type: API_LOADING_SUCCESS });
 		} catch (err) {
-			dispatch({ type: API_USER_FAILED, payload: err.response.data.message });
+			dispatch({
+				type: API_LOADING_ERROR,
+				payload: err.message,
+			});
 			return Swal.fire({
 				icon: "error",
 				title: "Oops...",
@@ -59,7 +60,7 @@ export const loginAction = (data) => {
 
 export const keepLoginAction = () => {
 	return async (dispatch) => {
-		dispatch({ type: API_USER_START });
+		dispatch({ type: API_LOADING_START });
 		try {
 			const token = localStorage.getItem("token");
 			const headers = {
@@ -67,7 +68,11 @@ export const keepLoginAction = () => {
 					Authorization: `Bearer ${token}`,
 				},
 			};
-			const response = await axios.post(`${url}/keepLogin`, {}, headers);
+			const response = await axios.post(
+				`${apiUrl_user}/keepLogin`,
+				{},
+				headers
+			);
 			const {
 				id,
 				email,
@@ -80,7 +85,7 @@ export const keepLoginAction = () => {
 				emailVerificationID,
 			} = response.data;
 			dispatch({
-				type: LOGIN,
+				type: AUTH_SIGN,
 				payload: {
 					id,
 					email,
@@ -94,11 +99,11 @@ export const keepLoginAction = () => {
 				},
 			});
 			dispatch({
-				type: API_USER_SUCCESS,
+				type: API_LOADING_SUCCESS,
 			});
 		} catch (err) {
 			dispatch({
-				type: API_USER_FAILED,
+				type: API_LOADING_ERROR,
 				payload: err.message,
 			});
 		}
@@ -109,7 +114,7 @@ export const logoutAction = () => {
 	return (dispatch) => {
 		localStorage.removeItem("token");
 		dispatch({
-			type: LOGOUT,
+			type: AUTH_LOGOUT,
 		});
 	};
 };

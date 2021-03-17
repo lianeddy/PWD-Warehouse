@@ -2,9 +2,9 @@ const express = require("express");
 const { login, keepLogin } = require("../controllers/userControllers");
 const { decryptToken } = require("../middlewares");
 
-const route = express.Router();
+const router = express.Router();
 
-route.post("/login", login);
-route.post("/keepLogin", decryptToken, keepLogin);
+router.post("/login", login);
+router.post("/keepLogin", decryptToken, keepLogin);
 
-module.exports = route;
+module.exports = router;

@@ -26,7 +26,7 @@ const login = async (req, res) => {
 		return res.status(200).send(response);
 	} catch (err) {
 		console.log(err);
-		return res.status(500).send(err);
+		next(err);
 	}
 };
 
@@ -36,7 +36,7 @@ const keepLogin = async (req, res) => {
 		const getUser = await user.findByPk(id);
 		return res.status(200).send(getUser);
 	} catch (err) {
-		return res.status(500).send(err);
+		next(err);
 	}
 };
 

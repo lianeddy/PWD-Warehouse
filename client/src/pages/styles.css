@@ -2,7 +2,7 @@
   display: flex;
   flex-direction: column;
   text-align: center;
-  justify-items: center;
+  /* justify-items: center; */
   font-size: 22px;
   max-width: 500px;
   min-height: 672px;
@@ -38,7 +38,7 @@ input {
 }
 
 i {
-  position: absolute;
+  /* position: absolute; */
   top: 38%;
   right: 16%;
 }

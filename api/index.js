@@ -1,19 +1,23 @@
 const express = require("express");
 const cors = require("cors");
-const { userRouter } = require("./routes");
+const { errorHandler } = require("./handlers");
+const { userRouters, productRouters } = require("./routers");
 const bearerToken = require("express-bearer-token");
 
 const app = express();
 
-app.use(bearerToken());
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cors());
+
+app.use(bearerToken());
 
 app.get("/", (req, res) => res.status(200).send("nature goods api"));
-app.use("/users", userRouter);
+app.use("/user", userRouters);
+// app.use("/product", productRouters);
 
-const API_PORT = process.env.API_PORT || 2000;
+app.use(errorHandler);
+const API_PORT = process.env.API_PORT;
 require("dotenv").config();
 
 app.listen(API_PORT, async () => {

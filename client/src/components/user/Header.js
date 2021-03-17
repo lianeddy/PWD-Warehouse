@@ -12,7 +12,7 @@ import {
 	NavbarToggler,
 	UncontrolledDropdown,
 } from "reactstrap";
-import { logoutAction } from "../redux/action";
+import { logoutAction } from "../../redux/actions";
 
 class Header extends Component {
 	state = {
