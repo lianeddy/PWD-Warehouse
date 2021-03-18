@@ -1,27 +1,137 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, Redirect } from "react-router-dom";
 import {
 	Button,
+	DropdownItem,
+	DropdownMenu,
+	DropdownToggle,
 	Input,
 	InputGroup,
 	InputGroupAddon,
 	InputGroupText,
+	UncontrolledDropdown,
 } from "reactstrap";
 import { makeStyles } from "@material-ui/styles";
+import { Badge } from "@material-ui/core";
 import { primaryColor, surfaceColor } from "../../helpers";
 import { Fade } from "react-reveal";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { logoutAction } from "../../redux/actions";
+import Swal from "sweetalert2";
 
 const Header = () => {
 	const dispatch = useDispatch();
 	const styles = useStyles();
+	const { isLogin, username } = useSelector((state) => state.authReducer);
 	const [showSearchInput, setShowSearchInput] = useState(false);
 
 	const handleLogoutBtn = () => {
-		dispatch(logoutAction());
-		alert("logout");
+		Swal.fire({
+			title: "Logout",
+			text: "You will be returned to home page",
+			icon: "warning",
+			showCancelButton: true,
+			confirmButtonColor: "#3085d6",
+			cancelButtonColor: "#d33",
+			confirmButtonText: "Sure",
+		}).then((result) => {
+			if (result.isConfirmed) {
+				dispatch(logoutAction());
+				return <Redirect to="/" />;
+			}
+		});
 	};
+
+	if (isLogin) {
+		return (
+			<div className={styles.container}>
+				<div className="mr-4">
+					<img src="https://i.imgur.com/eKvfJEW.png" height="50" width="50" />
+				</div>
+				<div className={styles.navContainer}>
+					<div className={styles.navLeftContainer}>
+						<Link to="/" className={styles.navItemContainer}>
+							<div className={styles.textLink}>home</div>
+						</Link>
+						<Link to="/products" className={styles.navItemContainer}>
+							<div className={styles.textLink}>products</div>
+						</Link>
+						<Link to="/products" className={styles.navItemContainer}>
+							<div className={styles.textLink}>dummy1</div>
+						</Link>
+						<Link to="/products" className={styles.navItemContainer}>
+							<div className={styles.textLink}>dummy2</div>
+						</Link>
+					</div>
+					<div className="d-flex align-items-center">
+						<div
+							style={{
+								borderRight: "1px solid rgba(0,0,0,0.1)",
+								paddingInline: 10,
+							}}
+						>
+							<InputGroup>
+								<Fade left when={showSearchInput}>
+									<Input
+										placeholder="search"
+										style={{ borderRadius: 50, paddingInline: 20 }}
+									/>
+								</Fade>
+								<InputGroupAddon addonType="prepend">
+									<InputGroupText
+										onClick={() => setShowSearchInput(!showSearchInput)}
+										style={{
+											backgroundColor: "rgba(0, 0, 0, 0)",
+											borderWidth: 0,
+											cursor: "pointer",
+										}}
+									>
+										<i className="bi bi-search"></i>
+									</InputGroupText>
+								</InputGroupAddon>
+							</InputGroup>
+						</div>
+						<div
+							className="d-flex align-items-center"
+							style={{
+								borderRight: "1px solid rgba(0,0,0,0.1)",
+								paddingInline: 20,
+							}}
+						>
+							<div>
+								<Badge badgeContent={10} color="error" max={9} overlap="circle">
+									<i className="bi bi-cart3" style={{ fontSize: 22 }}></i>
+								</Badge>
+							</div>
+						</div>
+						<div
+							className="d-flex align-items-center"
+							style={{
+								borderRight: "1px solid rgba(0,0,0,0.1)",
+								paddingLeft: 20,
+								paddingRight: 5,
+							}}
+						>
+							<div>{username}</div>
+							<UncontrolledDropdown inNavbar>
+								<DropdownToggle nav>
+									<img
+										src="https://icon-library.com/images/avatar-icon-images/avatar-icon-images-4.jpg"
+										height="45"
+									/>
+								</DropdownToggle>
+								<DropdownMenu right>
+									<DropdownItem>Profile</DropdownItem>
+									<DropdownItem divider />
+									<DropdownItem onClick={handleLogoutBtn}>Logout</DropdownItem>
+								</DropdownMenu>
+							</UncontrolledDropdown>
+						</div>
+					</div>
+				</div>
+			</div>
+		);
+	}
 
 	return (
 		<div className={styles.container}>
@@ -78,12 +188,6 @@ const Header = () => {
 								sign in
 							</Button>
 						</Link>
-						<Button
-							style={{ backgroundColor: surfaceColor, borderWidth: 0 }}
-							onClick={handleLogoutBtn}
-						>
-							logout
-						</Button>
 					</div>
 				</div>
 			</div>
