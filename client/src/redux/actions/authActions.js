@@ -135,12 +135,44 @@ const authRegisterAction = (payload) => {
 		try {
 			dispatch({ type: NULLIFY_ERROR });
 			dispatch({ type: API_LOADING_START });
+			localStorage.setItem("username", payload.username);
+			localStorage.setItem("email", payload.email);
 			const response = await axios.post(`${apiUrl_user}/register`, payload);
-			localStorage.setItem("token", response.data.token);
-			console.log(response);
 			if (response.status === 202) {
-				return alert(response.data.message);
+				dispatch({ type: API_LOADING_SUCCESS });
+				return Swal.fire({
+					icon: "warning",
+					title: "Ooopsss...",
+					text: `Message: ${response.data.message}`,
+				});
 			}
+			Swal.fire({
+				icon: "success",
+				title: "Please Check Your Email For a Confirmation",
+				text:
+					"To complete the subscription process, please click the link in the email we just sent you.  If it doesn’t show up in a few minutes, check your spam folder.",
+			});
+			dispatch({ type: API_LOADING_SUCCESS });
+		} catch (err) {
+			console.log(err.response);
+			dispatch({ type: API_LOADING_ERROR, payload: err.response.data.message });
+		}
+	};
+};
+
+const emailVerificationSuccessAction = (payload) => {
+	return async (dispatch) => {
+		try {
+			const headers = {
+				headers: {
+					Authorization: `Bearer ${payload}`,
+				},
+			};
+			const response = await axios.post(
+				`${apiUrl_user}/email-verification`,
+				{},
+				headers
+			);
 			const {
 				id,
 				email,
@@ -166,11 +198,17 @@ const authRegisterAction = (payload) => {
 					emailVerificationId: email_verification_id,
 				},
 			});
+			localStorage.removeItem("username");
+			localStorage.removeItem("email");
+			localStorage.setItem("token", response.data.token);
+			Swal.fire({
+				icon: "success",
+				title: "Registered Successfully",
+			});
 			dispatch({ type: API_LOADING_SUCCESS });
-			alert("register success");
 		} catch (err) {
 			console.log(err.response);
-			dispatch({ type: API_LOADING_ERROR, payload: err.response.data.message });
+			dispatch({ type: API_LOADING_ERROR, payload: err.response.data.error });
 		}
 	};
 };
@@ -330,4 +368,5 @@ export {
 	authSecurityAnswerCheck,
 	authChangePasswordEmailRequest,
 	authChangePassword,
+	emailVerificationSuccessAction,
 };

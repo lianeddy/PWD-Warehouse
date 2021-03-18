@@ -8,12 +8,20 @@ import {
 	InputGroupText,
 } from "reactstrap";
 import { makeStyles } from "@material-ui/styles";
-import { surfaceColor } from "../../helpers";
+import { primaryColor, surfaceColor } from "../../helpers";
 import { Fade } from "react-reveal";
+import { useDispatch } from "react-redux";
+import { logoutAction } from "../../redux/actions";
 
 const Header = () => {
+	const dispatch = useDispatch();
 	const styles = useStyles();
 	const [showSearchInput, setShowSearchInput] = useState(false);
+
+	const handleLogoutBtn = () => {
+		dispatch(logoutAction());
+		alert("logout");
+	};
 
 	return (
 		<div className={styles.container}>
@@ -50,10 +58,7 @@ const Header = () => {
 									style={{ borderRadius: 50, paddingInline: 20 }}
 								/>
 							</Fade>
-							<InputGroupAddon
-								addonType="prepend"
-								// style={{ backgroundColor: "rgba(0, 0, 0, 0)" }}
-							>
+							<InputGroupAddon addonType="prepend">
 								<InputGroupText
 									onClick={() => setShowSearchInput(!showSearchInput)}
 									style={{
@@ -73,6 +78,12 @@ const Header = () => {
 								sign in
 							</Button>
 						</Link>
+						<Button
+							style={{ backgroundColor: surfaceColor, borderWidth: 0 }}
+							onClick={handleLogoutBtn}
+						>
+							logout
+						</Button>
 					</div>
 				</div>
 			</div>
@@ -82,6 +93,7 @@ const Header = () => {
 
 const useStyles = makeStyles({
 	container: {
+		backgroundColor: primaryColor,
 		height: "70px",
 		maxHeight: "70px",
 		paddingInline: "50px",

@@ -7,6 +7,7 @@ import {
 	ChangePasswordPage,
 	ForgetPasswordPage,
 	RedirectPage,
+	EmailRedirectPage,
 } from "./pages/user";
 import { LoginPage, RegisterPage } from "./pages";
 import { useDispatch } from "react-redux";
@@ -27,6 +28,7 @@ const App = () => {
 			<Route path="/forget-password" component={ForgetPasswordPage} />
 			<Route path="/change-password" component={ChangePasswordPage} />
 			<Route path="/redirect" component={RedirectPage} />
+			<Route path="/email-verification" component={EmailRedirectPage} />
 		</div>
 	);
 };

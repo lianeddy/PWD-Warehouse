@@ -14,7 +14,7 @@ const ForgetPasswordPage = () => {
 	const dispatch = useDispatch();
 	const {
 		changePermitted,
-		security_question,
+		securityQuestion,
 		isLoading,
 		errorMessage,
 		id,
@@ -29,7 +29,7 @@ const ForgetPasswordPage = () => {
 			<div style={styles.style1}>
 				<div style={styles.style2}>
 					<div style={{ margin: "0 0 3px 0" }}>Security Question:</div>
-					<div style={{ margin: "0 0 10px 0" }}>{security_question}</div>
+					<div style={{ margin: "0 0 10px 0" }}>{securityQuestion}</div>
 					<input
 						type="text"
 						id="securityAnswer"

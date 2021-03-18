@@ -2,10 +2,29 @@ const { user, securityQuestion } = require("../models");
 const { encryptToken } = require("../middlewares");
 const { encryptHandler, emailHandler } = require("../handlers");
 
-// Per-Joinan
-
-// Controllers
 const register = async (req, res, next) => {
+	try {
+		const verify = encryptToken(req.body);
+		const mailOption = {
+			from: "Admin <nature.goods.official@no-reply.com>",
+			to: req.body.email,
+			subject: "Email Verification",
+			template: "VerifyEmail",
+			context: {
+				username: req.body.username,
+				email: req.body.email,
+				verify,
+			},
+		};
+		await emailHandler(mailOption);
+		return res
+			.status(200)
+			.send({ status: "SUCCESS", message: "Please check your email" });
+	} catch (err) {
+		next(err);
+	}
+};
+const emailVerification = async (req, res, next) => {
 	try {
 		const {
 			username,
@@ -14,7 +33,7 @@ const register = async (req, res, next) => {
 			full_name,
 			security_answer,
 			security_question_id,
-		} = req.body;
+		} = req.user;
 		const addUser = await user.create({
 			username,
 			password: encryptHandler(password),
@@ -23,28 +42,16 @@ const register = async (req, res, next) => {
 			security_answer,
 			security_question_id,
 		});
-		const getUser = await user.findAll({
+		const getUser = await user.findOne({
 			where: {
 				id: addUser.id,
 			},
 			attributes: { exclude: "password" },
 		});
 		const response = {
-			...getUser[0].dataValues,
-			token: encryptToken(getUser[0].dataValues),
+			...getUser.dataValues,
+			token: encryptToken(getUser.dataValues),
 		};
-		const mailOption = {
-			from: "Admin <nature.goods.official@no-reply.com>",
-			to: email,
-			subject: "Email Verification",
-			template: "VerifyEmail",
-			context: {
-				username,
-				email,
-				token: response.token,
-			},
-		};
-		await emailHandler(mailOption);
 		return res.status(200).send(response);
 	} catch (err) {
 		next(err);
@@ -69,8 +76,7 @@ const login = async (req, res) => {
 		const getUser = await user.findAll({
 			where: {
 				email: req.body.email,
-				// password: hash(req.body.password),
-				password: req.body.password,
+				password: encryptHandler(req.body.password),
 			},
 		});
 		if (getUser.length === 0) {
@@ -83,7 +89,7 @@ const login = async (req, res) => {
 			...getUser[0].dataValues,
 			token: encryptToken(getUser[0].dataValues),
 		};
-		// console.log(response.token)
+
 		return res.status(200).send(response);
 	} catch (err) {
 		console.log(err);
@@ -227,6 +233,7 @@ const changePassword = async (req, res, next) => {
 		next(err);
 	}
 };
+
 module.exports = {
 	register,
 	getSecurityQuestion,
@@ -236,4 +243,5 @@ module.exports = {
 	changePassword,
 	login,
 	keepLogin,
+	emailVerification,
 };
