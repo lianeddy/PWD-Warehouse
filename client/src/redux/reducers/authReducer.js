@@ -5,12 +5,18 @@ import {
   AUTH_SIGN,
   AUTH_LOGOUT,
   NULLIFY_ERROR,
+  RESET_INITIAL_STATE,
+  REGISTERED_TRUE,
+  CHANGE_PERMITTED,
 } from "../types";
 
 const INITIAL_STATE = {
   isLoading: false,
   isLogin: false,
   isError: false,
+  securityQuestion: "",
+  changePermitted: false,
+  passwordChanged: false,
   id: null,
   errorMessage: "",
   email: "",
@@ -56,6 +62,18 @@ const authReducer = (state = INITIAL_STATE, action) => {
         errorMessage: "",
         isError: false,
       };
+    case REGISTERED_TRUE:
+      return {
+        ...state,
+        ...action.payload,
+      };
+    case CHANGE_PERMITTED:
+      return {
+        ...state,
+        changePermitted: true,
+      };
+    case RESET_INITIAL_STATE:
+      return INITIAL_STATE;
     default:
       return state;
   }

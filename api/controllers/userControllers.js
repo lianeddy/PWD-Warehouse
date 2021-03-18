@@ -1,11 +1,15 @@
-const { user, securityQuestion } = require('../models');
-const { encryptToken } = require('../middlewares');
-const { encryptHandler, emailHandler, hash } = require('../handlers');
+const { user, securityQuestion } = require("../models");
+const { encryptToken } = require("../middlewares");
+const { encryptHandler, emailHandler, hash } = require("../handlers");
 
 const sequelize = require("../database");
-const hash = require("../handlers");
 
+// Per-Joinan
+user.belongsTo(securityQuestion, {
+  foreignKey: "security_question_id",
+});
 
+// Controllers
 const register = async (req, res, next) => {
   try {
     const {
@@ -28,17 +32,17 @@ const register = async (req, res, next) => {
       where: {
         id: addUser.id,
       },
-      attributes: { exclude: 'password' },
+      attributes: { exclude: "password" },
     });
     const response = {
       ...getUser[0].dataValues,
       token: encryptToken(getUser[0].dataValues),
     };
     const mailOption = {
-      from: 'Admin <nature.goods.official@no-reply.com>',
+      from: "Admin <nature.goods.official@no-reply.com>",
       to: email,
-      subject: 'Email Verification',
-      template: 'VerifyEmail',
+      subject: "Email Verification",
+      template: "VerifyEmail",
       context: {
         username,
         email,
@@ -66,40 +70,175 @@ const getSecurityQuestion = async (req, res, next) => {
 };
 
 const login = async (req, res) => {
-	try {
-		const getUser = await user.findAll({
-			where: {
-				email: req.body.email,
-				// password: hash(req.body.password),
-				password: req.body.password,
-			},
-		});
-		if (getUser.length === 0) {
-			return res.status(404).send({
-				message: "User Not Found",
-				status: "Not Found",
-			});
-		}
-		const response = {
-			...getUser[0].dataValues,
-			token: encryptToken(getUser[0].dataValues),
-		};
-		// console.log(response.token)
-		return res.status(200).send(response);
-	} catch (err) {
-		console.log(err);
-		next(err);
-	}
+  try {
+    const getUser = await user.findAll({
+      where: {
+        email: req.body.email,
+        // password: hash(req.body.password),
+        password: req.body.password,
+      },
+    });
+    if (getUser.length === 0) {
+      return res.status(404).send({
+        message: "User Not Found",
+        status: "Not Found",
+      });
+    }
+    const response = {
+      ...getUser[0].dataValues,
+      token: encryptToken(getUser[0].dataValues),
+    };
+    // console.log(response.token)
+    return res.status(200).send(response);
+  } catch (err) {
+    console.log(err);
+    next(err);
+  }
 };
 
 const keepLogin = async (req, res) => {
-	try {
-		const id = req.user.id;
-		const getUser = await user.findByPk(id);
-		return res.status(200).send(getUser);
-	} catch (err) {
-		next(err);
-	}
+  try {
+    const id = req.user.id;
+    const getUser = await user.findByPk(id);
+    return res.status(200).send(getUser);
+  } catch (err) {
+    next(err);
+  }
 };
 
-module.exports = { register, getSecurityQuestion, login, keepLogin };
+const registeredChecker = async (req, res, next) => {
+  const { email } = req.body;
+
+  try {
+    const getData = await user.findOne({
+      where: {
+        email: email,
+        email_verification_id: 1,
+      },
+      include: {
+        model: securityQuestion,
+      },
+      raw: true,
+    });
+
+    if (!getData) {
+      res.status(404).send({
+        message:
+          "Mohon maaf, email anda tidak tersedia atau belum terverifikasi",
+      });
+    }
+
+    return res.status(200).send(getData);
+  } catch (err) {
+    next(err);
+  }
+};
+
+const securityQuestionChecker = async (req, res, next) => {
+  const { email, answer } = req.body;
+
+  try {
+    const getData = await user.findOne({
+      where: {
+        email: email,
+        email_verification_id: 1,
+        security_answer: answer,
+      },
+    });
+
+    if (!getData) {
+      res.status(404).send({
+        message: "Mohon maaf, jawaban anda salah",
+      });
+    }
+
+    return res.status(200).send(true);
+  } catch (err) {
+    next(err);
+  }
+};
+
+const changePasswordEmailRequest = async (req, res, next) => {
+  const { email } = req.body;
+  try {
+    const getData = await user.findOne({
+      where: {
+        email,
+        email_verification_id: 1,
+      },
+      attributes: ["email"],
+    });
+
+    const token = encryptToken({
+      ...getData.toJSON(),
+    });
+
+    const mailOptions = {
+      from: "Admin <luthfilarlar@gmail.com>",
+      to: email,
+      subject: "Permintaan Ubah Password",
+      html: `
+        <div>
+          <p>Nature Goods</p>
+          <p>Permohonan Pengubahan Password</p>
+          <a href="http://localhost:3000/redirect?email=${email}&token=${token}">Klik disini untuk mengganti password</a>
+          <p>Tidak merasa mengirim permohonan? Abaikan saja!</p>
+        </div>`,
+    };
+
+    await emailHandler(mailOptions);
+
+    return res.status(200).send({
+      message: "Sent",
+      token: token,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+const changePassword = async (req, res, next) => {
+  const { newPassword, id } = req.body;
+
+  try {
+    if (req.user) {
+      await user.update(
+        {
+          password: encryptHandler(newPassword),
+        },
+        {
+          where: {
+            email: req.user.email,
+          },
+        }
+      );
+    } else {
+      await user.update(
+        {
+          password: encryptHandler(newPassword),
+        },
+        {
+          where: {
+            id,
+          },
+        }
+      );
+    }
+
+    return res.status(200).send({
+      message: "Edited",
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+module.exports = {
+  register,
+  getSecurityQuestion,
+  registeredChecker,
+  securityQuestionChecker,
+  changePasswordEmailRequest,
+  changePassword,
+  login,
+  keepLogin,
+};

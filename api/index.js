@@ -10,13 +10,13 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.get('/', (req, res) => res.status(200).send('nature goods api'));
-app.use('/user', userRouters);
-app.use('/product', productRouters);
+app.get("/", (req, res) => res.status(200).send("nature goods api"));
+app.use("/user", userRouters);
+app.use("/product", productRouters);
 
 app.use(errorHandler);
 const API_PORT = process.env.API_PORT;
-require('dotenv').config();
+require("dotenv").config();
 
 app.listen(API_PORT, async () => {
   // rebuild database based on models dir

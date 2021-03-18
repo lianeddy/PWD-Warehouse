@@ -1,8 +1,17 @@
+const user = require("./user");
+const securityQuestion = require("./securityQuestion");
+const role = require("./role");
+const product = require("./product");
+const inventory = require("./inventory");
+const category = require("./category");
+const warehouse = require("./warehouse");
+const userStatus = require("./userStatus");
+const emailVerification = require("./emailVerification");
+
 module.exports = {
-  user: require('./user'),
-  securityQuestion: require('./securityQuestion'),
-  product: require('./product'),
-  category: require('./category'),
-  inventory: require('./inventory'),
-  warehouse: require('./warehouse'),
+  role,
+  user,
+  securityQuestion,
+  userStatus,
+  emailVerification,
 };

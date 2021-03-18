@@ -1,3 +1,6 @@
-import ProductPage from './ProductPage';
+import ProductPage from "./ProductPage";
+import ForgetPasswordPage from "./ForgetPasswordPage";
+import ChangePasswordPage from "./ChangePasswordPage";
+import RedirectPage from "./RedirectPage";
 
-export { ProductPage };
+export { ForgetPasswordPage, ChangePasswordPage, RedirectPage, ProductPage };
