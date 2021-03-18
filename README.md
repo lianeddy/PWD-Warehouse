@@ -1,6 +1,6 @@
 # nature_goods_warehouse_web_app
 
-Debuuging - PW22 & PW14
+Debuuging
 
 PW - 22 Product
 Changelogs:

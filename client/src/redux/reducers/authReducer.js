@@ -10,13 +10,13 @@ const INITIAL_STATE = {
   isLoading: false,
   isLogin: false,
   isError: false,
-  id: null,
   errorMessage: '',
+  id: null,
   email: '',
   name: '',
   username: '',
   imagepath: '',
-  phone: null,
+  phone: '',
   roleId: null,
   emailVerificationId: null,
   userStatusId: null,
@@ -27,7 +27,7 @@ const authReducer = (state = INITIAL_STATE, action) => {
     case API_LOADING_START:
       return { ...state, isLoading: true };
     case API_LOADING_SUCCESS:
-      return { ...state, isLoading: false, ...action.payload };
+      return { ...state, isLoading: false };
     case API_LOADING_ERROR:
       return { ...state, isLoading: false, isError: true, errorMessage: action.payload };
     case NULLIFY_ERROR:
@@ -35,14 +35,7 @@ const authReducer = (state = INITIAL_STATE, action) => {
     case AUTH_SIGN:
       return {
         ...state,
-        email: action.payload.email,
-        name: action.payload.full_name,
-        username: action.payload.username,
-        imagepath: action.payload.imagepath,
-        phone: action.payload.phone,
-        roleId: action.payload.role_id,
-        emailVerificationId: action.payload.emai_verification_id,
-        userStatusId: action.payload.user_status_id,
+        ...action.payload,
       };
     default:
       return state;
