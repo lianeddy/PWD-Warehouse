@@ -1,7 +1,8 @@
-const express = require('express');
-const cors = require('cors');
-const { errorHandler } = require('./handlers');
-const { userRouters, productRouters } = require('./routers');
+const express = require("express");
+const cors = require("cors");
+const { errorHandler } = require("./handlers");
+const { userRouters, productRouters } = require("./routers");
+const bearerToken = require("express-bearer-token");
 
 const app = express();
 

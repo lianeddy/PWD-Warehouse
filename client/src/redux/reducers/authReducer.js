@@ -3,20 +3,21 @@ import {
   API_LOADING_START,
   API_LOADING_SUCCESS,
   AUTH_SIGN,
+  AUTH_LOGOUT,
   NULLIFY_ERROR,
-} from '../types';
+} from "../types";
 
 const INITIAL_STATE = {
   isLoading: false,
   isLogin: false,
   isError: false,
-  errorMessage: '',
   id: null,
-  email: '',
-  name: '',
-  username: '',
-  imagepath: '',
-  phone: '',
+  errorMessage: "",
+  email: "",
+  name: "",
+  username: "",
+  imagepath: "",
+  phone: null,
   roleId: null,
   emailVerificationId: null,
   userStatusId: null,
@@ -25,17 +26,35 @@ const INITIAL_STATE = {
 const authReducer = (state = INITIAL_STATE, action) => {
   switch (action.type) {
     case API_LOADING_START:
-      return { ...state, isLoading: true };
+      return {
+        ...state,
+        isLoading: true,
+      };
     case API_LOADING_SUCCESS:
-      return { ...state, isLoading: false };
+      return {
+        ...state,
+        ...action.payload,
+        isLoading: false,
+      };
     case API_LOADING_ERROR:
-      return { ...state, isLoading: false, isError: true, errorMessage: action.payload };
-    case NULLIFY_ERROR:
-      return { ...state, isError: false, errorMessage: null };
+      return {
+        ...state,
+        errorMessage: action.payload,
+        isError: true,
+        isLoading: false,
+      };
     case AUTH_SIGN:
       return {
         ...state,
         ...action.payload,
+      };
+    case AUTH_LOGOUT:
+      return INITIAL_STATE;
+    case NULLIFY_ERROR:
+      return {
+        ...state,
+        errorMessage: "",
+        isError: false,
       };
     default:
       return state;

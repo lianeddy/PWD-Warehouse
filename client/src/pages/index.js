@@ -1,3 +1,5 @@
-import RegisterPage from './RegisterPage';
+import RegisterPage from "./RegisterPage";
+import LoginPage from "./LoginPage";
+import LandingPage from "./LandingPage";
 
-export { RegisterPage };
+export { LoginPage, LandingPage, RegisterPage };

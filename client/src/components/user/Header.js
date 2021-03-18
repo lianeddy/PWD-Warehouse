@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import {
   Collapse,
   Navbar,
@@ -9,8 +9,8 @@ import {
   NavItem,
   NavLink,
   Button,
-} from 'reactstrap';
-import { makeStyles } from '@material-ui/styles';
+} from "reactstrap";
+import { makeStyles } from "@material-ui/styles";
 
 const Header = () => {
   const styles = useStyles();
@@ -19,7 +19,10 @@ const Header = () => {
   const toggle = () => setIsOpen(!isOpen);
 
   return (
-    <div style={{ boxShadow: '1px 0 12px 1px rgba(0,0,0,0.3)' }} className="px-5 py-2">
+    <div
+      style={{ boxShadow: "1px 0 12px 1px rgba(0,0,0,0.3)" }}
+      className="px-5 py-2"
+    >
       <Navbar expand="md" style={{ padding: 0, margin: 0 }}>
         <NavbarBrand href="/">
           <div>
@@ -42,6 +45,7 @@ const Header = () => {
             <Link to="/register">
               <Button>sign up</Button>
             </Link>
+            {/* ADD LOGOUT */}
           </Nav>
         </Collapse>
       </Navbar>
@@ -51,32 +55,32 @@ const Header = () => {
 
 const useStyles = makeStyles({
   navWrapper: {
-    justifyContent: 'space-between',
-    marginVertical: '50px',
+    justifyContent: "space-between",
+    marginVertical: "50px",
     padding: 0,
-    '&:hover': {
-      background: 'red',
+    "&:hover": {
+      background: "red",
     },
   },
   navItemWrapper: {
     margin: 0,
     padding: 0,
 
-    '&:hover': {
-      background: 'red',
+    "&:hover": {
+      background: "red",
     },
   },
   link: {
-    '&:hover': {
-      textDecoration: 'none',
+    "&:hover": {
+      textDecoration: "none",
     },
   },
   textLink: {
     fontWeight: 600,
-    textTransform: 'uppercase',
-    color: 'green',
-    '&:hover': {
-      color: '#064f2d',
+    textTransform: "uppercase",
+    color: "green",
+    "&:hover": {
+      color: "#064f2d",
     },
   },
 });

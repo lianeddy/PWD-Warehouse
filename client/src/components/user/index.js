@@ -1,4 +1,4 @@
-import CardProduct from './CardProduct';
-import Header from './Header';
+import CardProduct from "./CardProduct";
+import Header from "./Header";
 
 export { CardProduct, Header };
