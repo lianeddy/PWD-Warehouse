@@ -44,7 +44,7 @@ const authRegisteredCheck = (payload) => {
         payload: {
           id,
           email,
-          security_question,
+          securityQuestion: security_question,
           registered: true,
         }
       })

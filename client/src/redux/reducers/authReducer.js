@@ -3,7 +3,7 @@ import {API_LOADING_SUCCESS, API_LOADING_START, API_LOADING_ERROR, NULLIFY_ERROR
 const INITIAL_STATE = {
   id: null,
   email: "",
-  security_question: "",
+  securityQuestion: "",
   changePermitted: false,
   passwordChanged: false,
   isLoading: false,
