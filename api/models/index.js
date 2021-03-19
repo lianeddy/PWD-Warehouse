@@ -9,9 +9,13 @@ const userStatus = require("./userStatus");
 const emailVerification = require("./emailVerification");
 
 module.exports = {
-  role,
-  user,
-  securityQuestion,
-  userStatus,
-  emailVerification,
+	role,
+	user,
+	securityQuestion,
+	userStatus,
+	emailVerification,
+	product,
+	inventory,
+	category,
+	warehouse,
 };

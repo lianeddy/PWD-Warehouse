@@ -1,13 +1,14 @@
 const express = require("express");
 const {
-  register,
-  getSecurityQuestion,
-  registeredChecker,
-  securityQuestionChecker,
-  changePasswordEmailRequest,
-  changePassword,
-  login,
-  keepLogin,
+	register,
+	getSecurityQuestion,
+	registeredChecker,
+	securityQuestionChecker,
+	changePasswordEmailRequest,
+	changePassword,
+	login,
+	keepLogin,
+	emailVerification,
 } = require("../controllers/userControllers");
 const { registerValidator, decryptToken } = require("../middlewares");
 
@@ -15,6 +16,7 @@ const router = express.Router();
 
 router.get("/get-security-question", getSecurityQuestion);
 router.post("/register", registerValidator, register);
+router.post("/email-verification", decryptToken, emailVerification);
 router.post("/login", login);
 router.post("/keepLogin", decryptToken, keepLogin);
 router.post("/registered-checker", registeredChecker);
