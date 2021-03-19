@@ -1,7 +1,6 @@
 import React from "react";
 import { Route } from "react-router-dom";
 import "./App.css";
-import { Header } from "./components/user";
 import {
 	ProductPage,
 	ChangePasswordPage,
@@ -12,6 +11,8 @@ import {
 import { LoginPage, RegisterPage } from "./pages";
 import { useDispatch } from "react-redux";
 import { keepLoginAction } from "./redux/actions";
+import { Dashboard } from "./pages/admin";
+import { Header } from "./components";
 
 const App = () => {
 	const dispatch = useDispatch();
@@ -22,13 +23,15 @@ const App = () => {
 	return (
 		<div>
 			<Header />
-			<Route path="/products" exact component={ProductPage} />
+			<Route path="/" exact component={ProductPage} />
+			<Route path="/products" component={ProductPage} />
 			<Route path="/login" component={LoginPage} />
 			<Route path="/register" component={RegisterPage} />
 			<Route path="/forget-password" component={ForgetPasswordPage} />
 			<Route path="/change-password" component={ChangePasswordPage} />
 			<Route path="/redirect" component={RedirectPage} />
 			<Route path="/email-verification" component={EmailRedirectPage} />
+			<Route path="/admin" component={Dashboard} />
 		</div>
 	);
 };

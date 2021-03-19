@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Redirect } from "react-router";
 import { authChangePassword } from "../../redux/actions/authActions";
@@ -6,13 +6,19 @@ import { authChangePassword } from "../../redux/actions/authActions";
 const ChangePasswordPage = (props) => {
 	const [newPassword, setNewPassword] = useState("");
 	const [confirmPassword, setConfirmPassword] = useState("");
-	const [message, setMessege] = useState("");
+	const [message, setMessage] = useState("");
 	const [showPassword1, setShowPassword1] = useState(false);
 	const [showPassword2, setShowPassword2] = useState(false);
 
-	const { isLoading, id } = useSelector((state) => state.authReducer);
+	const { isLoading, id, errorMessage } = useSelector(
+		(state) => state.authReducer
+	);
 
 	const dispatch = useDispatch();
+
+	useEffect(() => {
+		setMessage(errorMessage);
+	}, [errorMessage]);
 
 	let token;
 
@@ -24,21 +30,24 @@ const ChangePasswordPage = (props) => {
 		return <Redirect to="/login" />;
 	}
 
-	const renderLoading = () => {
-		return <div>Loading</div>;
-	};
-
 	const renderMain = () => {
 		return (
 			<>
-				<div style={{ margin: "0 0 10px 0" }}>Masukkan Password Baru</div>
+				<div
+					style={{ margin: "0 0 10px 0", fontWeight: "bold", fontSize: "24px" }}
+				>
+					Masukkan Password Baru
+				</div>
+				<div style={{ margin: "0 0 18px 0" }}>
+					Minimal 8 huruf, 1 simbol, 1 angka, dan 1 huruf besar
+				</div>
 				<div>
 					<input
 						type={showPassword1 ? "text" : "password"}
 						id="newPassword"
 						placeholder="New Password"
 						onChange={(e) => setNewPassword(e.target.value)}
-						style={{ margin: "0 0 15px 0" }}
+						style={{ margin: "0 0 12px 0" }}
 					/>
 					<button onClick={() => setShowPassword1(!showPassword1)}>
 						{showPassword1 ? (
@@ -54,7 +63,6 @@ const ChangePasswordPage = (props) => {
 						id="confirmNewPassword"
 						placeholder="Confirm New Password"
 						onChange={(e) => setConfirmPassword(e.target.value)}
-						style={{ margin: "0 0 10px 0" }}
 					/>
 					<button onClick={() => setShowPassword2(!showPassword2)}>
 						{showPassword2 ? (
@@ -64,11 +72,14 @@ const ChangePasswordPage = (props) => {
 						)}
 					</button>
 				</div>
-				<div style={{ margin: "0 0 10px 0" }}>{message}</div>
+				<div style={{ margin: "18px 0 18px 0" }}>{message}</div>
 				<button
+					disabled={isLoading}
 					onClick={() => {
 						if (newPassword !== confirmPassword) {
-							return setMessege("Password invalid");
+							return setMessage(
+								"Pastikan password dan confirm password yang anda masukkan sama"
+							);
 						}
 
 						if (token) {
@@ -88,7 +99,7 @@ const ChangePasswordPage = (props) => {
 						);
 					}}
 				>
-					Confirm
+					{isLoading ? "Loading" : "Confirm"}
 				</button>
 			</>
 		);
@@ -96,9 +107,7 @@ const ChangePasswordPage = (props) => {
 
 	return (
 		<div style={styles.style1}>
-			<div style={styles.style2}>
-				{isLoading ? renderLoading() : renderMain()}
-			</div>
+			<div style={styles.style2}>{renderMain()}</div>
 		</div>
 	);
 };
@@ -113,12 +122,14 @@ const styles = {
 	style2: {
 		backgroundColor: "white",
 		boxShadow: "2.5px 2.5px 10px rgba(0,0,0,0.2)",
+		textAlign: "center",
 		height: "400px",
-		width: "350px",
+		width: "432px",
 		display: "flex",
 		flexDirection: "column",
 		justifyContent: "center",
 		alignItems: "center",
+		padding: "24px",
 	},
 };
 

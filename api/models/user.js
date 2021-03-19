@@ -26,5 +26,8 @@ const user = sequelize.define(
 user.belongsTo(securityQuestion, {
 	foreignKey: "security_question_id",
 });
+securityQuestion.hasMany(user, {
+	foreignKey: "security_question_id",
+});
 
 module.exports = user;

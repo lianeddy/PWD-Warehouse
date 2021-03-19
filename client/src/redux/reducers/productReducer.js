@@ -11,6 +11,8 @@ const INITIAL_STATE = {
 	isError: false,
 	errorMessage: false,
 	products: [],
+	minPrice: null,
+	maxPrice: null,
 };
 
 const productReducer = (state = INITIAL_STATE, action) => {
@@ -41,7 +43,7 @@ const productReducer = (state = INITIAL_STATE, action) => {
 		case GET_PRODUCTS:
 			return {
 				...state,
-				products: action.payload,
+				...action.payload,
 			};
 		default:
 			return state;

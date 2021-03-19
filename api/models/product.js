@@ -1,7 +1,10 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../database");
+const cart = require("./cart");
 const category = require("./category");
 const inventory = require("./inventory");
+const productImage = require("./productImage");
+const warehouse = require("./warehouse");
 
 const product = sequelize.define(
 	"product",
@@ -19,22 +22,53 @@ const product = sequelize.define(
 	}
 );
 
+// Relasi product dengan gambar - One to Many
+product.hasMany(productImage, {
+	foreignKey: "product_id",
+});
+productImage.belongsTo(product, {
+	foreignKey: "product_id",
+});
+
+// Relasi product dengan cart (junction table) - One to Many
+product.hasMany(cart, {
+	foreignKey: "product_id",
+});
+cart.belongsTo(product, {
+	foreignKey: "product_id",
+});
+
+// Relasi product dengan category - One to Many
+category.hasOne(product, {
+	foreignKey: "category_id",
+});
 product.belongsTo(category, {
-	foreignKey: {
-		name: "category_id",
-	},
+	foreignKey: "category_id",
 });
+
+product.belongsToMany(warehouse, {
+	foreignKey: "product_id",
+	otherKey: "warehouse_id",
+	through: inventory,
+});
+warehouse.belongsToMany(product, {
+	foreignKey: "warehouse_id",
+	otherKey: "product_id",
+	through: inventory,
+});
+
+category.hasMany(product, {
+	foreignKey: "category_id",
+});
+product.belongsTo(category, {
+	foreignKey: "category_id",
+});
+
 product.hasOne(inventory, {
-	foreignKey: {
-		name: "product_id",
-	},
+	foreignKey: "product_id",
 });
-
-//product
-//productimage fk product_id
-//inventory fk product_id warehouse_id manyToMany
-//warehouse
-
-// input: nama, price, description, category_id, stock, warehouse_id, gambar[]
+inventory.belongsTo(product, {
+	foreignKey: "product_id",
+});
 
 module.exports = product;

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Redirect } from "react-router";
 import {
@@ -6,6 +6,7 @@ import {
 	authSecurityAnswerCheck,
 	authChangePasswordEmailRequest,
 } from "../../redux/actions/authActions";
+import { RESET_INITIAL_STATE } from "../../redux/types";
 
 const ForgetPasswordPage = () => {
 	const [email, setEmail] = useState("");
@@ -20,60 +21,20 @@ const ForgetPasswordPage = () => {
 		id,
 	} = useSelector((state) => state.authReducer);
 
+	useEffect(() => {
+		dispatch({
+			type: RESET_INITIAL_STATE,
+		});
+	}, []);
+
 	if (changePermitted) {
 		return <Redirect to="/change-password" />;
 	}
 
-	if (id) {
+	const part1 = () => {
 		return (
-			<div style={styles.style1}>
-				<div style={styles.style2}>
-					<div style={{ margin: "0 0 3px 0" }}>Security Question:</div>
-					<div style={{ margin: "0 0 10px 0" }}>{securityQuestion}</div>
-					<input
-						type="text"
-						id="securityAnswer"
-						placeholder="Jawaban Anda"
-						onChange={(e) => setAnswer(e.target.value)}
-						style={{ margin: "0 0 10px 0" }}
-					/>
-					<div style={{ margin: "0 0 10px 0" }}>{errorMessage}</div>
-					<button
-						onClick={() =>
-							dispatch(
-								authSecurityAnswerCheck({
-									email,
-									answer,
-								})
-							)
-						}
-						style={{ margin: "0 0 10px 0" }}
-					>
-						Confirm
-					</button>
-					<div>
-						Lupa jawabannya? Klik&nbsp;
-						<span
-							onClick={() =>
-								dispatch(authChangePasswordEmailRequest({ email }))
-							}
-							style={{ fontWeight: "bold" }}
-						>
-							disini
-						</span>
-					</div>
-					<div>
-						{isLoading ? "Mengirim link ganti password ke email anda..." : null}
-					</div>
-				</div>
-			</div>
-		);
-	}
-
-	return (
-		<div style={styles.style1}>
-			<div style={styles.style2}>
-				<div style={{ margin: "0 0 10px 0" }}>Masukkan email anda</div>
+			<>
+				<div style={{ margin: "8px 0 18px 0" }}>Masukkan email anda</div>
 				<input
 					type="text"
 					id="email"
@@ -84,10 +45,68 @@ const ForgetPasswordPage = () => {
 				<div style={{ textAlign: "center" }}>{errorMessage}</div>
 				<button
 					onClick={() => dispatch(authRegisteredCheck({ email }))}
-					style={{ margin: "5px 0 0 0" }}
+					style={{ margin: "12px 0 0 0" }}
 				>
 					Confirm
 				</button>
+			</>
+		);
+	};
+
+	const part2 = () => {
+		return (
+			<>
+				<div style={{ margin: "8px 0 0px 0" }}>Security Question:</div>
+				<div style={{ margin: "0 0 18px 0" }}>{securityQuestion}</div>
+				<input
+					type="text"
+					id="securityAnswer"
+					placeholder="Jawaban Anda"
+					onChange={(e) => setAnswer(e.target.value)}
+					style={{ margin: "0px 0 14px 0" }}
+				/>
+				<div style={{ margin: "0 0 12px 0" }}>{errorMessage}</div>
+				<button
+					onClick={() =>
+						dispatch(
+							authSecurityAnswerCheck({
+								email,
+								answer,
+							})
+						)
+					}
+					style={{ margin: "0 0 18px 0" }}
+				>
+					Confirm
+				</button>
+				<div>
+					Lupa jawabannya? Klik&nbsp;
+					<span
+						onClick={() => dispatch(authChangePasswordEmailRequest({ email }))}
+						style={{ fontWeight: "bold" }}
+					>
+						disini
+					</span>
+				</div>
+				<div>
+					{isLoading ? "Mengirim link ganti password ke email anda..." : null}
+				</div>
+			</>
+		);
+	};
+
+	return (
+		<div style={styles.style1}>
+			<div style={styles.style2}>
+				<div
+					style={{
+						fontSize: "24px",
+						fontWeight: "bold",
+					}}
+				>
+					Forget Password
+				</div>
+				<>{!id ? part1() : part2()}</>
 			</div>
 		</div>
 	);

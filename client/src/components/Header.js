@@ -13,10 +13,10 @@ import {
 } from "reactstrap";
 import { makeStyles } from "@material-ui/styles";
 import { Badge } from "@material-ui/core";
-import { primaryColor, surfaceColor } from "../../helpers";
+import { primaryColor, surfaceColor } from "../helpers";
 import { Fade } from "react-reveal";
 import { useDispatch, useSelector } from "react-redux";
-import { logoutAction } from "../../redux/actions";
+import { logoutAction } from "../redux/actions";
 import Swal from "sweetalert2";
 
 const Header = () => {
@@ -45,12 +45,14 @@ const Header = () => {
 	if (isLogin) {
 		return (
 			<div className={styles.container}>
-				<div className="mr-4">
-					<img src="https://i.imgur.com/eKvfJEW.png" height="50" width="50" />
+				<div className="mr-4" style={{ cursor: "pointer" }}>
+					<Link to="/">
+						<img src="https://i.imgur.com/eKvfJEW.png" height="50" width="50" />
+					</Link>
 				</div>
 				<div className={styles.navContainer}>
 					<div className={styles.navLeftContainer}>
-						<Link to="/" className={styles.navItemContainer}>
+						<Link to="/products" className={styles.navItemContainer}>
 							<div className={styles.textLink}>home</div>
 						</Link>
 						<Link to="/products" className={styles.navItemContainer}>
@@ -136,7 +138,9 @@ const Header = () => {
 	return (
 		<div className={styles.container}>
 			<div className="mr-4">
-				<img src="https://i.imgur.com/eKvfJEW.png" height="50" width="50" />
+				<Link to="/">
+					<img src="https://i.imgur.com/eKvfJEW.png" height="50" width="50" />
+				</Link>
 			</div>
 			<div className={styles.navContainer}>
 				<div className={styles.navLeftContainer}>

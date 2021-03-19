@@ -134,6 +134,7 @@ const authRegisterAction = (payload) => {
 	return async (dispatch) => {
 		try {
 			dispatch({ type: NULLIFY_ERROR });
+			dispatch({ type: AUTH_LOGOUT });
 			dispatch({ type: API_LOADING_START });
 			localStorage.setItem("username", payload.username);
 			localStorage.setItem("email", payload.email);

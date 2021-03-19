@@ -1,36 +1,59 @@
 import React from "react";
-import {
-	Card,
-	CardImg,
-	CardText,
-	CardBody,
-	CardTitle,
-	CardSubtitle,
-	Button,
-} from "reactstrap";
+import { Card, CardImg, Button } from "reactstrap";
+import { accentColor, surfaceColor } from "../../helpers";
 
-const CardProduct = ({ name, price, description, category, stock }) => {
+const CardProduct = ({ name, price, stock }) => {
 	return (
-		<div>
-			<Card>
-				<CardImg
-					top
-					width="100%"
-					src="/assets/318x180.svg"
-					alt="Card image cap"
-				/>
-				<CardBody>
-					<CardTitle tag="h5">{name}</CardTitle>
-					<CardSubtitle tag="h6" className="mb-2 text-muted">
+		<Card
+			style={{
+				height: 300,
+				maxHeight: 300,
+				borderWidth: 0,
+				boxShadow: "0 0 12px 2px rgba(0,0,0,0.1)",
+			}}
+		>
+			<CardImg
+				style={{ backgroundColor: accentColor }}
+				top
+				width="100%"
+				height="175"
+				src="/assets/318x180.svg"
+				alt="Card image cap"
+			/>
+			<div
+				style={{
+					height: "100%",
+					paddingInline: 10,
+					paddingBlock: 10,
+					display: "flex",
+					flexDirection: "column",
+					justifyContent: "space-between",
+				}}
+			>
+				<div>
+					<div>{name}</div>
+					<div tag="h6" className="mb-2 text-muted">
 						Rp{price.toLocaleString()}
-					</CardSubtitle>
-					<CardText>{description}</CardText>
-					<CardText>category: {category}</CardText>
-					<CardText>stock: {stock}</CardText>
-					<Button>Button</Button>
-				</CardBody>
-			</Card>
-		</div>
+					</div>
+				</div>
+				<div style={{ display: "flex", justifyContent: "flex-end" }}>
+					{stock === 0 ? null : (
+						<Button style={{ borderWidth: 0, backgroundColor: surfaceColor }}>
+							<i class="bi bi-cart-plus" style={{ color: "white" }}></i>
+						</Button>
+					)}
+					<Button
+						style={{
+							borderWidth: 0,
+							backgroundColor: accentColor,
+							marginLeft: 5,
+						}}
+					>
+						<div style={{ color: "black" }}>Detail</div>
+					</Button>
+				</div>
+			</div>
+		</Card>
 	);
 };
 

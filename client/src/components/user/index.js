@@ -1,4 +1,4 @@
 import CardProduct from "./CardProduct";
-import Header from "./Header";
+import UserFooter from "./UserFooter";
 
-export { CardProduct, Header };
+export { CardProduct, UserFooter };
