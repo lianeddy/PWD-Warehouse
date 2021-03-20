@@ -11,7 +11,7 @@ const eye = <FontAwesomeIcon icon={faEye} />;
 
 const LoginPage = () => {
 	const dispatch = useDispatch();
-	const { isLoading, isLogin, role_id, changePermitted } = useSelector(
+	const { isLoading, isLogin, roleId, changePermitted } = useSelector(
 		(state) => state.authReducer
 	);
 	const [email, setEmail] = useState("");
@@ -22,8 +22,8 @@ const LoginPage = () => {
 		setPasswordShown(passwordShown ? false : true);
 	};
 
-	if (isLogin && role_id === 1) return <Redirect to="/admin" />;
-	if (isLogin && role_id === 2) return <Redirect to="/products" />;
+	if (isLogin && roleId === 1) return <Redirect to="/admin" />;
+	if (isLogin && roleId === 2) return <Redirect to="/products" />;
 
 	if (changePermitted) {
 		dispatch({

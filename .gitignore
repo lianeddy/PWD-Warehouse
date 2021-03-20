@@ -1,5 +1,5 @@
-/api/.env
-/api/package-lock.json
+*.env
+*package-lock.json
 /api/node_modules
 /client/node_modules
 /client/package-lock.json

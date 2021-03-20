@@ -50,8 +50,8 @@ const ProductPage = () => {
 				<div
 					key={value.id}
 					style={{
-						width: "24.53%",
-						maxHeight: "24.53%",
+						width: "24%",
+						maxHeight: "24%",
 						marginInline: 2,
 						marginBottom: 4,
 					}}
@@ -219,7 +219,7 @@ const ProductPage = () => {
 							style={{
 								display: "flex",
 								flexWrap: "wrap",
-								justifyContent: "flex-start",
+								justifyContent: "space-evenly",
 								marginBottom: 50,
 							}}
 						>
