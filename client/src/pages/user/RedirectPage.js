@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Redirect } from "react-router";
-import { authRegisteredCheck } from "../../redux/actions/authActions";
+import { getChangePasswordUserData } from "../../redux/actions/authActions";
 
 const RedirectPage = (props) => {
 	const dispatch = useDispatch();
@@ -17,7 +17,7 @@ const RedirectPage = (props) => {
 	}
 
 	useEffect(() => {
-		dispatch(authRegisteredCheck({ email }));
+		dispatch(getChangePasswordUserData({ email }));
 	}, []);
 
 	if (id) {

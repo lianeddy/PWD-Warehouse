@@ -12,6 +12,7 @@ import {
 	REGISTERED_TRUE,
 } from "../types";
 import Swal from "sweetalert2";
+import { cartGetAction } from "./cartActions";
 
 const loginAction = (data) => {
 	return async (dispatch) => {
@@ -47,6 +48,7 @@ const loginAction = (data) => {
 					emailVerificationId: email_verification_id,
 				},
 			});
+			dispatch(cartGetAction({ id }));
 			dispatch({ type: API_LOADING_SUCCESS });
 		} catch (err) {
 			dispatch({
@@ -109,6 +111,7 @@ const keepLoginAction = () => {
 					emailVerificationId: email_verification_id,
 				},
 			});
+			dispatch(cartGetAction({ id }));
 			dispatch({
 				type: API_LOADING_SUCCESS,
 			});
@@ -134,6 +137,7 @@ const authRegisterAction = (payload) => {
 	return async (dispatch) => {
 		try {
 			dispatch({ type: NULLIFY_ERROR });
+			dispatch({ type: AUTH_LOGOUT });
 			dispatch({ type: API_LOADING_START });
 			localStorage.setItem("username", payload.username);
 			localStorage.setItem("email", payload.email);
@@ -243,6 +247,7 @@ const authRegisteredCheck = (payload) => {
 
 			dispatch({
 				type: API_LOADING_SUCCESS,
+				payload: { wantToChangePass: true },
 			});
 		} catch (err) {
 			dispatch({
@@ -312,6 +317,36 @@ const authChangePasswordEmailRequest = (payload) => {
 	};
 };
 
+const getChangePasswordUserData = (payload) => {
+	return async (dispatch) => {
+		try {
+			dispatch({
+				type: NULLIFY_ERROR,
+			});
+
+			dispatch({
+				type: API_LOADING_START,
+			});
+
+			const response = await axios.post(
+				`${apiUrl_user}/registered-checker`,
+				payload
+			);
+			const { id, email } = response.data;
+
+			dispatch({
+				type: API_LOADING_SUCCESS,
+				payload: { id, email, wantToChangePass: true, registered: true },
+			});
+		} catch (err) {
+			dispatch({
+				type: API_LOADING_ERROR,
+				payload: err.response.data.message,
+			});
+		}
+	};
+};
+
 const authChangePassword = (payload) => {
 	const { token, newPassword, id } = payload;
 	console.log(token);
@@ -369,4 +404,5 @@ export {
 	authChangePasswordEmailRequest,
 	authChangePassword,
 	emailVerificationSuccessAction,
+	getChangePasswordUserData,
 };

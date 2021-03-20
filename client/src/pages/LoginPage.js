@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { loginAction } from "../redux/actions";
 import { Spinner, Button } from "reactstrap";
 import { Link, Redirect } from "react-router-dom";
-
+import { RESET_INITIAL_STATE } from "../redux/types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye } from "@fortawesome/free-solid-svg-icons";
 
@@ -11,7 +11,9 @@ const eye = <FontAwesomeIcon icon={faEye} />;
 
 const LoginPage = () => {
 	const dispatch = useDispatch();
-	const { isLoading, isLogin } = useSelector((state) => state.authReducer);
+	const { isLoading, isLogin, wantToChangePass, roleId } = useSelector(
+		(state) => state.authReducer
+	);
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 	const [passwordShown, setPasswordShown] = useState(false);
@@ -20,8 +22,13 @@ const LoginPage = () => {
 		setPasswordShown(passwordShown ? false : true);
 	};
 
-	if (isLogin) {
-		return <Redirect to="/products" />;
+	if (isLogin && roleId === 1) return <Redirect to="/admin" />;
+	if (isLogin && roleId === 2) return <Redirect to="/products" />;
+
+	if (wantToChangePass) {
+		dispatch({
+			type: RESET_INITIAL_STATE,
+		});
 	}
 
 	return (

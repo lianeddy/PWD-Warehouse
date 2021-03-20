@@ -2,20 +2,17 @@ import {
 	API_LOADING_ERROR,
 	API_LOADING_START,
 	API_LOADING_SUCCESS,
-	GET_PRODUCTS,
 	NULLIFY_ERROR,
 } from "../types";
 
 const INITIAL_STATE = {
+	cart: [],
 	isLoading: false,
 	isError: false,
-	errorMessage: false,
-	products: [],
-	maxPrice: null,
-	minPrice: null,
+	errorMessage: "",
 };
 
-const productReducer = (state = INITIAL_STATE, action) => {
+const cartReducer = (state = INITIAL_STATE, action) => {
 	switch (action.type) {
 		case API_LOADING_START:
 			return {
@@ -25,29 +22,25 @@ const productReducer = (state = INITIAL_STATE, action) => {
 		case API_LOADING_SUCCESS:
 			return {
 				...state,
-				isLoading: false,
+				...action.payload,
+				isLoading: true,
 			};
 		case API_LOADING_ERROR:
 			return {
 				...state,
-				isLoading: false,
-				isError: true,
 				errorMessage: action.payload,
+				isError: true,
+				isLoading: false,
 			};
 		case NULLIFY_ERROR:
 			return {
 				...state,
-				isError: false,
 				errorMessage: "",
-			};
-		case GET_PRODUCTS:
-			return {
-				...state,
-				...action.payload,
+				isError: false,
 			};
 		default:
 			return state;
 	}
 };
 
-export { productReducer };
+export { cartReducer };

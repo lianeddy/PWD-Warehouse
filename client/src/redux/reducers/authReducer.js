@@ -14,10 +14,8 @@ const INITIAL_STATE = {
 	isLoading: false,
 	isLogin: false,
 	isError: false,
-	errorMessage: "",
 	securityQuestion: "",
 	changePermitted: false,
-	passwordChanged: false,
 	id: null,
 	errorMessage: "",
 	email: "",
@@ -28,6 +26,7 @@ const INITIAL_STATE = {
 	roleId: null,
 	emailVerificationId: null,
 	userStatusId: null,
+	wantToChangePass: false,
 };
 
 const authReducer = (state = INITIAL_STATE, action) => {
@@ -53,8 +52,8 @@ const authReducer = (state = INITIAL_STATE, action) => {
 		case AUTH_SIGN:
 			return {
 				...state,
-				isLogin: true,
 				...action.payload,
+				isLogin: true,
 			};
 		case AUTH_LOGOUT:
 			return INITIAL_STATE;

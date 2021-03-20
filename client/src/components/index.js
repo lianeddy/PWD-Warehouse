@@ -1,3 +1,4 @@
+import Header from "./Header";
 import LoaderPage from "./LoaderPage";
 
-export { LoaderPage };
+export { Header, LoaderPage };

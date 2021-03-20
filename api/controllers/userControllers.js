@@ -24,6 +24,7 @@ const register = async (req, res, next) => {
 		next(err);
 	}
 };
+
 const emailVerification = async (req, res, next) => {
 	try {
 		const {
@@ -89,10 +90,8 @@ const login = async (req, res) => {
 			...getUser[0].dataValues,
 			token: encryptToken(getUser[0].dataValues),
 		};
-
 		return res.status(200).send(response);
 	} catch (err) {
-		console.log(err);
 		next(err);
 	}
 };
