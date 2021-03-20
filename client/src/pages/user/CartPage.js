@@ -1,11 +1,18 @@
-import React, { useEffect } from "react";
-import { useSelector } from "react-redux";
-import { apiUrl } from "../../helpers";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { Redirect } from "react-router";
+import { updateCartQty, deleteCart } from "../../redux/actions";
 
-const CartPage = () => {
-	const { cart, isLoading, isError, errorMessage } = useSelector(
-		(state) => state.cartReducer
+const CartPage = (props) => {
+	const { cart } = useSelector((state) => state.cartReducer);
+	const { id, isLogin, isLoading, isFinished } = useSelector(
+		(state) => state.authReducer
 	);
+	const dispatch = useDispatch();
+
+	if (isFinished && !isLogin) {
+		return <Redirect to="/login" />;
+	}
 
 	return (
 		<div
@@ -37,7 +44,7 @@ const CartPage = () => {
 						</div>
 						<div
 							style={{
-								width: "200px",
+								width: "224px",
 								// backgroundColor: "red",
 								margin: "0 24px 0 24px",
 							}}
@@ -67,13 +74,22 @@ const CartPage = () => {
 										margin: "5px 0 0 0",
 									}}
 								>
-									{/* <div>Rp{val.price.toLocaleString()}</div> */}
 									<button
 										style={{
 											margin: "0 0 0 0",
 											width: "48px",
 											height: "36px",
 										}}
+										onClick={() =>
+											dispatch(
+												updateCartQty({
+													userId: id,
+													cartId: val.id,
+													qty: val.qty - 1,
+												})
+											)
+										}
+										disabled={val.qty <= 1}
 									>
 										-
 									</button>
@@ -89,12 +105,42 @@ const CartPage = () => {
 									</div>
 									<button
 										style={{
-											margin: "0 0 0 0",
+											margin: "0 12px 0 0",
 											width: "48px",
 											height: "36px",
 										}}
+										onClick={() =>
+											dispatch(
+												updateCartQty({
+													userId: id,
+													cartId: val.id,
+													qty: val.qty + 1,
+												})
+											)
+										}
 									>
 										+
+									</button>
+									<button
+										style={{
+											margin: "0 0 0 0",
+											width: "48px",
+											height: "36px",
+											backgroundColor: "red",
+										}}
+										onClick={() =>
+											dispatch(
+												deleteCart({
+													userId: id,
+													cartId: val.id,
+												})
+											)
+										}
+									>
+										<i
+											className="bi bi-trash-fill"
+											style={{ fontSize: "16px", color: "white" }}
+										></i>
 									</button>
 								</div>
 							</div>

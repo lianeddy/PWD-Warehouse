@@ -72,7 +72,7 @@ const getProducts = async (req, res, next) => {
 				"price",
 				"description",
 				"category.category",
-				"inventory.stock",
+				"inventories.stock",
 			],
 			include: [
 				{
@@ -125,4 +125,34 @@ const getCategories = async (req, res, next) => {
 	}
 };
 
-module.exports = { addProduct, getProducts, getCategories };
+const getProductById = async (req, res, next) => {
+	try {
+		const getById = await product.findOne({
+			raw: true,
+			attributes: [
+				"id",
+				"name",
+				"price",
+				"description",
+				"category.category",
+				"inventories.stock",
+			],
+			include: [
+				{
+					model: category,
+					attributes: [],
+				},
+				{
+					model: inventory,
+					attributes: [],
+				},
+			],
+			where: { id: req.params.id },
+		});
+		res.status(200).send(getById);
+	} catch (err) {
+		next(err);
+	}
+};
+
+module.exports = { addProduct, getProducts, getCategories, getProductById };
