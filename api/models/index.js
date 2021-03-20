@@ -9,6 +9,10 @@ const userStatus = require("./userStatus");
 const emailVerification = require("./emailVerification");
 const productImage = require("./productImage");
 const cart = require("./cart");
+const transaction = require("./transaction");
+const transactionItem = require("./transactionItem");
+const orderStatus = require("./orderStatus");
+const paymentStatus = require("./paymentStatus");
 
 module.exports = {
 	role,
@@ -22,4 +26,8 @@ module.exports = {
 	warehouse,
 	productImage,
 	cart,
+	transaction,
+	transactionItem,
+	orderStatus,
+	paymentStatus,
 };

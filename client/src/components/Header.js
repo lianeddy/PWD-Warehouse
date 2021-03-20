@@ -92,33 +92,6 @@ const Header = () => {
 					</div>
 					<div className="d-flex align-items-center">
 						<div
-							style={{
-								borderRight: "1px solid rgba(0,0,0,0.1)",
-								paddingInline: 10,
-							}}
-						>
-							<InputGroup>
-								<Fade left when={showSearchInput}>
-									<Input
-										placeholder="search"
-										style={{ borderRadius: 50, paddingInline: 20 }}
-									/>
-								</Fade>
-								<InputGroupAddon addonType="prepend">
-									<InputGroupText
-										onClick={() => setShowSearchInput(!showSearchInput)}
-										style={{
-											backgroundColor: "rgba(0, 0, 0, 0)",
-											borderWidth: 0,
-											cursor: "pointer",
-										}}
-									>
-										<i className="bi bi-search"></i>
-									</InputGroupText>
-								</InputGroupAddon>
-							</InputGroup>
-						</div>
-						<div
 							className="d-flex align-items-center"
 							style={{
 								borderRight: "1px solid rgba(0,0,0,0.1)",
@@ -127,16 +100,16 @@ const Header = () => {
 						>
 							<div>
 								<Badge badgeContent={10} color="error" max={9} overlap="circle">
-									<i className="bi bi-cart3" style={{ fontSize: 22 }}></i>
+									<i className="bi bi-bell" style={{ fontSize: 22 }}></i>
 								</Badge>
 							</div>
 						</div>
 						<div
 							className="d-flex align-items-center"
 							style={{
-								borderRight: "1px solid rgba(0,0,0,0.1)",
+								// borderRight: "1px solid rgba(0,0,0,0.1)",
 								paddingLeft: 20,
-								paddingRight: 5,
+								// paddingRight: 5,
 							}}
 						>
 							<div>{username}</div>
@@ -402,9 +375,8 @@ const useStyles = makeStyles({
 		width: "100%",
 		height: "100%",
 	},
-	navLeftContainer: {
-		display: "flex",
-		height: "100%",
+	rightContainerContent1: {
+		width: "100%",
 	},
 	searchInputBtn: {
 		backgroundColor: "rgba(97, 177, 90, 0.5)",

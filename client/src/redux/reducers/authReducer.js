@@ -27,6 +27,7 @@ const INITIAL_STATE = {
 	roleId: null,
 	emailVerificationId: null,
 	userStatusId: null,
+	isFinished: false,
 };
 
 const authReducer = (state = INITIAL_STATE, action) => {

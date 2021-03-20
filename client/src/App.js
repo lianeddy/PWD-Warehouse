@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Route } from "react-router-dom";
 import "./App.css";
 import {
@@ -16,10 +16,11 @@ import { Header } from "./components";
 
 const App = () => {
 	const dispatch = useDispatch();
-	const token = localStorage.getItem("token");
-	if (token) {
+
+	useEffect(() => {
 		dispatch(keepLoginAction());
-	}
+	}, []);
+
 	return (
 		<div>
 			<Header />

@@ -1,23 +1,175 @@
-import React from "react";
+import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Button } from "reactstrap";
 import { LoaderPage } from "../../components";
-import { AUTH_LOGOUT } from "../../redux/types";
 import { Redirect } from "react-router-dom";
+import { accentColor, primaryColor, surfaceColor } from "../../helpers";
+import { makeStyles } from "@material-ui/core";
+import { Fade } from "react-reveal";
+import {
+	HomeAdminPage,
+	InvoiceAdminPage,
+	ProductAdminPage,
+	ProfileAdminPage,
+} from ".";
+
+const menusSideBar = [
+	{ icon: "bi bi-house", value: "Dashboard" },
+	{ icon: "bi bi-hdd", value: "Product" },
+	{ icon: "bi bi-journal-text", value: "Invoice" },
+];
 
 const Dashboard = () => {
+	const styles = useStyles();
 	const dispatch = useDispatch();
-	const { isLogin, isLoading } = useSelector((state) => state.authReducer);
+	const { isLogin, isLoading, username, roleId } = useSelector(
+		(state) => state.authReducer
+	);
+
+	const [current, setCurrent] = useState(0);
+
 	if (isLoading) return <LoaderPage />;
+	if (roleId === 2) return <Redirect to="/products" />;
 	if (!isLogin) return <Redirect to="/products" />;
+
+	console.log(current);
+
+	const renderMenuSideBar = () => {
+		return menusSideBar.map((menu, index) => {
+			return (
+				<div
+					className={styles.menuListItem}
+					key={menu.value}
+					onClick={(e) => setCurrent(index)}
+				>
+					<i
+						className={menu.icon}
+						style={{ fontSize: 20, marginRight: 15 }}
+					></i>
+					<div style={{ fontSize: 15 }}>{menu.value}</div>
+				</div>
+			);
+		});
+	};
+
 	return (
-		<div>
-			<div>home</div>
-			<Button color="primary" onClick={() => dispatch({ type: AUTH_LOGOUT })}>
-				logout
-			</Button>
+		<div className="d-flex" style={{ maxWidth: "100wh" }}>
+			<div
+				style={{
+					width: "30%",
+					maxWidth: 300,
+					minWidth: 300,
+					minHeight: "100vh",
+					marginTop: 5,
+				}}
+			>
+				<div
+					style={{
+						backgroundImage: 'url("https://i.imgur.com/bNGZmNQ.jpg")',
+						height: 125,
+						display: "flex",
+						alignItems: "flex-end",
+						padding: 20,
+					}}
+				>
+					<div className="d-flex align-items-end">
+						<div className="mr-3">
+							<img
+								src="https://icon-library.com/images/avatar-icon-images/avatar-icon-images-4.jpg"
+								alt="file_err"
+								width="50"
+								height="50"
+								style={{
+									objectFit: "contain",
+									backgroundColor: primaryColor,
+									borderRadius: 50,
+								}}
+							/>
+						</div>
+						<div>
+							<div>{username}</div>
+							<div style={{ fontSize: 12, color: "gray" }}>Administrator</div>
+						</div>
+					</div>
+				</div>
+				<div>
+					<div style={{ marginBottom: 10, paddingInline: 20, paddingTop: 20 }}>
+						<div
+							style={{
+								textTransform: "uppercase",
+								fontWeight: 600,
+								color: "gray",
+							}}
+						>
+							authentication
+						</div>
+					</div>
+					<div>
+						<div className={styles.menuListItem} onClick={(e) => setCurrent(3)}>
+							<i
+								className="bi bi-emoji-smile"
+								style={{ fontSize: 20, marginRight: 15 }}
+							></i>
+							<div style={{ fontSize: 15 }}>Profile</div>
+						</div>
+						<div className={styles.menuListItem}>
+							<i
+								className="bi bi-key"
+								style={{ fontSize: 20, marginRight: 15 }}
+							></i>
+							<div style={{ fontSize: 15 }}>Logout</div>
+						</div>
+					</div>
+					<div style={{ marginBottom: 10, paddingInline: 20, paddingTop: 20 }}>
+						<div
+							style={{
+								textTransform: "uppercase",
+								fontWeight: 600,
+								color: "gray",
+							}}
+						>
+							Menu
+						</div>
+					</div>
+					<div>{renderMenuSideBar()}</div>
+				</div>
+			</div>
+			<div
+				style={{
+					width: "100%",
+
+					marginTop: 5,
+					backgroundColor: accentColor,
+					minHeight: "100vh",
+				}}
+			>
+				<Fade bottom collapse duration={100} when={current === 0}>
+					<HomeAdminPage current={current} />
+				</Fade>
+				<Fade bottom collapse duration={100} when={current === 1}>
+					<ProductAdminPage current={current} />
+				</Fade>
+				<Fade bottom collapse duration={100} when={current === 2}>
+					<InvoiceAdminPage current={current} />
+				</Fade>
+				<Fade bottom collapse duration={100} when={current === 3}>
+					<ProfileAdminPage current={current} />
+				</Fade>
+			</div>
 		</div>
 	);
 };
+
+const useStyles = makeStyles({
+	menuListItem: {
+		display: "flex",
+		alignItems: "center",
+		lineHeight: 2,
+		cursor: "pointer",
+		paddingLeft: 20,
+		"&:hover": {
+			backgroundColor: "rgba(97, 177, 90, 0.3)",
+		},
+	},
+});
 
 export default Dashboard;

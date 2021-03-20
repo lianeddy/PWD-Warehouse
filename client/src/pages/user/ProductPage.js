@@ -7,6 +7,7 @@ import axios from "axios";
 import { accentColor, apiUrl_product } from "../../helpers";
 import Paginate from "react-reactstrap-pagination";
 import { CardProduct, UserFooter } from "../../components/user";
+import { RESET_INITIAL_STATE } from "../../redux/types";
 
 const sortBy = [
 	{ value: 1, label: "Default sorting" },
@@ -24,6 +25,14 @@ const ProductPage = () => {
 	const [categories, setCategories] = useState([]);
 	const [sort, setSort] = useState(1);
 	const [currentPage, setCurrentPage] = useState(0);
+
+	const { wantToChangePass } = useSelector((state) => state.authReducer);
+
+	if (wantToChangePass) {
+		dispatch({
+			type: RESET_INITIAL_STATE,
+		});
+	}
 
 	useEffect(async () => {
 		dispatch(getProductsAction());
@@ -66,7 +75,7 @@ const ProductPage = () => {
 			);
 		});
 	};
-	console.log(category);
+	console.log(categories);
 	const renderCategory = () => {
 		return categories.map((value) => {
 			return (
@@ -104,7 +113,9 @@ const ProductPage = () => {
 						}}
 					>
 						<div className="mr-4">
-							Showing {offset + 1} of {offset + limit} of {totalItem} results
+							Showing {offset + 1} -{" "}
+							{totalItem > 12 ? offset + limit : totalItem} of {totalItem}{" "}
+							results
 						</div>
 						<div style={{ width: "50%" }}>
 							<Select
