@@ -35,8 +35,6 @@ const getProductsByWarehouse = async (req, res, next) => {
 	}
 };
 
-// const addProduct;
-
 module.exports = {
 	getWarehouse,
 	getProductsByWarehouse,

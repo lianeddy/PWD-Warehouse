@@ -71,6 +71,7 @@ const loginAction = (data) => {
 const keepLoginAction = () => {
 	return async (dispatch) => {
 		try {
+			dispatch({ type: NULLIFY_ERROR });
 			dispatch({ type: API_LOADING_START });
 			const token = localStorage.getItem("token");
 			const headers = {

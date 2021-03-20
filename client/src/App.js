@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Route } from "react-router-dom";
 import "./App.css";
 import { Header } from "./components";
@@ -15,11 +15,10 @@ import { keepLoginAction } from "./redux/actions";
 
 const App = () => {
 	const dispatch = useDispatch();
-	const token = localStorage.getItem("token");
 
-	if (token) {
+	useEffect(() => {
 		dispatch(keepLoginAction());
-	}
+	}, []);
 
 	return (
 		<div>

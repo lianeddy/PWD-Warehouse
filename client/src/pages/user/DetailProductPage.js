@@ -8,7 +8,7 @@ import {
 } from "../../redux/actions";
 import { Button } from "reactstrap";
 import Fade from "react-reveal/Fade";
-import { Link } from "react-router-dom";
+import { Link, Redirect } from "react-router-dom";
 
 class DetailProductPage extends Component {
 	state = {
@@ -77,6 +77,10 @@ class DetailProductPage extends Component {
 	};
 
 	render() {
+		// const { isLogin } = this.props;
+		// if (!isLogin) {
+		// 	return <Link to="/login" />;
+		// }
 		const { stockMinCart } = this.state;
 		const {
 			id,
@@ -90,7 +94,7 @@ class DetailProductPage extends Component {
 		let res = cart.find((val) => {
 			return val.name === name;
 		});
-		console.log(res);
+		// console.log(res);
 		return (
 			<div className="container">
 				<div>
@@ -150,6 +154,7 @@ const mapStatetoProps = (state) => {
 	return {
 		productById: state.productReducer.productById,
 		user_id: state.authReducer.id,
+		isLogin: state.authReducer.isLogin,
 		cart: state.cartReducer.cart,
 	};
 };

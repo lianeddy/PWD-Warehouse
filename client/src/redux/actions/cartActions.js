@@ -1,16 +1,15 @@
 import axios from "axios";
-import { apiUrl_cart } from "../../helpers";
 import {
 	API_LOADING_ERROR,
 	API_LOADING_START,
 	API_LOADING_SUCCESS,
 	NULLIFY_ERROR,
 } from "../types";
+import { apiUrl_cart } from "../../helpers";
 import Swal from "sweetalert2";
 
 const addToCartAction = ({ id, user_id, qty }) => {
 	return async (dispatch) => {
-		console.log(id);
 		try {
 			dispatch({ type: NULLIFY_ERROR });
 			dispatch({ type: API_LOADING_START });
@@ -29,7 +28,7 @@ const addToCartAction = ({ id, user_id, qty }) => {
 				text: `Please Sign In to Buy Something`,
 				icon: "warning",
 				confirmButtonColor: "#3085d6",
-				confirmButtonText: "Ok",
+				confirmButtonText: "OK",
 			}).then((result) => {
 				if (result.isConfirmed) {
 					dispatch({ type: NULLIFY_ERROR });

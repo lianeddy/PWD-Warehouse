@@ -72,7 +72,7 @@ const getProducts = async (req, res, next) => {
 				"price",
 				"description",
 				"category.category",
-				"inventory.stock",
+				"inventories.stock",
 			],
 			include: [
 				{
@@ -115,6 +115,7 @@ const getProducts = async (req, res, next) => {
 const getCategories = async (req, res, next) => {
 	try {
 		const categories = await category.findAll();
+		console.log("abc");
 		const response = [];
 		categories.forEach((value) =>
 			response.push({ value: value.id, label: value.category })
@@ -135,7 +136,7 @@ const getProductById = async (req, res, next) => {
 				"price",
 				"description",
 				"category.category",
-				"inventory.stock",
+				"inventories.stock",
 			],
 			include: [
 				{

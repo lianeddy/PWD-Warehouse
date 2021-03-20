@@ -2,8 +2,6 @@ const { cart } = require("../models");
 
 const addToCart = async (req, res, next) => {
 	try {
-		console.log(req.body);
-		console.log(req.params);
 		const addCart = await cart.create({
 			qty: req.body.qty,
 			product_id: req.params.id,
@@ -20,7 +18,6 @@ const editQtyCart = async (req, res, next) => {
 		const qty = await cart.update(
 			{
 				qty: req.body.qty,
-				// product_id: req.body.product_id,
 			},
 			{
 				where: {
