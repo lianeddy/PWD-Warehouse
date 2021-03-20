@@ -1,115 +1,158 @@
-const { Op } = require('sequelize');
-const { product, inventory, category } = require('../models');
+const { Op } = require("sequelize");
+const { product, inventory, category, productImage } = require("../models");
 
-// without image
 const addProduct = async (req, res, next) => {
-  try {
-    const { name, price, category_id, stock, warehouse_id, description } = req.body;
-    const newProduct = await product.create({
-      name,
-      price,
-      category_id,
-      description,
-    });
-    await inventory.create({
-      inventory: stock,
-      product_id: newProduct.id,
-      warehouse_id,
-    });
-    return res.status(200).send('successfully added product');
-  } catch (err) {
-    next(err);
-  }
+	try {
+		const {
+			name,
+			price,
+			category_id,
+			stock,
+			warehouse_id,
+			description,
+		} = req.body;
+		const newProduct = await product.create({
+			name,
+			price,
+			category_id,
+			description,
+		});
+		await inventory.create({
+			inventory: stock,
+			product_id: newProduct.id,
+			warehouse_id,
+		});
+		return res.status(200).send("successfully added product");
+	} catch (err) {
+		next(err);
+	}
 };
 
-product.belongsTo(category, {
-  foreignKey: {
-    name: 'category_id',
-  },
-});
-
-// category.hasOne(product, {
-//   foreignKey: {
-//     name: 'category_id',
-//   },
-// });
-
-product.hasOne(inventory, {
-  foreignKey: {
-    name: 'product_id',
-  },
-});
-
-// inventory.belongsTo(product, {
-//   foreignKey: {
-//     name: 'product_id',
-//   },
-// });
-
 const getProducts = async (req, res, next) => {
-  try {
-    // console.log(req.query);
-    let query = {
-      raw: true,
-      where: {
-        is_available: 1,
-      },
-    };
-    if (req.query.category)
-      query.where = { ...query.where, category_id: parseInt(req.query.category) };
-    if (req.query.min)
-      query.where = { ...query.where, price: { [Op.gte]: parseInt(req.query.min) } };
-    if (req.query.max)
-      query.where = { ...query.where, price: { [Op.lte]: parseInt(req.query.max) } };
-    if (req.query.max && req.query.min)
-      query.where = {
-        ...query.where,
-        price: { [Op.between]: [parseInt(req.query.min), parseInt(req.query.max)] },
-      };
-
-    if (req.query.sort == 1) query = { ...query, order: [['created_at', 'DESC']] };
-    if (req.query.sort == 2) query = { ...query, order: [['created_at', 'ASC']] };
-    if (req.query.sort == 3) query = { ...query, order: [['price', 'ASC']] };
-    if (req.query.sort == 4) query = { ...query, order: [['price', 'DESC']] };
-
-    query = {
-      ...query,
-      attributes: [
-        'id',
-        'name',
-        'price',
-        'description',
-        'category.category',
-        'inventory.inventory',
-      ],
-      include: [
-        {
-          model: category,
-          attributes: [],
-        },
-        {
-          model: inventory,
-          attributes: [],
-        },
-      ],
-    };
-    console.log(query);
-    const response = await product.findAll(query);
-    return res.status(200).send(response);
-  } catch (err) {
-    next(err);
-  }
+	try {
+		let query = {
+			raw: true,
+			where: {
+				is_available: 1,
+			},
+		};
+		if (req.query.category)
+			query.where = {
+				...query.where,
+				category_id: parseInt(req.query.category),
+			};
+		if (req.query.min)
+			query.where = {
+				...query.where,
+				price: { [Op.gte]: parseInt(req.query.min) },
+			};
+		if (req.query.max)
+			query.where = {
+				...query.where,
+				price: { [Op.lte]: parseInt(req.query.max) },
+			};
+		if (req.query.max && req.query.min)
+			query.where = {
+				...query.where,
+				price: {
+					[Op.between]: [parseInt(req.query.min), parseInt(req.query.max)],
+				},
+			};
+		if (req.query.sort == 1)
+			query = { ...query, order: [["created_at", "DESC"]] };
+		if (req.query.sort == 2)
+			query = { ...query, order: [["created_at", "ASC"]] };
+		if (req.query.sort == 3) query = { ...query, order: [["price", "ASC"]] };
+		if (req.query.sort == 4) query = { ...query, order: [["price", "DESC"]] };
+		query = {
+			...query,
+			attributes: [
+				"id",
+				"name",
+				"price",
+				"description",
+				"category.category",
+				"inventory.stock",
+			],
+			include: [
+				{
+					model: category,
+					attributes: [],
+				},
+				{
+					model: inventory,
+					attributes: [],
+				},
+			],
+		};
+		const getProducts = await product.findAll(query);
+		const productImg = await productImage.findAll();
+		const getMaxPrice = await product.findOne({
+			order: [["price", "DESC"]],
+		});
+		const getMinPrice = await product.findOne({
+			order: [["price", "ASC"]],
+		});
+		const productsGetImage = getProducts.map((value) => {
+			return {
+				...value,
+				image: productImg.filter((item) => {
+					return item.product_id === value.id;
+				}),
+			};
+		});
+		const response = {
+			maxPrice: getMaxPrice.price,
+			minPrice: getMinPrice.price,
+			products: productsGetImage,
+		};
+		return res.status(200).send(response);
+	} catch (err) {
+		next(err);
+	}
 };
 
 const getCategories = async (req, res, next) => {
-  try {
-    const categories = await category.findAll();
-    const response = [];
-    categories.forEach((value) => response.push({ value: value.id, label: value.category }));
-    return res.status(200).send(response);
-  } catch (err) {
-    next(err);
-  }
+	try {
+		const categories = await category.findAll();
+		const response = [];
+		categories.forEach((value) =>
+			response.push({ value: value.id, label: value.category })
+		);
+		return res.status(200).send(response);
+	} catch (err) {
+		next(err);
+	}
 };
 
-module.exports = { addProduct, getProducts, getCategories };
+const getProductById = async (req, res, next) => {
+	try {
+		const getById = await product.findOne({
+			raw: true,
+			attributes: [
+				"id",
+				"name",
+				"price",
+				"description",
+				"category.category",
+				"inventory.stock",
+			],
+			include: [
+				{
+					model: category,
+					attributes: [],
+				},
+				{
+					model: inventory,
+					attributes: [],
+				},
+			],
+			where: { id: req.params.id },
+		});
+		res.status(200).send(getById);
+	} catch (err) {
+		next(err);
+	}
+};
+
+module.exports = { addProduct, getProducts, getCategories, getProductById };
