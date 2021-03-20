@@ -6,7 +6,7 @@ import { emailVerificationSuccessAction } from "../../redux/actions";
 
 const EmailRedirectPage = (props) => {
 	const dispatch = useDispatch();
-	const isLogin = useSelector((state) => state.authReducer.isLogin);
+	const { isLogin, roleId } = useSelector((state) => state.authReducer);
 	const verify = new URLSearchParams(props.location.search).get("verify");
 	const emailQuery = new URLSearchParams(props.location.search).get("email");
 	const usernameQuery = new URLSearchParams(props.location.search).get(
@@ -16,6 +16,9 @@ const EmailRedirectPage = (props) => {
 	const localUsername = localStorage.getItem("username");
 
 	useEffect(() => {
+		console.log(props.location.search);
+		console.log(localEmail);
+		console.log(localUsername);
 		if (props.location.search) {
 			if (
 				verify &&
@@ -27,7 +30,7 @@ const EmailRedirectPage = (props) => {
 		}
 	}, []);
 
-	if (isLogin) return <Redirect to="/products" />;
+	if (isLogin && roleId === 2) return <Redirect to="/products" />;
 
 	return <LoaderPage />;
 };

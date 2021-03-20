@@ -1,13 +1,12 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../database");
 
-const inventory = sequelize.define(
-	"inventory",
+const cart = sequelize.define(
+	"cart",
 	{
-		stock: DataTypes.INTEGER,
-		warehouse_id: DataTypes.SMALLINT,
+		qty: DataTypes.INTEGER,
 		product_id: DataTypes.INTEGER,
-		updated_at: DataTypes.DATE,
+		user_id: DataTypes.INTEGER,
 	},
 	{
 		timestamps: false,
@@ -15,4 +14,4 @@ const inventory = sequelize.define(
 	}
 );
 
-module.exports = inventory;
+module.exports = cart;

@@ -1,11 +1,10 @@
-const sequelize = require("../database");
 const { user } = require("../models");
 
 const registerValidator = async (req, res, next) => {
 	try {
 		const { username, email, password } = req.body;
-		const emailRegex = /[\w-\.]+(@[\w-\.]+\.)+[\w-\.]{2,4}$/;
-		const passwordRegex = /(?=.*[\d])(?=.*[A-Z])(?=.*[!@#$%^&*\-\_=<>,\.?]).{8,16}$/;
+		const emailRegex = /^[\w-\.]+(@[\w-\.]+\.)+[\w-\.]{2,4}$/;
+		const passwordRegex = /^(?=.*[\d])(?=.*[A-Z])(?=.*[!@#$%^&*\-\_=<>,\.?]).{8,16}$/;
 		if (!email.match(emailRegex))
 			return res
 				.status(202)

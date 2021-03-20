@@ -1,13 +1,11 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../database");
 
-const inventory = sequelize.define(
-	"inventory",
+const productImage = sequelize.define(
+	"product_image",
 	{
-		stock: DataTypes.INTEGER,
-		warehouse_id: DataTypes.SMALLINT,
+		imagepath: DataTypes.STRING,
 		product_id: DataTypes.INTEGER,
-		updated_at: DataTypes.DATE,
 	},
 	{
 		timestamps: false,
@@ -15,4 +13,4 @@ const inventory = sequelize.define(
 	}
 );
 
-module.exports = inventory;
+module.exports = productImage;

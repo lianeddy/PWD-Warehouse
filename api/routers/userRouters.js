@@ -10,7 +10,11 @@ const {
 	keepLogin,
 	emailVerification,
 } = require("../controllers/userControllers");
-const { registerValidator, decryptToken } = require("../middlewares");
+const {
+	registerValidator,
+	decryptToken,
+	changePasswordValidator,
+} = require("../middlewares");
 
 const router = express.Router();
 
@@ -22,7 +26,16 @@ router.post("/keepLogin", decryptToken, keepLogin);
 router.post("/registered-checker", registeredChecker);
 router.post("/security-question-checker", securityQuestionChecker);
 router.post("/change-password-email-request", changePasswordEmailRequest);
-router.patch("/change-password-with-email", decryptToken, changePassword);
-router.patch("/change-password-without-email", changePassword);
+router.patch(
+	"/change-password-with-email",
+	decryptToken,
+	changePasswordValidator,
+	changePassword
+);
+router.patch(
+	"/change-password-without-email",
+	changePasswordValidator,
+	changePassword
+);
 
 module.exports = router;

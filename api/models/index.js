@@ -7,6 +7,8 @@ const category = require("./category");
 const warehouse = require("./warehouse");
 const userStatus = require("./userStatus");
 const emailVerification = require("./emailVerification");
+const cart = require("./cart");
+const productImage = require("./productImage");
 
 module.exports = {
 	role,
@@ -18,4 +20,6 @@ module.exports = {
 	inventory,
 	category,
 	warehouse,
+	cart,
+	productImage,
 };

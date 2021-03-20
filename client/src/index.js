@@ -8,7 +8,6 @@ import { Provider } from "react-redux";
 import { configureStore } from "@reduxjs/toolkit";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
-import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
 import reducer from "./redux/reducers";
 
 const store = configureStore({

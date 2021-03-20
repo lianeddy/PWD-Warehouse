@@ -1,5 +1,5 @@
 const { Op } = require("sequelize");
-const { product, inventory, category } = require("../models");
+const { product, inventory, category, productImage } = require("../models");
 
 const addProduct = async (req, res, next) => {
 	try {
@@ -72,7 +72,7 @@ const getProducts = async (req, res, next) => {
 				"price",
 				"description",
 				"category.category",
-				"inventory.inventory",
+				"inventory.stock",
 			],
 			include: [
 				{
@@ -85,8 +85,27 @@ const getProducts = async (req, res, next) => {
 				},
 			],
 		};
-		console.log(query);
-		const response = await product.findAll(query);
+		const getProducts = await product.findAll(query);
+		const productImg = await productImage.findAll();
+		const getMaxPrice = await product.findOne({
+			order: [["price", "DESC"]],
+		});
+		const getMinPrice = await product.findOne({
+			order: [["price", "ASC"]],
+		});
+		const productsGetImage = getProducts.map((value) => {
+			return {
+				...value,
+				image: productImg.filter((item) => {
+					return item.product_id === value.id;
+				}),
+			};
+		});
+		const response = {
+			maxPrice: getMaxPrice.price,
+			minPrice: getMinPrice.price,
+			products: productsGetImage,
+		};
 		return res.status(200).send(response);
 	} catch (err) {
 		next(err);
