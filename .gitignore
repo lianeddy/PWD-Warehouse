@@ -1,8 +1,8 @@
-./api/.env
-./package-lock.json
-./api/node_modules
-./client/node_modules
-./client/package-lock.json
+/api/.env
+/package-lock.json
+/api/node_modules
+/client/node_modules
+/client/package-lock.json
 
 ##
 
