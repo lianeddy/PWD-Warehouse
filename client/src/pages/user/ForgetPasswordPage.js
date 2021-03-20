@@ -19,6 +19,7 @@ const ForgetPasswordPage = () => {
 		isLoading,
 		errorMessage,
 		id,
+		isLogin,
 	} = useSelector((state) => state.authReducer);
 
 	useEffect(() => {
@@ -26,6 +27,10 @@ const ForgetPasswordPage = () => {
 			type: RESET_INITIAL_STATE,
 		});
 	}, []);
+
+	if (isLogin) {
+		return <Redirect to="/" />;
+	}
 
 	if (changePermitted) {
 		return <Redirect to="/change-password" />;

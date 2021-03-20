@@ -10,16 +10,15 @@ import {
 	CartPage,
 } from "./pages/user";
 import { LoginPage, RegisterPage } from "./pages";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { keepLoginAction } from "./redux/actions";
 
 const App = () => {
 	const dispatch = useDispatch();
-	const token = localStorage.getItem("token");
 
-	if (token) {
+	useEffect(() => {
 		dispatch(keepLoginAction());
-	}
+	}, []);
 
 	return (
 		<div>

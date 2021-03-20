@@ -27,6 +27,7 @@ const INITIAL_STATE = {
 	emailVerificationId: null,
 	userStatusId: null,
 	wantToChangePass: false,
+	isFinished: false,
 };
 
 const authReducer = (state = INITIAL_STATE, action) => {
@@ -35,12 +36,14 @@ const authReducer = (state = INITIAL_STATE, action) => {
 			return {
 				...state,
 				isLoading: true,
+				isFinished: false,
 			};
 		case API_LOADING_SUCCESS:
 			return {
 				...state,
 				...action.payload,
 				isLoading: false,
+				isFinished: true,
 			};
 		case API_LOADING_ERROR:
 			return {
@@ -48,6 +51,7 @@ const authReducer = (state = INITIAL_STATE, action) => {
 				errorMessage: action.payload,
 				isError: true,
 				isLoading: false,
+				isFinished: true,
 			};
 		case AUTH_SIGN:
 			return {
