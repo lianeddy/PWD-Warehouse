@@ -64,7 +64,7 @@ product.belongsTo(category, {
 	foreignKey: "category_id",
 });
 
-product.hasOne(inventory, {
+product.hasMany(inventory, {
 	foreignKey: "product_id",
 });
 inventory.belongsTo(product, {

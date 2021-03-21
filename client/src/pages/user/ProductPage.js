@@ -113,7 +113,9 @@ const ProductPage = () => {
 						}}
 					>
 						<div className="mr-4">
-							Showing {offset + 1} of {offset + limit} of {totalItem} results
+							Showing {offset + 1} -{" "}
+							{totalItem > 12 ? offset + limit : totalItem} of {totalItem}{" "}
+							result
 						</div>
 						<div style={{ width: "50%" }}>
 							<Select
