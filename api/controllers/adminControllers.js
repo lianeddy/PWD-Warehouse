@@ -1,0 +1,211 @@
+const { Op } = require("sequelize");
+const sequelize = require("../database");
+const { transaction, user, monthly_report } = require("../models");
+
+const getDashboard = async (req, res, next) => {
+	try {
+		const totalOrder = await transaction.count("id", {
+			where: { order_status_id: 5 },
+		});
+
+		const totalProfit = await transaction.sum("amount", {
+			where: { order_status_id: 5 },
+		});
+
+		const totalClient = await user.count();
+
+		const dailyProfit = await transaction.sum("amount", {
+			where: {
+				created_at: {
+					[Op.between]: [
+						sequelize.fn("subdate", sequelize.fn("now"), 1),
+						sequelize.fn("now"),
+					],
+				},
+				order_status_id: 5,
+			},
+		});
+
+		const weeklyProfit = await transaction.sum("amount", {
+			where: {
+				created_at: {
+					[Op.between]: [
+						sequelize.fn("subdate", sequelize.fn("now"), 7),
+						sequelize.fn("now"),
+					],
+				},
+				order_status_id: 5,
+			},
+		});
+
+		const monthlyProfit = await transaction.sum("amount", {
+			where: {
+				created_at: {
+					[Op.between]: [
+						sequelize.fn(
+							"subdate",
+							sequelize.fn("now"),
+							sequelize.fn("dayofmonth", sequelize.fn("now"))
+						),
+						sequelize.fn("now"),
+					],
+				},
+				order_status_id: 5,
+			},
+		});
+
+		const [[rangeMonthly]] = await sequelize.query(`
+			SELECT
+				DAYNAME(SUBDATE(NOW(), DAYOFMONTH(NOW()))) AS from_dayname,
+    		DAYOFMONTH(SUBDATE(NOW(), DAYOFMONTH(now())-1)) AS from_date,
+    		EXTRACT(MONTH FROM SUBDATE(NOW(), DAYOFMONTH(NOW())-1)) AS from_month,
+				MONTHNAME(SUBDATE(NOW(), DAYOFMONTH(NOW())-1)) AS from_monthname,
+    		YEAR(SUBDATE(NOW(), DAYOFMONTH(NOW()))) AS from_year,
+    		DATE_FORMAT(SUBDATE(NOW(), DAYOFMONTH(NOW()) -1), '%M, %D %Y') AS from_date_format,
+    		SUBDATE(NOW(), DAYOFMONTH(NOW())-1) AS from_spesific_date,
+    		DAYNAME(NOW()) AS to_dayname,
+				DAYOFMONTH(NOW()) AS to_date,
+				EXTRACT(MONTH FROM NOW()) AS to_month,
+    		MONTHNAME(NOW()) AS to_monthname,
+    		YEAR(NOW()) AS to_year,
+				DATE_FORMAT(NOW(), '%M, %D %Y') AS to_date_format,
+    		NOW() AS to_spesific_date 
+			FROM transaction WHERE id=1;
+		`);
+
+		const [[rangeWeekly]] = await sequelize.query(`
+			SELECT
+				DAYNAME(SUBDATE(NOW(), 7)) AS from_dayname,
+    		DAYOFMONTH(SUBDATE(NOW(), 7)) AS from_date,
+       	MONTHNAME(SUBDATE(NOW(), 1)) AS from_monthname,
+    		EXTRACT(MONTH FROM SUBDATE(created_at, 7)) AS from_month,
+        YEAR(SUBDATE(NOW(), DAYOFMONTH(NOW()))) AS from_year,
+    		DATE_FORMAT(SUBDATE(NOW(), 7), '%M, %D %Y') AS from_date_format,
+    		SUBDATE(NOW(), 7) AS from_spesific_date,
+    		DAYNAME(NOW()) AS to_dayname,
+				DAYOFMONTH(NOW()) AS to_date,
+				EXTRACT(MONTH FROM NOW()) AS to_month,
+				MONTHNAME(NOW()) AS to_monthname,
+				YEAR(NOW()) AS to_year,
+				DATE_FORMAT(NOW(), '%M, %D %Y') AS to_date_format,
+    		NOW() AS to_spesific_date 
+			FROM transaction WHERE id=1;
+		`);
+
+		const [[rangeDaily]] = await sequelize.query(`
+			SELECT
+				DAYNAME(SUBDATE(NOW(), 1)) AS from_dayname,
+    		DAYOFMONTH(SUBDATE(NOW(), 1)) AS from_date,
+    		EXTRACT(MONTH FROM SUBDATE(created_at, 1)) AS from_month,
+				MONTHNAME(SUBDATE(NOW(), 1)) AS from_monthname,
+				YEAR(SUBDATE(NOW(), DAYOFMONTH(NOW()))) AS from_year,
+    		DATE_FORMAT(SUBDATE(NOW(), 1), '%M, %D %Y') AS from_date_format,
+    		SUBDATE(NOW(), 1) AS from_spesific_date,
+    		DAYNAME(NOW()) AS to_dayname,
+				DAYOFMONTH(NOW()) AS to_date,
+				MONTHNAME(NOW()) AS to_monthname,
+				EXTRACT(MONTH FROM NOW()) AS to_month,
+				YEAR(NOW()) AS to_year,
+				DATE_FORMAT(NOW(), '%M, %D %Y') AS to_date_format,
+   		 	NOW() AS to_spesific_date 
+			FROM transaction WHERE id=1;
+		`);
+
+		const monthlyTransaction = await transaction.findAll({
+			where: {
+				created_at: {
+					[Op.between]: [
+						sequelize.fn(
+							"subdate",
+							sequelize.fn("now"),
+							sequelize.fn("dayofmonth", sequelize.fn("now"))
+						),
+						sequelize.fn("now"),
+					],
+				},
+				order_status_id: 5,
+			},
+		});
+
+		const weeklyTransaction = await transaction.findAll({
+			where: {
+				created_at: {
+					[Op.between]: [
+						sequelize.fn("subdate", sequelize.fn("now"), 7),
+						sequelize.fn("now"),
+					],
+				},
+				order_status_id: 5,
+			},
+		});
+
+		const dailyTransaction = await transaction.findAll({
+			where: {
+				created_at: {
+					[Op.between]: [
+						sequelize.fn("subdate", sequelize.fn("now"), 1),
+						sequelize.fn("now"),
+					],
+				},
+				order_status_id: 5,
+			},
+		});
+
+		const monthlyReport = {
+			range: rangeMonthly,
+			profit: parseInt(monthlyProfit.monthly_profit),
+			transaction: monthlyTransaction,
+		};
+		const weeklyReport = {
+			range: rangeWeekly,
+			profit: parseInt(weeklyProfit.weekly_profit),
+			transaction: weeklyTransaction,
+		};
+		const dailyReport = {
+			range: rangeDaily,
+			profit: parseInt(dailyProfit.daily_profit),
+			transaction: dailyTransaction,
+		};
+
+		const getMonthlyReportGroup = await monthly_report.findAll({
+			group: "year",
+		});
+
+		const getMonthlyReport = await monthly_report.findAll();
+
+		const anualReport = [];
+
+		getMonthlyReportGroup.forEach((group, index) => {
+			return anualReport.push({
+				id: group.year,
+				data: getMonthlyReport.map((month, index) => {
+					console.log(month.month === true);
+					return {
+						x: month.month,
+						y: month.total_order,
+						profit: month.profit,
+					};
+				}),
+			});
+		});
+
+		const response = {
+			dailyProfitt,
+			weeklyProfitt,
+			monthlyProfitt,
+			totalOrder,
+			totalProfit,
+			totalClient,
+			monthlyReport,
+			weeklyReport,
+			dailyReport,
+			anualReport,
+		};
+
+		return res.status(200).send(response);
+	} catch (err) {
+		next(err);
+	}
+};
+
+module.exports = { getDashboard };

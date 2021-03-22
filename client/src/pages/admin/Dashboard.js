@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { LoaderPage } from "../../components";
 import { Redirect } from "react-router-dom";
@@ -11,6 +11,8 @@ import {
 	ProductAdminPage,
 	ProfileAdminPage,
 } from ".";
+import { getDashboard, logoutAction } from "../../redux/actions";
+import Swal from "sweetalert2";
 
 const menusSideBar = [
 	{ icon: "bi bi-house", value: "Dashboard" },
@@ -27,11 +29,30 @@ const Dashboard = () => {
 
 	const [current, setCurrent] = useState(0);
 
-	if (isLoading) return <LoaderPage />;
-	if (roleId === 2) return <Redirect to="/products" />;
-	if (!isLogin) return <Redirect to="/products" />;
+	useEffect(() => {
+		dispatch(getDashboard());
+	}, []);
 
-	console.log(current);
+	const handleLogoutBtn = () => {
+		Swal.fire({
+			title: "Logout",
+			text: "You will be returned to home page",
+			icon: "warning",
+			showCancelButton: true,
+			confirmButtonColor: "#3085d6",
+			cancelButtonColor: "#d33",
+			confirmButtonText: "Sure",
+		}).then((result) => {
+			if (result.isConfirmed) {
+				dispatch(logoutAction());
+				return <Redirect to="/" />;
+			}
+		});
+	};
+
+	if (isLoading) return <LoaderPage />;
+	if (isLogin && roleId === 2) return <Redirect to="/products" />;
+	if (!isLogin) return <Redirect to="/products" />;
 
 	const renderMenuSideBar = () => {
 		return menusSideBar.map((menu, index) => {
@@ -59,7 +80,8 @@ const Dashboard = () => {
 					maxWidth: 300,
 					minWidth: 300,
 					minHeight: "100vh",
-					marginTop: 5,
+					boxShadow: "1px 0 10px 1px rgba(0,0,0,0.3)",
+					zIndex: 1,
 				}}
 			>
 				<div
@@ -111,7 +133,7 @@ const Dashboard = () => {
 							></i>
 							<div style={{ fontSize: 15 }}>Profile</div>
 						</div>
-						<div className={styles.menuListItem}>
+						<div className={styles.menuListItem} onClick={handleLogoutBtn}>
 							<i
 								className="bi bi-key"
 								style={{ fontSize: 20, marginRight: 15 }}
@@ -136,8 +158,6 @@ const Dashboard = () => {
 			<div
 				style={{
 					width: "100%",
-
-					marginTop: 5,
 					backgroundColor: accentColor,
 					minHeight: "100vh",
 				}}

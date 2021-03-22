@@ -12,7 +12,7 @@ const cart = require("./cart");
 const transaction = require("./transaction");
 const transactionItem = require("./transactionItem");
 const orderStatus = require("./orderStatus");
-const paymentStatus = require("./paymentStatus");
+const monthly_report = require("./monthlyReport");
 
 module.exports = {
 	role,
@@ -29,5 +29,5 @@ module.exports = {
 	transaction,
 	transactionItem,
 	orderStatus,
-	paymentStatus,
+	monthly_report,
 };

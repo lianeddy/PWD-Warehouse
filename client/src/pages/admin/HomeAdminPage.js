@@ -1,70 +1,40 @@
 import React from "react";
 import { accentColor, primaryColor, surfaceColor } from "../../helpers";
 import { ResponsiveLine } from "@nivo/line";
-
-const x = 1000000;
-const date = new Date();
-
-const data = [
-	{
-		id: 2019,
-		color: "red",
-		data: [
-			{ x: "Jan", y: 2 },
-			{ x: "Feb", y: 10 },
-			{ x: "Mar", y: 67 },
-			{ x: "Apr", y: 25 },
-			{ x: "May", y: 49 },
-			{ x: "Jun", y: 115 },
-			{ x: "Jul", y: 14 },
-			{ x: "Aug", y: 122 },
-			{ x: "Sep", y: 45 },
-			{ x: "Oct", y: 53 },
-			{ x: "Nov", y: 70 },
-			{ x: "Dec", y: 86 },
-		],
-	},
-	{
-		id: 2020,
-		color: "blue",
-		data: [
-			{ x: "Jan", y: 210 },
-			{ x: "Feb", y: 421 },
-			{ x: "Mar", y: 156 },
-			{ x: "Apr", y: 122 },
-			{ x: "May", y: 321 },
-			{ x: "Jun", y: 156 },
-			{ x: "Jul", y: 72 },
-			{ x: "Aug", y: 298 },
-			{ x: "Sep", y: 456 },
-			{ x: "Oct", y: 602 },
-			{ x: "Nov", y: 321 },
-			{ x: "Dec", y: 159 },
-		],
-	},
-];
+import { useSelector } from "react-redux";
 
 const HomeAdminPage = ({ current }) => {
+	const {
+		totalProfit,
+		totalClient,
+		totalOrder,
+		dailyReport,
+		weeklyReport,
+		monthlyReport,
+		anualReport,
+	} = useSelector((state) => state.adminReducer.dashboard);
+
 	return (
 		<div
 			style={{
 				minHeight: "100vh",
 				backgroundColor: primaryColor,
-				padding: 15,
+				paddingBlock: 20,
+				paddingInline: 30,
 				display: current === 0 ? "block" : "none",
 			}}
 		>
 			<div
 				className="d-flex justify-content-between"
-				style={{ marginBottom: 30 }}
+				style={{ marginBottom: 20 }}
 			>
 				<div
 					style={{
 						height: 200,
 						backgroundColor: accentColor,
 						borderRadius: 10,
-						maxWidth: 300,
-						width: "24%",
+						width: "32.5%",
+						boxShadow: "0 0 10px 1px rgba(0,0,0,0.3)",
 					}}
 				>
 					<div
@@ -114,7 +84,7 @@ const HomeAdminPage = ({ current }) => {
 								></div>
 							</div>
 							<div style={{ fontSize: 16, color: "white" }}>
-								{x.toLocaleString()}
+								{totalOrder.toLocaleString()}
 							</div>
 						</div>
 					</div>
@@ -124,8 +94,8 @@ const HomeAdminPage = ({ current }) => {
 						height: 200,
 						backgroundColor: accentColor,
 						borderRadius: 10,
-						maxWidth: 300,
-						width: "24%",
+						width: "32.5%",
+						boxShadow: "0 0 10px 1px rgba(0,0,0,0.3)",
 					}}
 				>
 					<div
@@ -175,7 +145,7 @@ const HomeAdminPage = ({ current }) => {
 								></div>
 							</div>
 							<div style={{ fontSize: 16, color: "white" }}>
-								{x.toLocaleString()}
+								{totalClient.toLocaleString()}
 							</div>
 						</div>
 					</div>
@@ -185,69 +155,8 @@ const HomeAdminPage = ({ current }) => {
 						height: 200,
 						backgroundColor: accentColor,
 						borderRadius: 10,
-						maxWidth: 300,
-						width: "24%",
-					}}
-				>
-					<div
-						className="d-flex justify-content-between"
-						style={{ height: "100%", padding: 20 }}
-					>
-						<div className="d-flex align-items-center">
-							<div
-								style={{
-									display: "flex",
-									justifyContent: "center",
-									alignItems: "center",
-									width: 60,
-									height: 60,
-									borderRadius: 50,
-									backgroundColor: "rgba(0,0,0,0.15)",
-								}}
-							>
-								<i
-									className="bi bi-graph-up"
-									style={{
-										fontSize: 25,
-										color: "white",
-									}}
-								></i>
-							</div>
-						</div>
-						<div
-							style={{
-								display: "flex",
-								flexDirection: "column",
-								justifyContent: "space-evenly",
-								alignItems: "flex-end",
-							}}
-						>
-							<div className="d-flex flex-column align-items-end">
-								<div
-									style={{
-										fontSize: 22,
-										color: "white",
-									}}
-								>
-									Sales
-								</div>
-								<div
-									style={{ backgroundColor: "white", width: 30, height: 3 }}
-								></div>
-							</div>
-							<div style={{ fontSize: 16, color: "white" }}>
-								{x.toLocaleString()}
-							</div>
-						</div>
-					</div>
-				</div>
-				<div
-					style={{
-						height: 200,
-						backgroundColor: accentColor,
-						borderRadius: 10,
-						maxWidth: 300,
-						width: "24%",
+						width: "32.5%",
+						boxShadow: "0 0 10px 1px rgba(0,0,0,0.3)",
 					}}
 				>
 					<div
@@ -297,7 +206,7 @@ const HomeAdminPage = ({ current }) => {
 								></div>
 							</div>
 							<div style={{ fontSize: 16, color: "white" }}>
-								{x.toLocaleString()}
+								{totalProfit.toLocaleString()} IDR
 							</div>
 						</div>
 					</div>
@@ -315,11 +224,11 @@ const HomeAdminPage = ({ current }) => {
 						width: "65%",
 						backgroundColor: "white",
 						borderRadius: 10,
-						boxShadow: "0 0 5px 1px rgba(0,0,0,0.3)",
+						boxShadow: "0 0 10px 1px rgba(0,0,0,0.3)",
 					}}
 				>
 					<ResponsiveLine
-						data={data}
+						data={anualReport}
 						margin={{ top: 50, right: 100, bottom: 50, left: 100 }}
 						xScale={{ type: "point" }}
 						yScale={{
@@ -339,7 +248,7 @@ const HomeAdminPage = ({ current }) => {
 						areaOpacity={0.5}
 						axisTop={null}
 						axisRight={null}
-						pointSize={10}
+						pointSize={20}
 						pointColor={{ theme: "background" }}
 						pointBorderWidth={3}
 						pointBorderColor={{ from: "color", modifier: [] }}
@@ -353,7 +262,7 @@ const HomeAdminPage = ({ current }) => {
 								anchor: "top-right",
 								direction: "column",
 								justify: true,
-								translateX: 0,
+								translateX: 50,
 								translateY: 0,
 								itemsSpacing: 0,
 								itemDirection: "left-to-right",
@@ -382,22 +291,90 @@ const HomeAdminPage = ({ current }) => {
 						height: "100%",
 						backgroundColor: surfaceColor,
 						borderRadius: 10,
-						boxShadow: "0 0 8px 1px rgba(0,0,0,0.3)",
+						boxShadow: "0 0 10px 1px rgba(0,0,0,0.3)",
+						padding: 20,
 					}}
 				>
-					<div className="d-flex justify-content-between align-items-center">
+					<div
+						className="d-flex justify-content-between align-items-center"
+						style={{
+							backgroundColor: primaryColor,
+							borderRadius: 10,
+							marginBottom: 5,
+							padding: 10,
+						}}
+					>
 						<div>
-							<div>Earning</div>
-							<div>Today, </div>
+							<div>Today</div>
+							<div style={{ fontSize: 10, color: "gray" }}>
+								{dailyReport.range.to_dayname}, {dailyReport.range.to_date}{" "}
+								{dailyReport.range.to_monthname} {dailyReport.range.to_year}
+							</div>
 						</div>
-						<div>10000</div>
+						<div>
+							<div>Earn</div>
+							<div>
+								{dailyReport.profit ? dailyReport.profit.toLocaleString() : 0}{" "}
+								IDR
+							</div>
+						</div>
 					</div>
-					<div className="d-flex justify-content-between align-items-center">
+					<div
+						className="d-flex justify-content-between align-items-center"
+						style={{
+							backgroundColor: primaryColor,
+							borderRadius: 10,
+							marginBottom: 5,
+							padding: 10,
+						}}
+					>
+						<div>
+							<div>Weekly</div>
+							{weeklyReport.range.from_monthname !==
+							weeklyReport.range.to_monthname ? (
+								<div style={{ fontSize: 10, color: "gray" }}>
+									{weeklyReport.range.from_date}{" "}
+									{weeklyReport.range.from_monthname} -{" "}
+									{weeklyReport.range.to_date} {weeklyReport.range.to_monthname}{" "}
+									{weeklyReport.range.to_year}
+								</div>
+							) : (
+								<div style={{ fontSize: 10, color: "gray" }}>
+									{weeklyReport.range.from_date} - {weeklyReport.range.to_date}{" "}
+									{weeklyReport.range.to_monthname} {weeklyReport.range.to_year}
+								</div>
+							)}
+						</div>
 						<div>
 							<div>Earning</div>
-							<div>Weekly</div>
+							<div>
+								{weeklyReport.profit ? weeklyReport.profit.toLocaleString() : 0}{" "}
+								IDR
+							</div>
 						</div>
-						<div>10000</div>
+					</div>
+					<div
+						className="d-flex justify-content-between align-items-center"
+						style={{
+							backgroundColor: primaryColor,
+							borderRadius: 10,
+							marginBottom: 5,
+							padding: 10,
+						}}
+					>
+						<div>
+							<div>Monthly</div>
+							<div>{monthlyReport.range.to_monthname}</div>
+						</div>
+						<div>
+							<div>Earn</div>
+							<div>
+								{monthlyReport.profit
+									? monthlyReport.profit.toLocaleString()
+									: 0}{" "}
+								IDR
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>

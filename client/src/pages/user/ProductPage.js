@@ -8,6 +8,7 @@ import { accentColor, apiUrl_product } from "../../helpers";
 import Paginate from "react-reactstrap-pagination";
 import { CardProduct, UserFooter } from "../../components/user";
 import { RESET_INITIAL_STATE } from "../../redux/types";
+import { Redirect } from "react-router-dom";
 
 const sortBy = [
 	{ value: 1, label: "Default sorting" },
@@ -19,6 +20,7 @@ const sortBy = [
 const ProductPage = () => {
 	const dispatch = useDispatch();
 	const { products } = useSelector((state) => state.productReducer);
+	const { isLogin, roleId } = useSelector((state) => state.authReducer);
 	const [minimum, setMinimum] = useState("");
 	const [maximum, setMaximum] = useState("");
 	const [category, setCategory] = useState(0);
@@ -39,6 +41,7 @@ const ProductPage = () => {
 		const response = await axios.get(`${apiUrl_product}/categories`);
 		setCategories([{ value: 0, label: "All" }, ...response.data]);
 	}, []);
+
 	useEffect(() => {
 		let query;
 		if (minimum !== "") query = `min=${minimum}`;
@@ -49,6 +52,8 @@ const ProductPage = () => {
 		if (category !== 0) query += `&category=${category}`;
 		dispatch(getProductsAction(query));
 	}, [minimum, maximum, sort, category]);
+
+	// if (isLogin && roleId === 1) return <Redirect to="/admin" />;
 
 	const totalItem = products.length;
 	const limit = 12;

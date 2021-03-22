@@ -12,6 +12,7 @@ import {
 	REGISTERED_TRUE,
 } from "../types";
 import Swal from "sweetalert2";
+import { getDashboard } from "./adminActions";
 
 const loginAction = (data) => {
 	return async (dispatch) => {
@@ -109,6 +110,7 @@ const keepLoginAction = () => {
 					emailVerificationId: email_verification_id,
 				},
 			});
+			await dispatch(getDashboard());
 			dispatch({
 				type: API_LOADING_SUCCESS,
 			});
@@ -155,7 +157,6 @@ const authRegisterAction = (payload) => {
 			});
 			dispatch({ type: API_LOADING_SUCCESS });
 		} catch (err) {
-			console.log(err.response);
 			dispatch({ type: API_LOADING_ERROR, payload: err.response.data.message });
 		}
 	};

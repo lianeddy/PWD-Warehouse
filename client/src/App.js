@@ -20,6 +20,10 @@ const App = () => {
 	useEffect(() => {
 		dispatch(keepLoginAction());
 	}, []);
+	const token = localStorage.getItem("token");
+	if (token) {
+		dispatch(keepLoginAction());
+	}
 
 	return (
 		<div>

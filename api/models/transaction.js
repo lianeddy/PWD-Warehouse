@@ -1,16 +1,16 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../database");
 const user = require("./user");
-const paymentStatus = require("./paymentStatus");
 const orderStatus = require("./orderStatus");
+const transactionItem = require("./transactionItem");
+const product = require("./product");
 
 const transaction = sequelize.define(
 	"transaction",
 	{
-		amout: DataTypes.INTEGER,
+		amount: DataTypes.INTEGER,
 		created_at: DataTypes.DATE,
 		user_id: DataTypes.INTEGER,
-		payment_status_id: DataTypes.TINYINT,
 		order_status_id: DataTypes.TINYINT,
 	},
 	{
@@ -19,18 +19,27 @@ const transaction = sequelize.define(
 	}
 );
 
+transaction.hasMany(transactionItem, {
+	foreignKey: "transaction_id",
+});
+transactionItem.belongsTo(transaction, {
+	foreignKey: "transaction_id",
+});
+
+transaction.belongsToMany(product, {
+	foreignKey: "transaction_id",
+	through: transactionItem,
+});
+product.belongsToMany(transaction, {
+	foreignKey: "product_id",
+	through: transactionItem,
+});
+
 transaction.belongsTo(user, {
 	foreignKey: "user_id",
 });
 user.hasMany(transaction, {
 	foreignKey: "user_id",
-});
-
-transaction.belongsTo(paymentStatus, {
-	foreignKey: "payment_status_id",
-});
-paymentStatus.hasOne(transaction, {
-	foreignKey: "payment_status_id",
 });
 
 transaction.belongsTo(orderStatus, {

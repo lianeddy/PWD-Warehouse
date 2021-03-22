@@ -1,12 +1,7 @@
-// const {
-// 	registerAsAdmin,
-// 	emailVerificationForAdmin,
-// } = require("../controllers/adminControllers");
-// const { decryptToken, registerValidatorForAdmin } = require("../middlewares");
+const { getDashboard } = require("../controllers/adminControllers");
 
-// const router = require("express").Router();
+const router = require("express").Router();
 
-// // router.post("/register", registerValidatorForAdmin, registerAsAdmin);
-// // router.post("/email-verification", decryptToken, emailVerificationForAdmin);
+router.get("/dashboard", getDashboard);
 
-// module.exports = router;
+module.exports = router;

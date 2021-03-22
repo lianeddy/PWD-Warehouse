@@ -299,6 +299,8 @@ const useStyles = makeStyles({
 		boxShadow: "1px 0 12px 1px rgba(0,0,0,0.3)",
 		display: "flex",
 		alignItems: "center",
+		zIndex: 2,
+		position: "relative",
 	},
 	navContainer: {
 		display: "flex",
@@ -334,6 +336,8 @@ const useStyles = makeStyles({
 		boxShadow: "1px 0 12px 1px rgba(0,0,0,0.3)",
 		display: "flex",
 		alignItems: "center",
+		zIndex: 2,
+		position: "relative",
 	},
 	leftContainerAdmin: {
 		width: "30%",

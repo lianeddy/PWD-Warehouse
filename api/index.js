@@ -15,7 +15,7 @@ app.use(express.static("public"));
 app.get("/", (req, res) => res.status(200).send("nature goods api"));
 app.use("/user", userRouters);
 app.use("/product", productRouters);
-// app.use("/admin", adminRouters);
+app.use("/admin", adminRouters);
 
 app.use(errorHandler);
 const API_PORT = process.env.API_PORT;
