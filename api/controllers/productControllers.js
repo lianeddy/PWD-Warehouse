@@ -66,36 +66,33 @@ const getProducts = async (req, res, next) => {
     if (req.query.sort == 4) query = { ...query, order: [["price", "DESC"]] };
     query = {
       ...query,
-      attributes: [
-        "id",
-        "name",
-        "price",
-        "description",
-        "category.category",
-        "inventories.stock",
-      ],
+      attributes: ["id", "name", "price", "description", "category.category"],
       include: [
         {
           model: category,
-          attributes: [],
-        },
-        {
-          model: inventory,
           attributes: [],
         },
       ],
     };
     const getProducts = await product.findAll(query);
     const productImg = await productImage.findAll();
+    const getInventory = await inventory.findAll();
     const getMaxPrice = await product.findOne({
       order: [["price", "DESC"]],
     });
     const getMinPrice = await product.findOne({
       order: [["price", "ASC"]],
     });
-    const productsGetImage = getProducts.map((value) => {
+    const productsGetImageAndStock = getProducts.map((value) => {
+      let num = 0;
+      getInventory.forEach((item) => {
+        if (item.product_id === value.id) {
+          num += item.stock;
+        }
+      });
       return {
         ...value,
+        stock: num,
         image: productImg.filter((item) => {
           return item.product_id === value.id;
         }),
@@ -104,7 +101,7 @@ const getProducts = async (req, res, next) => {
     const response = {
       maxPrice: getMaxPrice.price,
       minPrice: getMinPrice.price,
-      products: productsGetImage,
+      products: productsGetImageAndStock,
     };
     return res.status(200).send(response);
   } catch (err) {
