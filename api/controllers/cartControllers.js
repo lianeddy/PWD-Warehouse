@@ -78,12 +78,6 @@ const deleteCart = async (req, res, next) => {
   }
 };
 
-module.exports = {
-  getCartByUserId,
-  updateCartQty,
-  deleteCart,
-};
-
 const editQtyCart = async (req, res, next) => {
   try {
     const qty = await cart.update(
@@ -102,4 +96,9 @@ const editQtyCart = async (req, res, next) => {
   }
 };
 
-module.exports = { addToCart, editQtyCart, getCartByUserId };
+module.exports = {
+  getCartByUserId,
+  editQtyCart,
+  deleteCart,
+  updateCartQty,
+};
