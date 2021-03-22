@@ -1,4 +1,13 @@
-const { product, warehouse, inventory } = require("../models");
+const { Op } = require("sequelize");
+const sequelize = require("../database");
+const {
+	transaction,
+	user,
+	monthly_report,
+	product,
+	warehouse,
+	inventory,
+} = require("../models");
 
 const getWarehouse = async (req, res, next) => {
 	try {
@@ -30,9 +39,10 @@ const getProductsByWarehouse = async (req, res, next) => {
 			],
 		});
 		return res.status(200).send(getProducts);
-const { Op } = require("sequelize");
-const sequelize = require("../database");
-const { transaction, user, monthly_report } = require("../models");
+	} catch (err) {
+		next(err);
+	}
+};
 
 const getDashboard = async (req, res, next) => {
 	try {
@@ -85,6 +95,8 @@ const getDashboard = async (req, res, next) => {
 				order_status_id: 5,
 			},
 		});
+
+		console.log(dailyProfit, weeklyProfit, monthlyProfit);
 
 		const [[rangeMonthly]] = await sequelize.query(`
 			SELECT
@@ -185,17 +197,17 @@ const getDashboard = async (req, res, next) => {
 
 		const monthlyReport = {
 			range: rangeMonthly,
-			profit: parseInt(monthlyProfit.monthly_profit),
+			profit: parseInt(monthlyProfit),
 			transaction: monthlyTransaction,
 		};
 		const weeklyReport = {
 			range: rangeWeekly,
-			profit: parseInt(weeklyProfit.weekly_profit),
+			profit: parseInt(weeklyProfit),
 			transaction: weeklyTransaction,
 		};
 		const dailyReport = {
 			range: rangeDaily,
-			profit: parseInt(dailyProfit.daily_profit),
+			profit: parseInt(dailyProfit),
 			transaction: dailyTransaction,
 		};
 
@@ -211,7 +223,6 @@ const getDashboard = async (req, res, next) => {
 			return anualReport.push({
 				id: group.year,
 				data: getMonthlyReport.map((month, index) => {
-					console.log(month.month === true);
 					return {
 						x: month.month,
 						y: month.total_order,
@@ -240,5 +251,5 @@ const getDashboard = async (req, res, next) => {
 module.exports = {
 	getWarehouse,
 	getProductsByWarehouse,
-	getDashboard
+	getDashboard,
 };

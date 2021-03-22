@@ -16,9 +16,6 @@ const EmailRedirectPage = (props) => {
 	const localUsername = localStorage.getItem("username");
 
 	useEffect(() => {
-		console.log(props.location.search);
-		console.log(localEmail);
-		console.log(localUsername);
 		if (props.location.search) {
 			if (
 				verify &&

@@ -51,8 +51,8 @@ const Dashboard = () => {
 	};
 
 	if (isLoading) return <LoaderPage />;
-	if (isLogin && roleId === 2) return <Redirect to="/products" />;
-	if (!isLogin) return <Redirect to="/products" />;
+	if (isLogin && roleId === 2) return <Redirect to="/login" />;
+	if (!isLogin) return <Redirect to="/login" />;
 
 	const renderMenuSideBar = () => {
 		return menusSideBar.map((menu, index) => {

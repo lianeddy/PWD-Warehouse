@@ -94,7 +94,7 @@ class DetailProductPage extends Component {
 		let res = cart.find((val) => {
 			return val.name === name;
 		});
-		// console.log(res);
+
 		return (
 			<div className="container">
 				<div>
