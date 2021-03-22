@@ -1,4 +1,5 @@
 import Header from "./Header";
 import LoaderPage from "./LoaderPage";
+import InputToolTip from "./InputToolTip";
 
-export { Header, LoaderPage };
+export { Header, LoaderPage, InputToolTip };
