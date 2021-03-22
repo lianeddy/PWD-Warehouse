@@ -13,6 +13,7 @@ import {
 } from "../types";
 import Swal from "sweetalert2";
 import { cartGetAction } from "./cartActions";
+import { getDashboard } from "./adminActions";
 
 const loginAction = (data) => {
   return async (dispatch) => {
@@ -112,6 +113,7 @@ const keepLoginAction = () => {
         },
       });
       dispatch(cartGetAction({ id }));
+      await dispatch(getDashboard());
       dispatch({
         type: API_LOADING_SUCCESS,
       });
@@ -158,7 +160,6 @@ const authRegisterAction = (payload) => {
       });
       dispatch({ type: API_LOADING_SUCCESS });
     } catch (err) {
-      console.log(err.response);
       dispatch({ type: API_LOADING_ERROR, payload: err.response.data.message });
     }
   };

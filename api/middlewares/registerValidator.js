@@ -14,7 +14,7 @@ const registerValidator = async (req, res, next) => {
 				.status(202)
 				.send({ status: "Success", message: "Unvalid password" });
 		const getUserByUsername = await user.findAll({
-			where: { username },
+			where: { username, role_id: 2 },
 		});
 		if (getUserByUsername.length !== 0)
 			return res.status(202).send({
@@ -22,7 +22,7 @@ const registerValidator = async (req, res, next) => {
 				message: "Username already exists",
 			});
 		const getUserByEmail = await user.findAll({
-			where: { email },
+			where: { email, role_id: 1 },
 		});
 		if (getUserByEmail.length !== 0)
 			return res

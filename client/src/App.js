@@ -9,22 +9,24 @@ import {
   RedirectPage,
   CartPage,
   DetailProductPage,
+  EmailRedirectPage,
 } from "./pages/user";
 import { LoginPage, RegisterPage } from "./pages";
 import { useDispatch } from "react-redux";
 import { keepLoginAction } from "./redux/actions";
+import { Dashboard } from "./pages/admin";
+import { Header } from "./components";
 
 const App = () => {
   const dispatch = useDispatch();
-  const token = localStorage.getItem("token");
-
-  if (token) {
-    dispatch(keepLoginAction());
-  }
 
   useEffect(() => {
     dispatch(keepLoginAction());
   }, []);
+  const token = localStorage.getItem("token");
+  if (token) {
+    dispatch(keepLoginAction());
+  }
 
   return (
     <div>
@@ -36,6 +38,8 @@ const App = () => {
       <Route path="/forget-password" component={ForgetPasswordPage} />
       <Route path="/change-password" component={ChangePasswordPage} />
       <Route path="/redirect" component={RedirectPage} />
+      <Route path="/email-verification" component={EmailRedirectPage} />
+      <Route path="/admin" component={Dashboard} />
       <Route path="/cart" component={CartPage} />
       <Route path="/detail" component={DetailProductPage} />
     </div>

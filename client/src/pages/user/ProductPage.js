@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getProductsAction } from "../../redux/actions/productActions";
+import { getProductsAction } from "../../redux/actions";
 import { Input, InputGroup, InputGroupAddon, InputGroupText } from "reactstrap";
 import Select from "react-select";
 import axios from "axios";
@@ -8,6 +8,7 @@ import { accentColor, apiUrl_product } from "../../helpers";
 import Paginate from "react-reactstrap-pagination";
 import { CardProduct, UserFooter } from "../../components/user";
 import { RESET_INITIAL_STATE } from "../../redux/types";
+import { Redirect } from "react-router-dom";
 
 const sortBy = [
   { value: 1, label: "Default sorting" },
@@ -19,6 +20,7 @@ const sortBy = [
 const ProductPage = () => {
   const dispatch = useDispatch();
   const { products } = useSelector((state) => state.productReducer);
+  const { isLogin, roleId } = useSelector((state) => state.authReducer);
   const [minimum, setMinimum] = useState("");
   const [maximum, setMaximum] = useState("");
   const [category, setCategory] = useState(0);
@@ -39,6 +41,7 @@ const ProductPage = () => {
     const response = await axios.get(`${apiUrl_product}/categories`);
     setCategories([{ value: 0, label: "All" }, ...response.data]);
   }, []);
+
   useEffect(() => {
     let query;
     if (minimum !== "") query = `min=${minimum}`;
@@ -50,6 +53,8 @@ const ProductPage = () => {
     dispatch(getProductsAction(query));
   }, [minimum, maximum, sort, category]);
 
+  // if (isLogin && roleId === 1) return <Redirect to="/admin" />;
+
   const totalItem = products.length;
   const limit = 12;
   const offset = currentPage * limit;
@@ -59,8 +64,8 @@ const ProductPage = () => {
         <div
           key={value.id}
           style={{
-            width: "24.53%",
-            maxHeight: "24.53%",
+            width: "24%",
+            maxHeight: "24%",
             marginInline: 2,
             marginBottom: 4,
           }}
@@ -229,7 +234,7 @@ const ProductPage = () => {
               style={{
                 display: "flex",
                 flexWrap: "wrap",
-                justifyContent: "flex-start",
+                justifyContent: "space-evenly",
                 marginBottom: 50,
               }}
             >

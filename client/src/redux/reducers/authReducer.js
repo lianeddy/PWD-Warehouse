@@ -14,6 +14,7 @@ const INITIAL_STATE = {
   isLoading: false,
   isLogin: false,
   isError: false,
+  errorMessage: "",
   securityQuestion: "",
   changePermitted: false,
   id: null,
@@ -26,8 +27,8 @@ const INITIAL_STATE = {
   roleId: null,
   emailVerificationId: null,
   userStatusId: null,
-  wantToChangePass: false,
   isFinished: false,
+  wantToChangePass: false,
 };
 
 const authReducer = (state = INITIAL_STATE, action) => {

@@ -8,12 +8,12 @@ const surfaceColor = "#61B15A";
 const accentColor = "#F0A500";
 
 export {
-	apiUrl,
-	apiUrl_user,
-	apiUrl_product,
-	surfaceColor,
-	primaryColor,
-	accentColor,
-	apiUrl_admin,
-	apiUrl_cart,
+  apiUrl,
+  apiUrl_user,
+  apiUrl_product,
+  surfaceColor,
+  primaryColor,
+  accentColor,
+  apiUrl_admin,
+  apiUrl_cart,
 };
