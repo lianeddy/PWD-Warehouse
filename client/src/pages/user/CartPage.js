@@ -1,11 +1,18 @@
-import React, { useEffect } from "react";
-import { useSelector } from "react-redux";
-import { apiUrl } from "../../helpers";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { Redirect } from "react-router";
+import { updateCartQty } from "../../redux/actions";
 
-const CartPage = () => {
-	const { cart, isLoading, isError, errorMessage } = useSelector(
-		(state) => state.cartReducer
+const CartPage = (props) => {
+	const { cart } = useSelector((state) => state.cartReducer);
+	const { id, isLogin, isLoading, isFinished } = useSelector(
+		(state) => state.authReducer
 	);
+	const dispatch = useDispatch();
+
+	if (isFinished && !isLogin) {
+		return <Redirect to="/login" />;
+	}
 
 	return (
 		<div
@@ -74,6 +81,16 @@ const CartPage = () => {
 											width: "48px",
 											height: "36px",
 										}}
+										onClick={() =>
+											dispatch(
+												updateCartQty({
+													userId: id,
+													cartId: val.id,
+													qty: val.qty - 1,
+												})
+											)
+										}
+										disabled={val.qty <= 1}
 									>
 										-
 									</button>
@@ -93,6 +110,15 @@ const CartPage = () => {
 											width: "48px",
 											height: "36px",
 										}}
+										onClick={() =>
+											dispatch(
+												updateCartQty({
+													userId: id,
+													cartId: val.id,
+													qty: val.qty + 1,
+												})
+											)
+										}
 									>
 										+
 									</button>

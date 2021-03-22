@@ -11,7 +11,7 @@ import {
   DetailProductPage,
 } from "./pages/user";
 import { LoginPage, RegisterPage } from "./pages";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { keepLoginAction } from "./redux/actions";
 
 const App = () => {

@@ -18,7 +18,7 @@ const addProduct = async (req, res, next) => {
       description,
     });
     await inventory.create({
-      inventory: stock,
+      stock,
       product_id: newProduct.id,
       warehouse_id,
     });
