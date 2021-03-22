@@ -102,4 +102,4 @@ const editQtyCart = async (req, res, next) => {
   }
 };
 
-module.exports = { addToCart, editQtyCart, getCartById };
+module.exports = { addToCart, editQtyCart, getCartByUserId };

@@ -152,4 +152,54 @@ const deleteCart = (payload) => {
 	};
 };
 
+const updateCartQty = (payload) => {
+	const { userId, cartId, qty } = payload;
+
+	return async (dispatch) => {
+		try {
+			dispatch({
+				type: NULLIFY_ERROR,
+			});
+
+			dispatch({
+				type: API_LOADING_START,
+			});
+
+			await axios.patch(`${apiUrl_cart}/update-qty/${cartId}`, { qty });
+
+			dispatch(cartGetAction({ userId }));
+		} catch (err) {
+			dispatch({
+				type: API_LOADING_ERROR,
+				payload: err.response.data.message,
+			});
+		}
+	};
+};
+
+const deleteCart = (payload) => {
+	const { userId, cartId } = payload;
+
+	return async (dispatch) => {
+		try {
+			dispatch({
+				type: NULLIFY_ERROR,
+			});
+
+			dispatch({
+				type: API_LOADING_START,
+			});
+
+			await axios.delete(`${apiUrl_cart}/delete/${cartId}`);
+
+			dispatch(cartGetAction({ userId }));
+		} catch (err) {
+			dispatch({
+				type: API_LOADING_ERROR,
+				payload: err.response.data.message,
+			});
+		}
+	};
+};
+
 export { cartGetAction, updateCartQty, deleteCart };

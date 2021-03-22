@@ -20,6 +20,8 @@ import { Header } from "./components";
 const App = () => {
   const dispatch = useDispatch();
 
+  const token = localStorage.getItem("token");
+
   useEffect(() => {
     dispatch(keepLoginAction());
   }, []);
