@@ -66,9 +66,22 @@ const updateCartQty = async (req, res, next) => {
   }
 };
 
+const deleteCart = async (req, res, next) => {
+  const { id } = req.params;
+
+  try {
+    await cart.destroy({ where: { id } });
+
+    res.status(200).send({ message: "deleted" });
+  } catch (err) {
+    next(err);
+  }
+};
+
 module.exports = {
   getCartByUserId,
   updateCartQty,
+  deleteCart,
 };
 
 const editQtyCart = async (req, res, next) => {
