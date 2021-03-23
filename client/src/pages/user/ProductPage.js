@@ -134,7 +134,6 @@ const ProductPage = () => {
 				query += `&max=${maximum}`;
 			}
 		}
-		console.log(query);
 		dispatch(getProductsAction(query));
 	};
 
