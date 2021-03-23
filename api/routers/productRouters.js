@@ -8,7 +8,7 @@ const {
 const router = require("express").Router();
 
 router.post("/", addProduct);
-router.get("/", getProducts);
+router.get("/search", getProducts);
 router.get("/categories", getCategories);
 router.get("/:id", getProductById);
 

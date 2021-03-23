@@ -1,14 +1,20 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getProductsAction } from "../../redux/actions";
-import { Input, InputGroup, InputGroupAddon, InputGroupText } from "reactstrap";
+import {
+	Button,
+	Input,
+	InputGroup,
+	InputGroupAddon,
+	InputGroupText,
+} from "reactstrap";
 import Select from "react-select";
 import axios from "axios";
 import { accentColor, apiUrl_product } from "../../helpers";
 import Paginate from "react-reactstrap-pagination";
 import { CardProduct, UserFooter } from "../../components/user";
 import { RESET_INITIAL_STATE } from "../../redux/types";
-import { Redirect } from "react-router-dom";
+import { Link, Redirect } from "react-router-dom";
 
 const sortBy = [
 	{ value: 1, label: "Default sorting" },
@@ -20,13 +26,14 @@ const sortBy = [
 const ProductPage = () => {
 	const dispatch = useDispatch();
 	const { products } = useSelector((state) => state.productReducer);
-	const { isLogin, roleId } = useSelector((state) => state.authReducer);
 	const [minimum, setMinimum] = useState("");
 	const [maximum, setMaximum] = useState("");
 	const [category, setCategory] = useState(0);
 	const [categories, setCategories] = useState([]);
 	const [sort, setSort] = useState(1);
+	const [keyword, setKeyword] = useState("");
 	const [currentPage, setCurrentPage] = useState(0);
+	const [queryUrl, setQueryUrl] = useState("");
 
 	const { wantToChangePass } = useSelector((state) => state.authReducer);
 
@@ -43,21 +50,31 @@ const ProductPage = () => {
 	}, []);
 
 	useEffect(() => {
-		let query;
-		if (minimum !== "") query = `min=${minimum}`;
-		if (maximum !== "") query = `max=${maximum}`;
-		if (maximum !== "" && minimum !== "")
-			query = `min=${minimum}&max=${maximum}`;
-		query += `&sort=${sort}`;
-		if (category !== 0) query += `&category=${category}`;
+		let query =
+			category === 0 ? `sort=${sort}` : `category=${category}&sort=${sort}`;
 		dispatch(getProductsAction(query));
-	}, [minimum, maximum, sort, category]);
+	}, [sort, category]);
 
-	// if (isLogin && roleId === 1) return <Redirect to="/admin" />;
+	useEffect(() => {
+		setQueryUrl(`
+			category=${category}
+			&sort=${sort}
+			${keyword !== "" ? `&keyword=` + keyword : ""}
+			${
+				maximum !== "" && minimum !== ""
+					? `&minimum=` + minimum + `&maximum=` + maximum
+					: ""
+			}
+			${maximum === "" && minimum !== "" ? `&minimum=` + minimum : ""}
+			${maximum !== "" && minimum === "" ? `&maximum=` + maximum : ""}
+			
+			`);
+	}, [minimum, maximum, keyword]);
 
 	const totalItem = products.length;
 	const limit = 12;
 	const offset = currentPage * limit;
+
 	const renderCard = () => {
 		return products.slice(offset, offset + limit).map((value) => {
 			return (
@@ -81,6 +98,7 @@ const ProductPage = () => {
 			);
 		});
 	};
+
 	const renderCategory = () => {
 		return categories.map((value) => {
 			return (
@@ -98,6 +116,28 @@ const ProductPage = () => {
 			);
 		});
 	};
+
+	const handlerFilterBtn = () => {
+		let query =
+			category === 0 ? `sort=${sort}` : `category=${category}&sort=${sort}`;
+		if (keyword !== "") {
+			const text = keyword.replace(" ", "%20");
+			query += `&keyword=${text}`;
+		}
+		if (maximum !== "" && minimum !== "") {
+			query += `&min=${minimum}&max=${maximum}`;
+		} else {
+			if (minimum !== "") {
+				query += `&min=${minimum}`;
+			}
+			if (maximum !== "") {
+				query += `&max=${maximum}`;
+			}
+		}
+		console.log(query);
+		dispatch(getProductsAction(query));
+	};
+
 	return (
 		<>
 			<div style={{ paddingBlock: 50, paddingInline: 200 }}>
@@ -135,16 +175,20 @@ const ProductPage = () => {
 				<div style={{ display: "flex", justifyContent: "space-between" }}>
 					<div
 						style={{
-							// backgroundColor: accentColor,
 							width: "25%",
 							minHeight: "500px",
 						}}
 					>
-						<div style={{ marginBottom: 20 }}>
+						<div style={{ marginBottom: 30 }}>
 							<InputGroup>
-								<Input placeholder="search" style={{ paddingInline: 20 }} />
+								<Input
+									placeholder="search"
+									style={{ paddingInline: 20 }}
+									onChange={(e) => setKeyword(e.target.value)}
+								/>
 								<InputGroupAddon addonType="append">
 									<InputGroupText
+										onClick={handlerFilterBtn}
 										style={{
 											backgroundColor: accentColor,
 											borderWidth: 0,
@@ -155,6 +199,76 @@ const ProductPage = () => {
 									</InputGroupText>
 								</InputGroupAddon>
 							</InputGroup>
+						</div>
+						<div style={{ marginBottom: 30 }}>
+							<div style={{ marginBottom: 10 }}>
+								<div
+									style={{
+										textTransform: "uppercase",
+										fontSize: 18,
+										fontWeight: "bold",
+									}}
+								>
+									filter by price
+								</div>
+							</div>
+							<div
+								className="d-flex justify-content-end"
+								style={{ marginBottom: 20 }}
+							>
+								<div
+									style={{
+										backgroundColor: "rgba(0,0,0,0.3)",
+										width: "75%",
+										height: 3,
+									}}
+								></div>
+							</div>
+							<div
+								style={{
+									display: "flex",
+									alignItems: "center",
+									marginBottom: 10,
+								}}
+							>
+								<div>
+									<Input
+										placeholder="min"
+										type="number"
+										onChange={(e) => setMinimum(e.target.value)}
+									/>
+								</div>
+								<div style={{ marginInline: 10 }}>
+									<div>to</div>
+								</div>
+								<div>
+									<Input
+										placeholder="max"
+										type="number"
+										onChange={(e) => setMaximum(e.target.value)}
+									/>
+								</div>
+							</div>
+							<div>
+								{/* <Link
+								// to={
+								// 	queryUrl === ""
+								// 		? "products/search?all=true"
+								// 		: `products/search?${queryUrl}`
+								// }
+								> */}
+								<Button
+									onClick={handlerFilterBtn}
+									style={{
+										width: "100%",
+										backgroundColor: accentColor,
+										borderWidth: 0,
+									}}
+								>
+									filter
+								</Button>
+								{/* </Link> */}
+							</div>
 						</div>
 						<div>
 							<div style={{ marginBottom: 10 }}>
@@ -181,54 +295,11 @@ const ProductPage = () => {
 								></div>
 							</div>
 							<div style={{ marginBottom: 30 }}>{renderCategory()}</div>
-							<div style={{ marginBottom: 10 }}>
-								<div
-									style={{
-										textTransform: "uppercase",
-										fontSize: 18,
-										fontWeight: "bold",
-									}}
-								>
-									filter by price
-								</div>
-							</div>
-							<div
-								className="d-flex justify-content-end"
-								style={{ marginBottom: 20 }}
-							>
-								<div
-									style={{
-										backgroundColor: "rgba(0,0,0,0.3)",
-										width: "75%",
-										height: 3,
-									}}
-								></div>
-							</div>
-							<div style={{ display: "flex", alignItems: "center" }}>
-								<div>
-									<Input
-										placeholder="min"
-										type="number"
-										onChange={(e) => setMinimum(e.target.value)}
-									/>
-								</div>
-								<div style={{ marginInline: 10 }}>
-									<div>to</div>
-								</div>
-								<div>
-									<Input
-										placeholder="max"
-										type="number"
-										onChange={(e) => setMaximum(e.target.value)}
-									/>
-								</div>
-							</div>
 						</div>
 					</div>
 					<div
 						style={{
 							width: "72%",
-							minHeight: "500px",
 						}}
 					>
 						<div
@@ -237,16 +308,29 @@ const ProductPage = () => {
 								flexWrap: "wrap",
 								justifyContent: "space-evenly",
 								marginBottom: 50,
+								minHeight: "100%",
 							}}
 						>
-							{renderCard()}
+							{products.length === 0 ? (
+								<div>
+									<img
+										src="https://www.interno-eg.com/resources/assets/front/images/no-product-found.png"
+										alt="file_err"
+										width="600px"
+									/>
+								</div>
+							) : (
+								renderCard()
+							)}
 						</div>
 						<div style={{ display: "flex", justifyContent: "flex-end" }}>
-							<Paginate
-								totalItems={totalItem}
-								pageSize={limit}
-								onSelect={(e) => setCurrentPage(e - 1)}
-							/>
+							{products.length === 0 ? null : (
+								<Paginate
+									totalItems={totalItem}
+									pageSize={limit}
+									onSelect={(e) => setCurrentPage(e - 1)}
+								/>
+							)}
 						</div>
 					</div>
 				</div>

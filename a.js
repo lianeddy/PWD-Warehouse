@@ -15,3 +15,7 @@ if (res) {
 
 // Kalo stock kurang?
 // Kalo stock kurang waktu sesudah get?
+
+let a = "kocak banget";
+let b = a.replace(" ", "%20");
+console.log(b);
