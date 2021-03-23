@@ -5,13 +5,15 @@ import RedirectPage from "./RedirectPage";
 import CartPage from "./CartPage";
 import EmailRedirectPage from "./EmailRedirectPage";
 import DetailProductPage from "./DetailProductPage";
+import CheckoutPage from "./CheckoutPage";
 
 export {
-  ForgetPasswordPage,
-  ChangePasswordPage,
-  RedirectPage,
-  ProductPage,
-  CartPage,
-  EmailRedirectPage,
-  DetailProductPage,
+	ForgetPasswordPage,
+	ChangePasswordPage,
+	RedirectPage,
+	ProductPage,
+	CartPage,
+	EmailRedirectPage,
+	DetailProductPage,
+	CheckoutPage,
 };
