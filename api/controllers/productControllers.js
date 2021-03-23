@@ -141,6 +141,7 @@ const getProductById = async (req, res, next) => {
 				"description",
 				"category.category",
 				"inventories.stock",
+				"product_images.imagepath",
 			],
 			include: [
 				{
@@ -149,6 +150,10 @@ const getProductById = async (req, res, next) => {
 				},
 				{
 					model: inventory,
+					attributes: [],
+				},
+				{
+					model: productImage,
 					attributes: [],
 				},
 			],
