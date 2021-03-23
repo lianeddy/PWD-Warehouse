@@ -96,8 +96,6 @@ const getDashboard = async (req, res, next) => {
 			},
 		});
 
-		console.log(dailyProfit, weeklyProfit, monthlyProfit);
-
 		const [[rangeMonthly]] = await sequelize.query(`
 			SELECT
 				DAYNAME(SUBDATE(NOW(), DAYOFMONTH(NOW()))) AS from_dayname,

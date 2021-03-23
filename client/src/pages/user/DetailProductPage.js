@@ -5,10 +5,12 @@ import {
 	getProductById,
 	addToCartAction,
 	getProductsAction,
+	changeQtyCartAction,
 } from "../../redux/actions";
 import { Button } from "reactstrap";
 import Fade from "react-reveal/Fade";
 import { Link, Redirect } from "react-router-dom";
+import Swal from "sweetalert2";
 
 class DetailProductPage extends Component {
 	state = {
@@ -62,25 +64,43 @@ class DetailProductPage extends Component {
 	};
 
 	addToCart = () => {
-		const { productById, user_id } = this.props;
-		const { qtySelected } = this.state;
-		const { id, name, price, image } = productById;
-		const dataCart = {
-			id,
-			name,
-			qty: qtySelected,
-			price,
-			user_id,
-			image,
-		};
-		this.props.addToCartAction(dataCart);
+		const {
+			productById,
+			userId,
+			isLogin,
+			addToCartAction,
+			changeQtyCartAction,
+			cart,
+		} = this.props;
+		if (!isLogin)
+			return Swal.fire({
+				title: "You Haven't Signed In Yet!",
+				text: `Please Sign In to Buy Something`,
+				icon: "warning",
+				confirmButtonColor: "#3085d6",
+				confirmButtonText: "OK",
+			});
+		const existProduct = cart.find(
+			(value) => value.product_id === productById.id
+		);
+		if (existProduct) {
+			const payload = {
+				userId,
+				id: existProduct.id,
+				qty: existProduct.qty + this.state.qtySelected,
+			};
+			changeQtyCartAction(payload);
+		} else {
+			const payload = {
+				productId: productById.id,
+				qty: this.state.qtySelected,
+				userId,
+			};
+			addToCartAction(payload);
+		}
 	};
 
 	render() {
-		// const { isLogin } = this.props;
-		// if (!isLogin) {
-		// 	return <Link to="/login" />;
-		// }
 		const { stockMinCart } = this.state;
 		const {
 			id,
@@ -150,12 +170,12 @@ class DetailProductPage extends Component {
 	}
 }
 
-const mapStatetoProps = (state) => {
+const mapStatetoProps = ({ authReducer, productReducer, cartReducer }) => {
 	return {
-		productById: state.productReducer.productById,
-		user_id: state.authReducer.id,
-		isLogin: state.authReducer.isLogin,
-		cart: state.cartReducer.cart,
+		productById: productReducer.productById,
+		userId: authReducer.id,
+		isLogin: authReducer.isLogin,
+		cart: cartReducer.cart,
 	};
 };
 
@@ -163,4 +183,5 @@ export default connect(mapStatetoProps, {
 	getProductById,
 	addToCartAction,
 	getProductsAction,
+	changeQtyCartAction,
 })(DetailProductPage);

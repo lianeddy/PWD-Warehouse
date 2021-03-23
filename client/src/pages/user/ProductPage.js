@@ -307,7 +307,7 @@ const ProductPage = () => {
 								flexWrap: "wrap",
 								justifyContent: "space-evenly",
 								marginBottom: 50,
-								minHeight: "100%",
+								minHeight: 580,
 							}}
 						>
 							{products.length === 0 ? (

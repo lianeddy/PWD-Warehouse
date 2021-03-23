@@ -10,6 +10,8 @@ import {
 	RESET_INITIAL_STATE,
 	CHANGE_PERMITTED,
 	REGISTERED_TRUE,
+	WANT_TO_CHANGE_PASS,
+	GET_CHANGE_PASSWORD_USER_DATA,
 } from "../types";
 import Swal from "sweetalert2";
 import { cartGetAction } from "./cartActions";
@@ -49,11 +51,10 @@ const loginAction = (data) => {
 					emailVerificationId: email_verification_id,
 				},
 			});
-			dispatch(cartGetAction({ id }));
+			dispatch(cartGetAction(id));
 			dispatch(getDashboard());
 			dispatch({ type: API_LOADING_SUCCESS });
 		} catch (err) {
-			console.log(err.response);
 			dispatch({
 				type: API_LOADING_ERROR,
 				payload: err.response.data.message,
@@ -114,7 +115,7 @@ const keepLoginAction = () => {
 					emailVerificationId: email_verification_id,
 				},
 			});
-			dispatch(cartGetAction({ id }));
+			dispatch(cartGetAction(id));
 			await dispatch(getDashboard());
 			dispatch({
 				type: API_LOADING_SUCCESS,
@@ -247,10 +248,7 @@ const authRegisteredCheck = (payload) => {
 				},
 			});
 
-			dispatch({
-				type: API_LOADING_SUCCESS,
-				payload: { wantToChangePass: true },
-			});
+			dispatch({ type: WANT_TO_CHANGE_PASS });
 		} catch (err) {
 			dispatch({
 				type: API_LOADING_ERROR,
@@ -281,7 +279,6 @@ const authSecurityAnswerCheck = (payload) => {
 				type: API_LOADING_SUCCESS,
 			});
 		} catch (err) {
-			console.log(err.response);
 			dispatch({
 				type: API_LOADING_ERROR,
 				payload: err.response.data.message,
@@ -337,7 +334,7 @@ const getChangePasswordUserData = (payload) => {
 			const { id, email } = response.data;
 
 			dispatch({
-				type: API_LOADING_SUCCESS,
+				type: GET_CHANGE_PASSWORD_USER_DATA,
 				payload: { id, email, wantToChangePass: true, registered: true },
 			});
 		} catch (err) {

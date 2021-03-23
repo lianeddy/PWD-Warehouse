@@ -30,13 +30,12 @@ const getCartByUserId = async (req, res, next) => {
 
 		const response = getData.map((val, i) => {
 			let stock = 0;
-
 			val.product.inventories.forEach((val) => {
 				return (stock += val.stock);
 			});
-
 			return {
 				id: val.id,
+				product_id: val.product.id,
 				name: val.product.name,
 				price: val.product.price,
 				category: val.product.category.category,
@@ -82,8 +81,8 @@ const addToCart = async (req, res, next) => {
 	try {
 		const addCart = await cart.create({
 			qty: req.body.qty,
-			product_id: req.params.id,
-			user_id: req.body.user_id,
+			product_id: req.body.productId,
+			user_id: req.params.id,
 		});
 		res.status(200).send({ message: "Add to Cart Success", id: addCart.id });
 	} catch (err) {
@@ -99,7 +98,7 @@ const editQtyCart = async (req, res, next) => {
 			},
 			{
 				where: {
-					user_id: req.params.id,
+					id: req.params.id,
 				},
 			}
 		);

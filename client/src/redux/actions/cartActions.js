@@ -3,21 +3,23 @@ import {
 	API_LOADING_ERROR,
 	API_LOADING_START,
 	API_LOADING_SUCCESS,
+	GET_CART,
 	NULLIFY_ERROR,
 } from "../types";
 import { apiUrl_cart } from "../../helpers";
 import Swal from "sweetalert2";
 
-const addToCartAction = ({ id, user_id, qty }) => {
+const addToCartAction = ({ productId, userId, qty }) => {
 	return async (dispatch) => {
 		try {
 			dispatch({ type: NULLIFY_ERROR });
 			dispatch({ type: API_LOADING_START });
-			const response = await axios.post(`${apiUrl_cart}/add-to-cart/${id}`, {
+			await axios.post(`${apiUrl_cart}/add-to-cart/${userId}`, {
 				qty,
-				user_id,
+				productId,
 			});
-			dispatch({ type: API_LOADING_SUCCESS, payload: response.data });
+			await dispatch(cartGetAction(userId));
+			dispatch({ type: API_LOADING_SUCCESS });
 			Swal.fire({
 				title: "Added To Cart",
 				icon: "success",
@@ -29,47 +31,39 @@ const addToCartAction = ({ id, user_id, qty }) => {
 				type: API_LOADING_ERROR,
 				payload: err.response.data.message,
 			});
-			Swal.fire({
-				title: "You Haven't Signed In Yet!",
-				text: `Please Sign In to Buy Something`,
-				icon: "warning",
-				confirmButtonColor: "#3085d6",
-				confirmButtonText: "OK",
-			}).then((result) => {
-				if (result.isConfirmed) {
-					dispatch({ type: NULLIFY_ERROR });
-				}
-			});
 		}
 	};
 };
 
-const changeQtyCartAction = ({ qty, user_id }) => {
+const changeQtyCartAction = (payload) => {
 	return async (dispatch) => {
 		try {
 			dispatch({ type: NULLIFY_ERROR });
 			dispatch({ type: API_LOADING_START });
-			await axios.patch(`${apiUrl_cart}/${user_id}`, { qty });
+			const { qty, id, userId } = payload;
+			await axios.put(`${apiUrl_cart}/edit-qty/${id}`, { qty });
+			Swal.fire("qty changed");
+			dispatch({ type: API_LOADING_SUCCESS });
+			await dispatch(cartGetAction(userId));
 		} catch (err) {
 			dispatch({ type: API_LOADING_ERROR, payload: err.response.data.error });
 		}
 	};
 };
 
-const cartGetAction = (payload) => {
+const cartGetAction = (userId) => {
 	return async (dispatch) => {
 		try {
-			const userId = payload.id ? payload.id : payload.userId;
 			dispatch({
 				type: API_LOADING_START,
 			});
 
 			const response = await axios.get(`${apiUrl_cart}/get/${userId}`);
-
 			dispatch({
-				type: API_LOADING_SUCCESS,
-				payload: { cart: response.data },
+				type: GET_CART,
+				payload: response.data,
 			});
+			dispatch({ type: API_LOADING_SUCCESS });
 		} catch (err) {
 			dispatch({
 				type: API_LOADING_ERROR,
@@ -94,7 +88,7 @@ const updateCartQty = (payload) => {
 
 			await axios.patch(`${apiUrl_cart}/update-qty/${cartId}`, { qty });
 
-			dispatch(cartGetAction({ userId }));
+			dispatch(cartGetAction(userId));
 		} catch (err) {
 			dispatch({
 				type: API_LOADING_ERROR,
@@ -119,7 +113,7 @@ const deleteCart = (payload) => {
 
 			await axios.delete(`${apiUrl_cart}/delete/${cartId}`);
 
-			dispatch(cartGetAction({ userId }));
+			dispatch(cartGetAction(userId));
 		} catch (err) {
 			dispatch({
 				type: API_LOADING_ERROR,
