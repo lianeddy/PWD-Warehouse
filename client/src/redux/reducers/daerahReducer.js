@@ -2,18 +2,23 @@ import {
 	API_LOADING_ERROR,
 	API_LOADING_START,
 	API_LOADING_SUCCESS,
-	GET_CART,
+	GET_DATA_DAERAH,
 	NULLIFY_ERROR,
+	RESET_DAERAH_INITIAL_STATE,
 } from "../types";
 
 const INITIAL_STATE = {
-	cart: [],
+	provinsi: [],
+	kota: [],
+	kecamatan: [],
+	kelurahan: [],
 	isLoading: false,
 	isError: false,
 	errorMessage: "",
+	isFinished: false,
 };
 
-const cartReducer = (state = INITIAL_STATE, action) => {
+const daerahReducer = (state = INITIAL_STATE, action) => {
 	switch (action.type) {
 		case API_LOADING_START:
 			return {
@@ -23,7 +28,9 @@ const cartReducer = (state = INITIAL_STATE, action) => {
 		case API_LOADING_SUCCESS:
 			return {
 				...state,
+				...action.payload,
 				isLoading: true,
+				isFinished: true,
 			};
 		case API_LOADING_ERROR:
 			return {
@@ -38,14 +45,16 @@ const cartReducer = (state = INITIAL_STATE, action) => {
 				errorMessage: "",
 				isError: false,
 			};
-		case GET_CART:
+		case GET_DATA_DAERAH:
 			return {
 				...state,
-				cart: action.payload,
+				...action.payload,
 			};
+		case RESET_DAERAH_INITIAL_STATE:
+			return INITIAL_STATE;
 		default:
 			return state;
 	}
 };
 
-export { cartReducer };
+export { daerahReducer };

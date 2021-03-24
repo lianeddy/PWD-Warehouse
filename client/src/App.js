@@ -10,6 +10,7 @@ import {
 	CartPage,
 	DetailProductPage,
 	EmailRedirectPage,
+	ProfilePage,
 } from "./pages/user";
 import { LoginPage, RegisterPage } from "./pages";
 import { useDispatch } from "react-redux";
@@ -43,6 +44,7 @@ const App = () => {
 			<Route path="/admin" component={Dashboard} />
 			<Route path="/cart" component={CartPage} />
 			<Route path="/detail" component={DetailProductPage} />
+			<Route path="/profile" component={ProfilePage} />
 		</div>
 	);
 };

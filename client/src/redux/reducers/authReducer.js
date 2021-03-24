@@ -83,7 +83,7 @@ const authReducer = (state = INITIAL_STATE, action) => {
 		case WANT_TO_CHANGE_PASS:
 			return {
 				...state,
-				wantToChangePass: false,
+				wantToChangePass: true,
 			};
 		case GET_CHANGE_PASSWORD_USER_DATA:
 			return {

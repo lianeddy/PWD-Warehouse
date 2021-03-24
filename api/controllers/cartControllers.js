@@ -28,11 +28,13 @@ const getCartByUserId = async (req, res, next) => {
 			],
 		});
 
-		const response = getData.map((val, i) => {
+		const response = getData.map((val) => {
 			let stock = 0;
+
 			val.product.inventories.forEach((val) => {
 				return (stock += val.stock);
 			});
+
 			return {
 				id: val.id,
 				product_id: val.product.id,

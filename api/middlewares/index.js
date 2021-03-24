@@ -2,7 +2,6 @@ const { decryptToken, encryptToken } = require("./jwtValidator");
 const registerValidator = require("./registerValidator");
 const changePasswordValidator = require("./changePasswordValidator");
 const loginValidator = require("./loginValidator");
-const uploader = require("./uploader");
 
 module.exports = {
 	decryptToken,
@@ -10,5 +9,4 @@ module.exports = {
 	registerValidator,
 	changePasswordValidator,
 	loginValidator,
-	uploader,
 };

@@ -34,6 +34,7 @@ const loginAction = (data) => {
 				user_status_id,
 				email_verification_id,
 				token,
+				user_addresses,
 			} = response.data;
 			localStorage.setItem("token", token);
 			dispatch({
@@ -49,6 +50,7 @@ const loginAction = (data) => {
 					userStatusId: user_status_id,
 					isLogin: true,
 					emailVerificationId: email_verification_id,
+					userAddress: user_addresses,
 				},
 			});
 			dispatch(cartGetAction(id));
@@ -100,6 +102,7 @@ const keepLoginAction = () => {
 				role_id,
 				user_status_id,
 				email_verification_id,
+				user_addresses,
 			} = response.data;
 			dispatch({
 				type: AUTH_SIGN,
@@ -113,6 +116,7 @@ const keepLoginAction = () => {
 					roleId: role_id,
 					userStatusid: user_status_id,
 					emailVerificationId: email_verification_id,
+					userAddress: user_addresses,
 				},
 			});
 			dispatch(cartGetAction(id));
@@ -249,6 +253,10 @@ const authRegisteredCheck = (payload) => {
 			});
 
 			dispatch({ type: WANT_TO_CHANGE_PASS });
+
+			dispatch({
+				type: API_LOADING_SUCCESS,
+			});
 		} catch (err) {
 			dispatch({
 				type: API_LOADING_ERROR,
@@ -392,6 +400,179 @@ const authChangePassword = (payload) => {
 	};
 };
 
+const addAddress = (payload) => {
+	const { kota } = payload;
+
+	let kotaMod = "";
+
+	kota.split(" ").forEach((val, i) => {
+		kotaMod += val;
+		if (i == kota.split(" ").length - 1) return (kotaMod += "");
+		return (kotaMod += "+");
+	});
+
+	return async (dispatch) => {
+		try {
+			dispatch({
+				type: NULLIFY_ERROR,
+			});
+
+			dispatch({
+				type: API_LOADING_START,
+			});
+
+			const response = await axios.get(
+				`https://api.distancematrix.ai/maps/api/geocode/json?address=${kotaMod}&key=8V2fGfu36JumHiAyuQFhXuBy3f55K`
+			);
+
+			const coordinate = response.data.result[0].geometry.location;
+
+			await axios.post(`${apiUrl_user}/add-address`, {
+				...payload,
+				...coordinate,
+			});
+
+			dispatch(keepLoginAction());
+		} catch (err) {
+			dispatch({
+				type: API_LOADING_ERROR,
+				payload: err.response.data.message,
+			});
+		}
+	};
+};
+
+const editAddress = (payload) => {
+	const { kota } = payload;
+
+	let kotaMod = "";
+
+	kota.split(" ").forEach((val, i) => {
+		kotaMod += val;
+		if (i == kota.split(" ").length - 1) return (kotaMod += "");
+		return (kotaMod += "+");
+	});
+
+	return async (dispatch) => {
+		try {
+			dispatch({
+				type: NULLIFY_ERROR,
+			});
+
+			dispatch({
+				type: API_LOADING_START,
+			});
+
+			const response = await axios.get(
+				`https://api.distancematrix.ai/maps/api/geocode/json?address=${kotaMod}&key=8V2fGfu36JumHiAyuQFhXuBy3f55K`
+			);
+
+			const coordinate = response.data.result[0].geometry.location;
+
+			await axios.patch(`${apiUrl_user}/edit-address`, {
+				...payload,
+				...coordinate,
+			});
+
+			dispatch(keepLoginAction());
+		} catch (err) {
+			dispatch({
+				type: API_LOADING_ERROR,
+				payload: err.response.data.message,
+			});
+		}
+	};
+};
+
+const deleteAddress = (payload) => {
+	const { id } = payload;
+
+	return async (dispatch) => {
+		try {
+			dispatch({
+				type: NULLIFY_ERROR,
+			});
+
+			dispatch({
+				type: API_LOADING_START,
+			});
+
+			await axios.delete(`${apiUrl_user}/delete-address/${id}`);
+
+			dispatch(keepLoginAction());
+		} catch (err) {
+			dispatch({
+				type: API_LOADING_ERROR,
+				payload: err.response.data.message,
+			});
+		}
+	};
+};
+
+const editProfile = (payload) => {
+	return async (dispatch) => {
+		try {
+			dispatch({
+				type: NULLIFY_ERROR,
+			});
+
+			dispatch({
+				type: API_LOADING_START,
+			});
+
+			await axios.patch(`${apiUrl_user}/edit-profile`, payload);
+
+			dispatch(keepLoginAction());
+		} catch (err) {
+			dispatch({
+				type: API_LOADING_ERROR,
+				payload: err.response.data.message,
+			});
+		}
+	};
+};
+
+const uploadProfilePic = (payload) => {
+	const { image, userId } = payload;
+
+	console.log(image);
+
+	let formData = new FormData();
+	formData.append("image", image.imageFile);
+
+	return async (dispatch) => {
+		console.log(payload);
+		try {
+			dispatch({
+				type: NULLIFY_ERROR,
+			});
+
+			dispatch({
+				type: API_LOADING_START,
+			});
+
+			const headers = {
+				headers: {
+					"Content-Type": "multipart/form-data",
+				},
+			};
+
+			await axios.patch(
+				`${apiUrl_user}/edit-profile-pic/${userId}`,
+				formData,
+				headers
+			);
+
+			dispatch(keepLoginAction());
+		} catch (err) {
+			dispatch({
+				type: API_LOADING_ERROR,
+				payload: err.response.data.message,
+			});
+		}
+	};
+};
+
 export {
 	authRegisterAction,
 	logoutAction,
@@ -403,4 +584,9 @@ export {
 	authChangePassword,
 	emailVerificationSuccessAction,
 	getChangePasswordUserData,
+	addAddress,
+	editAddress,
+	deleteAddress,
+	editProfile,
+	uploadProfilePic,
 };

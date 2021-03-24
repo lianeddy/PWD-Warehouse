@@ -9,6 +9,11 @@ const {
 	login,
 	keepLogin,
 	emailVerification,
+	addAddress,
+	editAddress,
+	editProfile,
+	editProfilePic,
+	deleteAddress,
 } = require("../controllers/userControllers");
 const {
 	registerValidator,
@@ -38,5 +43,11 @@ router.patch(
 	changePasswordValidator,
 	changePassword
 );
+
+router.post("/add-address", addAddress);
+router.patch("/edit-address", editAddress);
+router.patch("/edit-profile", editProfile);
+router.patch("/edit-profile-pic/:user_id", editProfilePic);
+router.delete("/delete-address/:id", deleteAddress);
 
 module.exports = router;
