@@ -1,5 +1,9 @@
 const { Op } = require("sequelize");
 const sequelize = require("../database");
+const fs = require("fs");
+const pify = require("pify");
+const { uploader } = require("../middlewares");
+
 const {
 	transaction,
 	user,
@@ -7,6 +11,8 @@ const {
 	product,
 	warehouse,
 	inventory,
+	productImage,
+	category,
 } = require("../models");
 
 const getWarehouse = async (req, res, next) => {
@@ -24,21 +30,234 @@ const getWarehouse = async (req, res, next) => {
 
 const getProductsByWarehouse = async (req, res, next) => {
 	try {
-		const getProducts = await warehouse.findAll({
+		let query = {
 			raw: true,
-			attributes: ["warehouse", "products.name", "products.inventory.stock"],
+		};
+		if (req.query.warehouse)
+			query.where = {
+				...query.where,
+				warehouse_id: parseInt(req.query.warehouse.id),
+			};
+		if (req.query.sort === 1)
+			query = { ...query, attributes: ["warehouse"], where: (id = 1) };
+		if (req.query.sort === 2)
+			query = { ...query, attributes: ["warehouse"], where: (id = 2) };
+		if (req.query.sort === 3)
+			query = { ...query, attributes: ["warehouse"], where: (id = 3) };
+		query = {
+			...query,
+			attributes: [
+				"warehouse",
+				"products.id",
+				"products.name",
+				"products.price",
+				"products.description",
+				"products.inventory.stock",
+				"products.inventory.operational_stock",
+				"products.category.category",
+				// "image",
+			],
 			include: [
 				{
 					model: product,
 					attributes: [],
-					through: {
-						model: inventory,
-						attributes: [],
-					},
+					include: [
+						// { model: warehouse, attributes: [] },
+						// { model: inventory, attributes: [] },
+						{ model: category, attributes: [] },
+					],
+					require: true,
 				},
 			],
+			where: { id: req.params.id },
+		};
+		const getWarehouse = await warehouse.findAll(query);
+		const productImg = await productImage.findAll();
+		const Warehouse1 = await warehouse.findOne({
+			attributes: ["warehouse"],
+			where: (id = 1),
 		});
-		return res.status(200).send(getProducts);
+		const Warehouse2 = await warehouse.findOne({
+			attributes: ["warehouse"],
+			where: (id = 2),
+		});
+		const Warehouse3 = await warehouse.findOne({
+			attributes: ["warehouse"],
+			where: (id = 3),
+		});
+		const getProductImg = getWarehouse.map((value) => {
+			return {
+				...value,
+				image: productImg.filter((item) => {
+					return item.dataValues.product_id === value.id;
+				}),
+			};
+		});
+		const response = {
+			Warehouse1: Warehouse1.warehouse,
+			Warehouse2: Warehouse2.warehouse,
+			Warehouse3: Warehouse3.warehouse,
+			products: getProductImg,
+		};
+
+		return res.status(200).send(response);
+	} catch (err) {
+		next(err);
+	}
+};
+
+const addProductByWarehouse = async (req, res, next) => {
+	try {
+		const path = "/products";
+		const upload = pify(uploader(path, "PRD").fields([{ name: "image" }]));
+
+		upload(req, res, async (err) => {
+			const { image } = req.files;
+			const {
+				name,
+				price,
+				category_id,
+				description,
+				stock,
+				operational_stock,
+			} = req.body;
+			const id = req.params.id;
+			const imagepath = image ? `${path}/${image[0].filename}` : null;
+
+			const newProduct = await product.create({
+				name,
+				price,
+				category_id,
+				description,
+			});
+			await inventory.create({
+				stock,
+				operational_stock,
+				product_id: newProduct.id,
+				warehouse_id: id,
+			});
+			const newImg = await productImage.create({
+				imagepath: imagepath,
+				product_id: newProduct.id,
+			});
+
+			if (newImg) {
+				return res.status(200).send(`Product Added`);
+			} else {
+				fs.unlinkSync(`public${imagepath}`);
+				return res.status(500).send(err);
+			}
+		});
+	} catch (err) {
+		next(err);
+	}
+};
+
+const editProduct = async (req, res, next) => {
+	try {
+		const path = "/products";
+		const upload = pify(uploader(path, "PRD").fields([{ name: "image" }]));
+		const id = req.params.id;
+
+		const pro = await productImage.findOne({
+			where: {
+				product_id: id,
+			},
+		});
+		const oldImagepath = pro.dataValues.imagepath;
+
+		upload(req, res, async (err) => {
+			const { image } = req.files;
+			const {
+				name,
+				price,
+				category_id,
+				description,
+				stock,
+				operational_stock,
+			} = req.body;
+			const imagepath = image ? `${path}/${image[0].filename}` : oldImagepath;
+
+			await product.update(
+				{
+					name,
+					price,
+					category_id,
+					description,
+				},
+				{
+					where: {
+						id: id,
+					},
+				}
+			);
+			await inventory.update(
+				{
+					stock,
+					operational_stock,
+				},
+				{
+					where: {
+						product_id: id,
+					},
+				}
+			);
+			const newImg = await productImage.update(
+				{
+					imagepath: imagepath,
+				},
+				{
+					where: {
+						product_id: id,
+					},
+				}
+			);
+
+			if (newImg) {
+				if (image && oldImagepath !== null) {
+					fs.unlinkSync(`public${oldImagepath}`);
+					return res.status(500).send(err);
+				}
+			} else {
+				fs.unlinkSync(`public${imagepath}`);
+			}
+		});
+		return res.status(200).send(`Edited`);
+	} catch (err) {
+		next(err);
+	}
+};
+
+const deleteProduct = async (req, res, next) => {
+	try {
+		const id = req.params.id;
+
+		const pro = await productImage.findOne({
+			where: {
+				product_id: id,
+			},
+		});
+		const oldImagepath = pro.dataValues.imagepath;
+
+		if (oldImagepath) {
+			fs.unlinkSync(`public${oldImagepath}`);
+			await product.destroy({
+				where: {
+					id: id,
+				},
+			});
+			await productImage.destroy({
+				where: {
+					product_id: id,
+				},
+			});
+			await inventory.destroy({
+				where: {
+					product_id: id,
+				},
+			});
+		}
+		return res.status(200).send("Deleted Product");
 	} catch (err) {
 		next(err);
 	}
@@ -95,6 +314,8 @@ const getDashboard = async (req, res, next) => {
 				order_status_id: 5,
 			},
 		});
+
+		console.log(dailyProfit, weeklyProfit, monthlyProfit);
 
 		const [[rangeMonthly]] = await sequelize.query(`
 			SELECT
@@ -249,5 +470,8 @@ const getDashboard = async (req, res, next) => {
 module.exports = {
 	getWarehouse,
 	getProductsByWarehouse,
+	addProductByWarehouse,
 	getDashboard,
+	editProduct,
+	deleteProduct,
 };

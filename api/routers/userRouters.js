@@ -14,6 +14,7 @@ const {
 	registerValidator,
 	decryptToken,
 	changePasswordValidator,
+	loginValidator,
 } = require("../middlewares");
 
 const router = express.Router();
@@ -21,7 +22,7 @@ const router = express.Router();
 router.get("/get-security-question", getSecurityQuestion);
 router.post("/register", registerValidator, register);
 router.post("/email-verification", decryptToken, emailVerification);
-router.post("/login", login);
+router.post("/login", loginValidator, login);
 router.post("/keepLogin", decryptToken, keepLogin);
 router.post("/registered-checker", registeredChecker);
 router.post("/security-question-checker", securityQuestionChecker);
