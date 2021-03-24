@@ -12,6 +12,7 @@ import {
 	REGISTERED_TRUE,
 	WANT_TO_CHANGE_PASS,
 	GET_CHANGE_PASSWORD_USER_DATA,
+	GET_ADDRESS,
 } from "../types";
 import Swal from "sweetalert2";
 import { cartGetAction } from "./cartActions";
@@ -34,6 +35,7 @@ const loginAction = (data) => {
 				user_status_id,
 				email_verification_id,
 				token,
+				user_address,
 			} = response.data;
 			localStorage.setItem("token", token);
 			dispatch({
@@ -49,6 +51,7 @@ const loginAction = (data) => {
 					userStatusId: user_status_id,
 					isLogin: true,
 					emailVerificationId: email_verification_id,
+					address: user_address,
 				},
 			});
 			dispatch(cartGetAction(id));
@@ -100,6 +103,7 @@ const keepLoginAction = () => {
 				role_id,
 				user_status_id,
 				email_verification_id,
+				user_address,
 			} = response.data;
 			dispatch({
 				type: AUTH_SIGN,
@@ -113,10 +117,11 @@ const keepLoginAction = () => {
 					roleId: role_id,
 					userStatusid: user_status_id,
 					emailVerificationId: email_verification_id,
+					address: user_address,
 				},
 			});
 			dispatch(cartGetAction(id));
-			await dispatch(getDashboard());
+			// await dispatch(getDashboard());
 			dispatch({
 				type: API_LOADING_SUCCESS,
 			});
@@ -392,6 +397,60 @@ const authChangePassword = (payload) => {
 	};
 };
 
+const changeMainAddressAction = (payload) => {
+	return async (dispatch) => {
+		try {
+			dispatch({ type: NULLIFY_ERROR });
+			dispatch({ type: API_LOADING_START });
+			const oldToken = localStorage.getItem("token");
+			const headers = {
+				headers: {
+					Authorization: `Bearer ${oldToken}`,
+				},
+			};
+			const response = await axios.patch(
+				`${apiUrl_user}/change-main-address/`,
+				payload,
+				headers
+			);
+			localStorage.removeItem("token");
+			const {
+				id,
+				email,
+				full_name,
+				username,
+				imagepath,
+				phone,
+				role_id,
+				user_status_id,
+				email_verification_id,
+				token,
+				user_address,
+			} = response.data;
+			localStorage.setItem("token", token);
+			dispatch({
+				type: AUTH_SIGN,
+				payload: {
+					id,
+					email,
+					name: full_name,
+					username,
+					imagepath,
+					phone,
+					roleId: role_id,
+					userStatusId: user_status_id,
+					isLogin: true,
+					emailVerificationId: email_verification_id,
+					address: user_address,
+				},
+			});
+			dispatch({ type: API_LOADING_SUCCESS });
+		} catch (err) {
+			dispatch({ type: API_LOADING_ERROR, payload: err.response.data.message });
+		}
+	};
+};
+
 export {
 	authRegisterAction,
 	logoutAction,
@@ -403,4 +462,5 @@ export {
 	authChangePassword,
 	emailVerificationSuccessAction,
 	getChangePasswordUserData,
+	changeMainAddressAction,
 };

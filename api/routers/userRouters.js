@@ -9,6 +9,7 @@ const {
 	login,
 	keepLogin,
 	emailVerification,
+	setMainAddress,
 } = require("../controllers/userControllers");
 const {
 	registerValidator,
@@ -37,5 +38,6 @@ router.patch(
 	changePasswordValidator,
 	changePassword
 );
+router.patch("/change-main-address", decryptToken, setMainAddress);
 
 module.exports = router;

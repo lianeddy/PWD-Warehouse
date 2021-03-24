@@ -10,6 +10,7 @@ import {
 	CHANGE_PERMITTED,
 	WANT_TO_CHANGE_PASS,
 	GET_CHANGE_PASSWORD_USER_DATA,
+	GET_ADDRESS,
 } from "../types";
 
 const INITIAL_STATE = {
@@ -27,6 +28,7 @@ const INITIAL_STATE = {
 	imagepath: "",
 	phone: null,
 	roleId: null,
+	address: [],
 	emailVerificationId: null,
 	userStatusId: null,
 	isFinished: false,
@@ -92,6 +94,10 @@ const authReducer = (state = INITIAL_STATE, action) => {
 			};
 		case RESET_INITIAL_STATE:
 			return INITIAL_STATE;
+		case GET_ADDRESS:
+			return {
+				address: action.payload,
+			};
 		default:
 			return state;
 	}

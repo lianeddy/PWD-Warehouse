@@ -74,7 +74,14 @@ const getProducts = async (req, res, next) => {
 		if (req.query.sort == 4) query = { ...query, order: [["price", "DESC"]] };
 		query = {
 			...query,
-			attributes: ["id", "name", "price", "description", "category.category"],
+			attributes: [
+				"id",
+				"name",
+				"price",
+				"weight",
+				"description",
+				"category.category",
+			],
 			include: [
 				{
 					model: category,

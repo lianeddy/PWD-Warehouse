@@ -1,50 +1,70 @@
-import { makeStyles } from "@material-ui/core";
-import React from "react";
+import { Drawer, makeStyles } from "@material-ui/core";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Button } from "reactstrap";
+import { LoaderPage } from "../../components";
 import { UserFooter } from "../../components/user";
 import { accentColor, primaryColor, surfaceColor } from "../../helpers";
-
-const data = [
-	{
-		id: 1,
-		name: "a",
-		qty: 100,
-		price: 200000,
-		weight: 500,
-		image:
-			"https://upload.wikimedia.org/wikipedia/commons/4/47/VU-Banana-1000x1000.png",
-	},
-	{
-		id: 2,
-		name: "b",
-		qty: 50,
-		price: 100000,
-		weight: 800,
-		image: "https://i.redd.it/w0lmb8i7odo51.png",
-	},
-	{
-		id: 3,
-		name: "c",
-		qty: 150,
-		price: 5000,
-		weight: 100,
-		image: "https://i.redd.it/5rgmp68wr5041.png",
-	},
-];
+import { changeMainAddressAction } from "../../redux/actions";
+import Loader from "react-loader-spinner";
 
 const CheckoutPage = () => {
 	const styles = useStyles();
+	const dispatch = useDispatch();
+	const { address, username, isLoading } = useSelector(
+		(state) => state.authReducer
+	);
+	const { cart } = useSelector((state) => state.cartReducer);
+	const mainAddress = address.find((value) => {
+		return value.is_main === 1;
+	});
+	const [open, setOpen] = useState(false);
+	const [localUsername, setLocalUsername] = useState("");
+	const [localAddress, setLocalAddress] = useState("");
+	const [localLabel, setLocalLabel] = useState("");
+	const [localPhone, setLocalPhone] = useState("");
+	useEffect(() => {
+		if (!isLoading) {
+			setLocalUsername(username);
+			setLocalAddress(mainAddress.alamat_detail);
+			setLocalLabel(mainAddress.label);
+			setLocalPhone(mainAddress.phone);
+		}
+	}, [address]);
+	const handleSetToMainAddressBtn = (mainAfterId) => {
+		const payload = {
+			mainBeforeId: mainAddress.id,
+			mainAfterId,
+		};
+		dispatch(changeMainAddressAction(payload));
+	};
+
+	const handleSelectBtn = (value) => {
+		setLocalAddress(value.alamat_detail);
+		setLocalLabel(value.label);
+		setLocalPhone(value.phone);
+	};
 
 	const renderList = () => {
-		return data.map((value) => {
+		return cart.map((value) => {
 			return (
 				<div>
 					<div style={{ display: "flex" }} key={value.id}>
-						<div style={{ width: "15%" }}>
+						<div
+							style={{
+								width: "15%",
+								height: 100,
+								width: 100,
+								backgroundColor: accentColor,
+								borderRadius: 5,
+							}}
+						>
 							<img
 								src={value.image}
 								alt="file_err"
 								style={{
+									backgroundColor: accentColor,
+									borderRadius: 5,
 									objectFit: "contain",
 									height: 100,
 									width: 100,
@@ -98,8 +118,106 @@ const CheckoutPage = () => {
 		});
 	};
 
+	const renderAddress = () => {
+		return address.map((value) => {
+			return (
+				<div
+					key={value.id}
+					style={{
+						borderRadius: 10,
+						boxShadow: "0 0 5px 0 rgba(0,0,0,0.3)",
+						marginBottom: 5,
+						paddingInline: 20,
+						paddingBlock: 10,
+						backgroundColor: primaryColor,
+					}}
+				>
+					<div style={{ marginBottom: 10 }}>
+						<div>
+							{value.is_main === 1 ? (
+								<div
+									style={{ display: "flex", justifyContent: "space-between" }}
+								>
+									<div>
+										<span>{username}</span>
+										<span>({value.label})</span>
+									</div>
+									<div
+										style={{
+											fontSize: 8,
+											boxShadow: "0 0 5px 0 rgba(0,0,0,0.15)",
+											fontWeight: 600,
+											borderRadius: 5,
+											paddingInline: 5,
+											border: "1px solid rgba(240, 165, 0)",
+											display: "flex",
+											justifyContent: "center",
+											alignItems: "center",
+										}}
+									>
+										<div>primary</div>
+									</div>
+								</div>
+							) : (
+								<div>
+									<span>{username}</span>
+									<span>({value.label})</span>
+								</div>
+							)}
+						</div>
+						<div>{value.phone}</div>
+						<div>{value.alamat_detail}</div>
+					</div>
+					<div>
+						{value.alamat_detail === localAddress ? (
+							<div>
+								<Button className={styles.primaryBtn}>
+									<div className={styles.primaryBtnChild}>selected</div>
+								</Button>
+							</div>
+						) : (
+							<div>
+								<Button
+									className={styles.whiteBtn}
+									style={{ marginRight: 5 }}
+									onClick={(e) => handleSelectBtn(value)}
+								>
+									<div className={styles.whiteBtnChild}>select</div>
+								</Button>
+								{value.is_main === 1 ? null : (
+									<Button
+										disabled={isLoading}
+										className={styles.whiteBtn}
+										onClick={(e) => handleSetToMainAddressBtn(value.id)}
+									>
+										<div className={styles.whiteBtnChild}>
+											set to main address
+										</div>
+									</Button>
+								)}
+							</div>
+						)}
+					</div>
+				</div>
+			);
+		});
+	};
+
+	const toggleDrawer = (event, isOpen) => {
+		if (
+			event.type === "keydown" &&
+			(event.key === "Tab" || event.key === "Shift")
+		) {
+			return;
+		}
+
+		setOpen(isOpen);
+	};
+
+	if (isLoading) return <LoaderPage />;
+
 	return (
-		<>
+		<div>
 			<div
 				style={{
 					paddingInline: 250,
@@ -147,23 +265,79 @@ const CheckoutPage = () => {
 							<div>
 								<div style={{ fontWeight: "bold" }}>Shipping Address</div>
 								<div className={styles.divider}></div>
-								<div>
-									<div
-										className={styles.smallText}
-										style={{ fontWeight: "bold" }}
-									>
-										Razak <span style={{ fontWeight: "normal" }}>(rumah)</span>
+								{localAddress === "" ? (
+									<Loader type="ThreeDots" />
+								) : (
+									<div>
+										<div
+											className={styles.smallText}
+											style={{ fontWeight: "bold" }}
+										>
+											{localUsername} (
+											<span style={{ fontWeight: 600 }}>{localLabel}</span>)
+										</div>
+										<div className={styles.smallText}>{localPhone}</div>
+										<div className={styles.smallText}>{localAddress}</div>
 									</div>
-									<div className={styles.smallText}>087886498</div>
-									<div className={styles.smallText}>Perum.pakujaya permai</div>
-								</div>
+								)}
 								<div className={styles.divider}></div>
 								<div style={{ display: "flex" }}>
-									<Button className={styles.whiteBtn}>
+									<Button
+										className={styles.whiteBtn}
+										onClick={(e) => toggleDrawer(e, true)}
+									>
 										<div className={styles.whiteBtnChildChangeAddress}>
 											change address
 										</div>
 									</Button>
+									<Drawer
+										anchor="right"
+										open={open}
+										onClose={(e) => toggleDrawer(e, false)}
+									>
+										<div
+											style={{
+												width: "400px",
+											}}
+										>
+											<div
+												style={{
+													backgroundColor: primaryColor,
+													display: "flex",
+													justifyContent: "center",
+													paddingBlock: 20,
+													boxShadow: "0 0 10px 1px rgba(0,0,0,0.3)",
+													fontWeight: 600,
+													fontSize: 18,
+													// marginBottom: 100,
+												}}
+											>
+												<div>Change Address</div>
+											</div>
+											<div style={{ padding: 20 }}>{renderAddress()}</div>
+											<div style={{ paddingTop: 32 }}>
+												<div
+													style={{
+														position: "fixed",
+														bottom: 0,
+														width: "400px",
+														backgroundColor: "red",
+														color: "white",
+														textAlign: "center",
+													}}
+												>
+													<Button
+														className={styles.primaryBtn}
+														style={{ width: "100%", borderRadius: 0 }}
+													>
+														<div className={styles.primaryBtnChild}>
+															+ Add New Address
+														</div>
+													</Button>
+												</div>
+											</div>
+										</div>
+									</Drawer>
 								</div>
 							</div>
 						</div>
@@ -172,7 +346,6 @@ const CheckoutPage = () => {
 								<div style={{ fontWeight: "bold" }}>Your Order</div>
 								<div className={styles.divider}></div>
 								<div>{renderList()}</div>
-								<div className={styles.divider}></div>
 								<div
 									style={{
 										display: "flex",
@@ -282,7 +455,7 @@ const CheckoutPage = () => {
 				</div>
 			</div>
 			<UserFooter />
-		</>
+		</div>
 	);
 };
 
