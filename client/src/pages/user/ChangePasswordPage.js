@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Redirect } from "react-router";
+import { InputToolTip } from "../../components";
 import { authChangePassword } from "../../redux/actions/authActions";
 
 const ChangePasswordPage = (props) => {
@@ -9,6 +10,8 @@ const ChangePasswordPage = (props) => {
 	const [message, setMessage] = useState("");
 	const [showPassword1, setShowPassword1] = useState(false);
 	const [showPassword2, setShowPassword2] = useState(false);
+	const [isValidPassword, setIsValidPassword] = useState(true);
+	const [isValidCPassword, setIsValidCPassword] = useState(true);
 
 	const { isLoading, id, errorMessage } = useSelector(
 		(state) => state.authReducer
@@ -20,7 +23,29 @@ const ChangePasswordPage = (props) => {
 		setMessage(errorMessage);
 	}, [errorMessage]);
 
+	useEffect(() => {
+		if (newPassword.length > 0) checkPassword(newPassword);
+		if (confirmPassword.length > 0) checkCPassword(confirmPassword);
+	}, [newPassword, confirmPassword]);
+
+	const passwordRegex = /^(?=.*[\d])(?=.*[A-Z])(?=.*[!@#$%^&*\-\_=<>,\.?]).{8,16}$/;
 	let token;
+
+	const checkPassword = (str) => {
+		if (str.match(passwordRegex)) {
+			setIsValidPassword(true);
+		} else {
+			setIsValidPassword(false);
+		}
+	};
+
+	const checkCPassword = (str) => {
+		if (str === newPassword) {
+			setIsValidCPassword(true);
+		} else {
+			setIsValidCPassword(false);
+		}
+	};
 
 	if (props.location.search) {
 		token = new URLSearchParams(props.location.search).get("token");
@@ -49,6 +74,14 @@ const ChangePasswordPage = (props) => {
 						onChange={(e) => setNewPassword(e.target.value)}
 						style={{ margin: "0 0 12px 0" }}
 					/>
+					<InputToolTip
+						when={!isValidPassword}
+						target="newPassword"
+						title="Unvalid Password"
+						text="Password must be 8-16 characters and at least
+									contain an uppercase letter, a numbers, special
+									character"
+					/>
 					<button onClick={() => setShowPassword1(!showPassword1)}>
 						{showPassword1 ? (
 							<i className="bi bi-eye-slash"></i>
@@ -63,6 +96,11 @@ const ChangePasswordPage = (props) => {
 						id="confirmNewPassword"
 						placeholder="Confirm New Password"
 						onChange={(e) => setConfirmPassword(e.target.value)}
+					/>
+					<InputToolTip
+						when={!isValidCPassword}
+						target="confirmNewPassword"
+						title="Password doesn't match"
 					/>
 					<button onClick={() => setShowPassword2(!showPassword2)}>
 						{showPassword2 ? (

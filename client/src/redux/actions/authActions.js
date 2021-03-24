@@ -281,6 +281,7 @@ const authSecurityAnswerCheck = (payload) => {
 				type: API_LOADING_SUCCESS,
 			});
 		} catch (err) {
+			console.log(err.response);
 			dispatch({
 				type: API_LOADING_ERROR,
 				payload: err.response.data.message,
