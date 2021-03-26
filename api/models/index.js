@@ -13,21 +13,23 @@ const transaction = require("./transaction");
 const transactionItem = require("./transactionItem");
 const orderStatus = require("./orderStatus");
 const monthly_report = require("./monthlyReport");
+const userAddress = require("./userAddress");
 
 module.exports = {
-  role,
-  user,
-  securityQuestion,
-  userStatus,
-  emailVerification,
-  product,
-  inventory,
-  category,
-  warehouse,
-  productImage,
-  cart,
-  transaction,
-  transactionItem,
-  orderStatus,
-  monthly_report,
+	role,
+	user,
+	securityQuestion,
+	userStatus,
+	emailVerification,
+	product,
+	inventory,
+	category,
+	warehouse,
+	productImage,
+	cart,
+	transaction,
+	transactionItem,
+	orderStatus,
+	monthly_report,
+	userAddress,
 };

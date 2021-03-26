@@ -4,11 +4,13 @@ import { productReducer } from "./productReducer";
 import { cartReducer } from "./cartReducer";
 import { adminReducer } from "./adminReducer";
 import { daerahReducer } from "./daerahReducer";
+import { transactionReducer } from "./transactionReducer";
 
 export default combineReducers({
-	authReducer,
-	productReducer,
-	cartReducer,
-	adminReducer,
-	daerahReducer,
+  authReducer,
+  productReducer,
+  cartReducer,
+  adminReducer,
+  daerahReducer,
+  transactionReducer,
 });

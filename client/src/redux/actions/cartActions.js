@@ -5,6 +5,7 @@ import {
 	API_LOADING_SUCCESS,
 	GET_CART,
 	NULLIFY_ERROR,
+	RESET_TRANSACTION,
 } from "../types";
 import { apiUrl_cart } from "../../helpers";
 import Swal from "sweetalert2";
@@ -27,10 +28,8 @@ const addToCartAction = ({ productId, userId, qty }) => {
 				confirmButtonText: "OK",
 			});
 		} catch (err) {
-			dispatch({
-				type: API_LOADING_ERROR,
-				payload: err.response.data.message,
-			});
+			if (!err.response) return dispatch({ type: API_LOADING_ERROR });
+			dispatch({ type: API_LOADING_ERROR, payload: err.response.data.message });
 		}
 	};
 };
@@ -46,7 +45,8 @@ const changeQtyCartAction = (payload) => {
 			dispatch({ type: API_LOADING_SUCCESS });
 			await dispatch(cartGetAction(userId));
 		} catch (err) {
-			dispatch({ type: API_LOADING_ERROR, payload: err.response.data.error });
+			if (!err.response) return dispatch({ type: API_LOADING_ERROR });
+			dispatch({ type: API_LOADING_ERROR, payload: err.response.data.message });
 		}
 	};
 };
@@ -63,12 +63,11 @@ const cartGetAction = (userId) => {
 				type: GET_CART,
 				payload: response.data,
 			});
+			dispatch({ type: RESET_TRANSACTION });
 			dispatch({ type: API_LOADING_SUCCESS });
 		} catch (err) {
-			dispatch({
-				type: API_LOADING_ERROR,
-				payload: err.response.data.message,
-			});
+			if (!err.response) return dispatch({ type: API_LOADING_ERROR });
+			dispatch({ type: API_LOADING_ERROR, payload: err.response.data.message });
 		}
 	};
 };
@@ -90,10 +89,8 @@ const updateCartQty = (payload) => {
 
 			dispatch(cartGetAction(userId));
 		} catch (err) {
-			dispatch({
-				type: API_LOADING_ERROR,
-				payload: err.response.data.message,
-			});
+			if (!err.response) return dispatch({ type: API_LOADING_ERROR });
+			dispatch({ type: API_LOADING_ERROR, payload: err.response.data.message });
 		}
 	};
 };
@@ -115,10 +112,8 @@ const deleteCart = (payload) => {
 
 			dispatch(cartGetAction(userId));
 		} catch (err) {
-			dispatch({
-				type: API_LOADING_ERROR,
-				payload: err.response.data.message,
-			});
+			if (!err.response) return dispatch({ type: API_LOADING_ERROR });
+			dispatch({ type: API_LOADING_ERROR, payload: err.response.data.message });
 		}
 	};
 };

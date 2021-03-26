@@ -1,4 +1,4 @@
-const { user, securityQuestion } = require("../models");
+const { user, securityQuestion, userAddress } = require("../models");
 const { encryptToken } = require("../middlewares");
 const { encryptHandler, emailHandler } = require("../handlers");
 const userAddress = require("../models/userAddress");
@@ -85,11 +85,12 @@ const login = async (req, res, next) => {
 				email: req.body.email,
 				password: encryptHandler(req.body.password),
 			},
-			include: [
-				{
-					model: userAddress,
-				},
-			],
+			attributes: { exclude: "password" },
+			include: {
+				model: userAddress,
+				as: "user_address",
+			},
+			order: [[{ model: userAddress, as: "user_address" }, "is_main", "ASC"]],
 		});
 		if (getUser.length === 0) {
 			return res.status(404).send({
@@ -417,6 +418,48 @@ const editProfilePic = async (req, res, next) => {
 		res.status(200).send({
 			message: "Uploaded",
 		});
+const setMainAddress = async (req, res, next) => {
+	try {
+		if (req.body.mainBeforeId) {
+			await userAddress.update(
+				{
+					is_main: 2,
+				},
+				{
+					where: {
+						user_id: req.user.id,
+						id: req.body.mainBeforeId,
+					},
+				}
+			);
+		}
+		await userAddress.update(
+			{
+				is_main: 1,
+			},
+			{
+				where: {
+					user_id: req.user.id,
+					id: req.body.mainAfterId,
+				},
+			}
+		);
+		const getUser = await user.findAll({
+			where: {
+				id: req.user.id,
+			},
+			attributes: { exclude: "password" },
+			include: {
+				model: userAddress,
+				as: "user_address",
+			},
+			order: [[{ model: userAddress, as: "user_address" }, "is_main", "ASC"]],
+		});
+		const response = {
+			...getUser[0].dataValues,
+			token: encryptToken(getUser[0].dataValues),
+		};
+		return res.status(200).send(response);
 	} catch (err) {
 		next(err);
 	}
@@ -437,4 +480,5 @@ module.exports = {
 	editProfile,
 	editProfilePic,
 	deleteAddress,
+	setMainAddress,
 };

@@ -4,20 +4,39 @@ const user = require("./user");
 const orderStatus = require("./orderStatus");
 const transactionItem = require("./transactionItem");
 const product = require("./product");
+const warehouse = require("./warehouse");
+const paymentMethod = require("./paymentMethod");
 
 const transaction = sequelize.define(
 	"transaction",
 	{
 		amount: DataTypes.INTEGER,
+		weight: DataTypes.INTEGER,
 		created_at: DataTypes.DATE,
 		user_id: DataTypes.INTEGER,
 		order_status_id: DataTypes.TINYINT,
+		warehouse_id: DataTypes.TINYINT,
+		payment_method_id: DataTypes.TINYINT,
 	},
 	{
 		timestamps: false,
 		freezeTableName: true,
 	}
 );
+
+// transaction.belongsTo(paymentMethod, {
+// 	foreignKey: "payment_method_id",
+// });
+paymentMethod.hasOne(transaction, {
+	foreignKey: "payment_method_id",
+});
+
+transaction.belongsTo(warehouse, {
+	foreignKey: "warehouse_id",
+});
+// warehouse.hasOne(warehouse, {
+// 	foreignKey: "warehouse_id",
+// });
 
 transaction.hasMany(transactionItem, {
 	foreignKey: "transaction_id",
