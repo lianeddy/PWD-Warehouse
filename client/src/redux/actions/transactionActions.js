@@ -1,4 +1,5 @@
 import axios from "axios";
+import Swal from "sweetalert2";
 import {
 	apiUrl_transaction,
 	matrixAPI_url,
@@ -11,10 +12,12 @@ import {
 	API_LOADING_ERROR,
 	API_LOADING_START,
 	API_LOADING_SUCCESS,
+	CHECKOUT_SUCCESS,
 	GET_COURIER,
 	NEAREST_WAREHOUSE,
 	NULLIFY_ERROR,
 } from "../types";
+import { cartGetAction } from "./cartActions";
 
 const currentAddressAction = (payload) => {
 	return async (dispatch) => {
@@ -124,18 +127,24 @@ const nearestWarehouseAction = (payload) => {
 	};
 };
 
-const getCourierAction = () => {
+const postTransaction = (payload) => {
 	return async (dispatch) => {
 		try {
 			dispatch({ type: NULLIFY_ERROR });
 			dispatch({ type: API_LOADING_START });
+			await axios.post(`${apiUrl_transaction}/${payload.userId}`, payload);
+			Swal.fire({
+				icon: "success",
+				title: "we need proof of your payment",
+			});
+			dispatch({ type: CHECKOUT_SUCCESS });
 			dispatch({ type: API_LOADING_SUCCESS });
+			dispatch(cartGetAction(payload.userId));
 		} catch (err) {
-			console.log(err.response);
 			if (!err.response) return dispatch({ type: API_LOADING_ERROR });
 			dispatch({ type: API_LOADING_ERROR, payload: err.response.data.message });
 		}
 	};
 };
 
-export { nearestWarehouseAction, currentAddressAction };
+export { nearestWarehouseAction, currentAddressAction, postTransaction };

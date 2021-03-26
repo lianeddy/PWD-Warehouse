@@ -5,6 +5,8 @@ import {
 	NULLIFY_ERROR,
 	NEAREST_WAREHOUSE,
 	GET_COURIER,
+	CHECKOUT_SUCCESS,
+	RESET_TRANSACTION,
 } from "../types";
 
 const INITIAL_STATE = {
@@ -13,6 +15,7 @@ const INITIAL_STATE = {
 	errorMessage: "",
 	nearestWarehouse: {},
 	courier: {},
+	isSuccess: false,
 };
 
 const transactionReducer = (state = INITIAL_STATE, action) => {
@@ -50,6 +53,13 @@ const transactionReducer = (state = INITIAL_STATE, action) => {
 				...state,
 				courier: action.payload,
 			};
+		case CHECKOUT_SUCCESS:
+			return {
+				...state,
+				isSuccess: true,
+			};
+		case RESET_TRANSACTION:
+			return INITIAL_STATE;
 		default:
 			return state;
 	}

@@ -9,6 +9,7 @@ import {
 	changeMainAddressAction,
 	currentAddressAction,
 	nearestWarehouseAction,
+	postTransaction,
 	updateCartQty,
 } from "../../redux/actions";
 import Loader from "react-loader-spinner";
@@ -22,7 +23,9 @@ const CheckoutPage = () => {
 	);
 	const { cart } = useSelector((state) => state.cartReducer);
 	const mainAddress = address.find((value) => value.is_main === 1);
-	const { courier } = useSelector((state) => state.transactionReducer);
+	const { courier, nearestWarehouse } = useSelector(
+		(state) => state.transactionReducer
+	);
 
 	const [openShipping, setOpenShipping] = useState(false);
 	const [openPayment, setOpenPayment] = useState(false);
@@ -117,7 +120,18 @@ const CheckoutPage = () => {
 		setOpenShipping(false);
 	};
 
-	const handleProcessBtn = () => {};
+	const handleProcessBtn = () => {
+		const payload = {
+			userId: id,
+			amount: renderBilling(),
+			weight: renderTotalWeight(),
+			warehouseId: nearestWarehouse.warehouse.id,
+			paymentMethodId: 1,
+			cart,
+		};
+		console.log(payload);
+		dispatch(postTransaction(payload));
+	};
 
 	const renderList = () => {
 		return cart.map((value) => {
