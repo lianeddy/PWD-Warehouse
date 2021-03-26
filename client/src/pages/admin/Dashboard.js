@@ -162,16 +162,18 @@ const Dashboard = () => {
 					minHeight: "100vh",
 				}}
 			>
-				<Fade bottom collapse duration={100} when={current === 0}>
+				<Fade bottom collapse duration={500} when={current === 0}>
 					<HomeAdminPage current={current} />
 				</Fade>
-				<Fade bottom collapse duration={100} when={current === 1}>
-					<ProductAdminPage current={current} />
-				</Fade>
-				<Fade bottom collapse duration={100} when={current === 2}>
+				<div>
+					<Fade bottom collapse duration={500} when={current === 1}>
+						<ProductAdminPage current={current} />
+					</Fade>
+				</div>
+				<Fade bottom collapse duration={500} when={current === 2}>
 					<InvoiceAdminPage current={current} />
 				</Fade>
-				<Fade bottom collapse duration={100} when={current === 3}>
+				<Fade bottom collapse duration={500} when={current === 3}>
 					<ProfileAdminPage current={current} />
 				</Fade>
 			</div>

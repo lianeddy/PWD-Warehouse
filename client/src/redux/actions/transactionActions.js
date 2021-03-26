@@ -6,7 +6,6 @@ import {
 	matrixAPI_key,
 	rajaOngkirAPI_url,
 	rajaOngkirAPI_key,
-	rajaOngkirAPI_url2,
 } from "../../helpers";
 import {
 	API_LOADING_ERROR,

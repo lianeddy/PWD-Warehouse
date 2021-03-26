@@ -12,7 +12,6 @@ import {
 	REGISTERED_TRUE,
 	WANT_TO_CHANGE_PASS,
 	GET_CHANGE_PASSWORD_USER_DATA,
-	GET_ADDRESS,
 } from "../types";
 import Swal from "sweetalert2";
 import { cartGetAction } from "./cartActions";
@@ -117,10 +116,12 @@ const keepLoginAction = () => {
 					address: user_address,
 				},
 			});
-			dispatch(cartGetAction(id));
-			dispatch({
-				type: API_LOADING_SUCCESS,
-			});
+			if (role_id === 1) {
+				dispatch(getDashboard());
+			} else {
+				dispatch(cartGetAction(id));
+				dispatch({ type: API_LOADING_SUCCESS });
+			}
 		} catch (err) {
 			if (!err.response) return dispatch({ type: API_LOADING_ERROR });
 			dispatch({ type: API_LOADING_ERROR, payload: err.response.data.message });
