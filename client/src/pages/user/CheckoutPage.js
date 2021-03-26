@@ -23,7 +23,7 @@ const CheckoutPage = () => {
 	);
 	const { cart } = useSelector((state) => state.cartReducer);
 	const mainAddress = address.find((value) => value.is_main === 1);
-	const { courier, nearestWarehouse } = useSelector(
+	const { courier, nearestWarehouse, isSuccess } = useSelector(
 		(state) => state.transactionReducer
 	);
 
@@ -124,10 +124,9 @@ const CheckoutPage = () => {
 		const payload = {
 			userId: id,
 			amount: renderBilling(),
-			weight: renderTotalWeight(),
 			warehouseId: nearestWarehouse.warehouse.id,
 			paymentMethodId: 1,
-			cart,
+			cartItems: cart,
 		};
 		console.log(payload);
 		dispatch(postTransaction(payload));
@@ -453,6 +452,7 @@ const CheckoutPage = () => {
 		setOpenPayment(isOpen);
 	};
 
+	if (isSuccess) return <Redirect to="/" />;
 	if (!isLogin && username === "") return <Redirect to="/login" />;
 	if (isLoading) return <LoaderPage />;
 
@@ -601,7 +601,7 @@ const CheckoutPage = () => {
 									</div>
 									<div>
 										<div style={{ fontSize: 20, fontWeight: 600 }}>
-											{renderSubTotal()}
+											Rp{renderSubTotal().toLocaleString()}
 										</div>
 									</div>
 								</div>

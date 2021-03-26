@@ -5,6 +5,7 @@ import {
 	API_LOADING_SUCCESS,
 	GET_CART,
 	NULLIFY_ERROR,
+	RESET_TRANSACTION,
 } from "../types";
 import { apiUrl_cart } from "../../helpers";
 import Swal from "sweetalert2";
@@ -62,6 +63,7 @@ const cartGetAction = (userId) => {
 				type: GET_CART,
 				payload: response.data,
 			});
+			dispatch({ type: RESET_TRANSACTION });
 			dispatch({ type: API_LOADING_SUCCESS });
 		} catch (err) {
 			if (!err.response) return dispatch({ type: API_LOADING_ERROR });

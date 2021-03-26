@@ -1,4 +1,4 @@
-const { warehouse, transaction, transactionItem } = require("../models");
+const { warehouse, transaction, transactionItem, cart } = require("../models");
 
 const getWarehouse = async (req, res, next) => {
 	try {
@@ -11,7 +11,11 @@ const getWarehouse = async (req, res, next) => {
 
 const postTransaction = async (req, res, next) => {
 	try {
-		const { cart, warehouseId, paymentMethodId, amount, weight } = req.body;
+		const { cartItems, warehouseId, paymentMethodId, amount } = req.body;
+		let weight = 0;
+		cartItems.forEach(async (value) => {
+			weight += value.weight * value.qty;
+		});
 		const post = await transaction.create({
 			amount,
 			weight,
@@ -19,7 +23,7 @@ const postTransaction = async (req, res, next) => {
 			warehouse_id: warehouseId,
 			payment_method_id: paymentMethodId,
 		});
-		cart.forEach(async (value) => {
+		cartItems.forEach(async (value) => {
 			await transactionItem.create({
 				qty: value.qty,
 				product_id: value.product_id,
