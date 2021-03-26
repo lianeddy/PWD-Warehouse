@@ -24,6 +24,7 @@ const getProductsAction = (query = "") => {
 			});
 			dispatch({ type: API_LOADING_SUCCESS });
 		} catch (err) {
+			if (!err.response) return dispatch({ type: API_LOADING_ERROR });
 			dispatch({ type: API_LOADING_ERROR, payload: err.response.data.message });
 		}
 	};
@@ -37,6 +38,7 @@ const getProductById = (id) => {
 			dispatch({ type: GET_PRODUCTS_ID, payload: response.data });
 			dispatch({ type: API_LOADING_SUCCESS });
 		} catch (err) {
+			if (!err.response) return dispatch({ type: API_LOADING_ERROR });
 			dispatch({ type: API_LOADING_ERROR, payload: err.response.data.message });
 		}
 	};

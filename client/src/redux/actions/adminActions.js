@@ -17,7 +17,8 @@ const getDashboard = () => {
 			dispatch({ type: GET_DASHBOARD, payload: response.data });
 			dispatch({ type: API_LOADING_SUCCESS });
 		} catch (err) {
-			dispatch({ type: API_LOADING_ERROR, payload: err.response });
+			if (!err.response) return dispatch({ type: API_LOADING_ERROR });
+			dispatch({ type: API_LOADING_ERROR, payload: err.response.data.message });
 		}
 	};
 };

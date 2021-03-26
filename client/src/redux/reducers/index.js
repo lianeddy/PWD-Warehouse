@@ -3,10 +3,12 @@ import { authReducer } from "./authReducer";
 import { productReducer } from "./productReducer";
 import { cartReducer } from "./cartReducer";
 import { adminReducer } from "./adminReducer";
+import { transactionReducer } from "./transactionReducer";
 
 export default combineReducers({
-  authReducer,
-  productReducer,
-  cartReducer,
-  adminReducer,
+	authReducer,
+	productReducer,
+	cartReducer,
+	adminReducer,
+	transactionReducer,
 });

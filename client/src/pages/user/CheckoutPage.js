@@ -4,33 +4,95 @@ import { useDispatch, useSelector } from "react-redux";
 import { Button } from "reactstrap";
 import { LoaderPage } from "../../components";
 import { UserFooter } from "../../components/user";
-import { accentColor, primaryColor, surfaceColor } from "../../helpers";
-import { changeMainAddressAction } from "../../redux/actions";
+import { accentColor, primaryColor } from "../../helpers";
+import {
+	changeMainAddressAction,
+	currentAddressAction,
+	nearestWarehouseAction,
+	updateCartQty,
+} from "../../redux/actions";
 import Loader from "react-loader-spinner";
+import { Redirect } from "react-router-dom";
 
 const CheckoutPage = () => {
 	const styles = useStyles();
 	const dispatch = useDispatch();
-	const { address, username, isLoading } = useSelector(
+	const { id, address, username, isLoading, isLogin } = useSelector(
 		(state) => state.authReducer
 	);
 	const { cart } = useSelector((state) => state.cartReducer);
-	const mainAddress = address.find((value) => {
-		return value.is_main === 1;
-	});
-	const [open, setOpen] = useState(false);
-	const [localUsername, setLocalUsername] = useState("");
-	const [localAddress, setLocalAddress] = useState("");
-	const [localLabel, setLocalLabel] = useState("");
-	const [localPhone, setLocalPhone] = useState("");
-	useEffect(() => {
-		if (!isLoading) {
+	const mainAddress = address.find((value) => value.is_main === 1);
+	const { courier } = useSelector((state) => state.transactionReducer);
+
+	const [openShipping, setOpenShipping] = useState(false);
+	const [openPayment, setOpenPayment] = useState(false);
+	const [openAddress, setOpenAddress] = useState(false);
+	const [localUsername, setLocalUsername] = useState(username);
+	const [localLabel, setLocalLabel] = useState(null);
+	const [localPhone, setLocalPhone] = useState(null);
+	const [localAddress, setLocalAddress] = useState(null);
+	const [localCity, setLocalCity] = useState(null);
+	const [localSubdistrict, setLocalSubdistrict] = useState(null);
+	const [cityId, setCityId] = useState(null);
+	const [shippingInformation, setShippingInformation] = useState(null);
+	// const [warehouse, setWarehouse] = useState([]);
+
+	useEffect(async () => {
+		// const getWarehouse = await axios.get(`${apiUrl_transaction}/warehouse`);
+		// setWarehouse(getWarehouse.data);
+		if (localStorage.getItem("current_address")) {
+			const current_address = JSON.parse(
+				localStorage.getItem("current_address")
+			);
 			setLocalUsername(username);
-			setLocalAddress(mainAddress.alamat_detail);
-			setLocalLabel(mainAddress.label);
-			setLocalPhone(mainAddress.phone);
+			setLocalAddress(current_address.alamat_lengkap);
+			setLocalCity(current_address.kota);
+			setLocalSubdistrict(current_address.kecamatan);
+			setLocalLabel(current_address.label);
+			setLocalPhone(current_address.phone);
+			setCityId(current_address.city_id);
+		}
+	}, []);
+
+	useEffect(() => {
+		if (!isLoading && username) {
+			if (localStorage.getItem("current_address")) {
+				const current_address = JSON.parse(
+					localStorage.getItem("current_address")
+				);
+				setLocalUsername(username);
+				setLocalAddress(current_address.alamat_lengkap);
+				setLocalCity(current_address.kota);
+				setLocalSubdistrict(current_address.kecamatan);
+				setLocalLabel(current_address.label);
+				setLocalPhone(current_address.phone);
+				setCityId(current_address.city_id);
+			} else {
+				setLocalUsername(username);
+				setLocalAddress(mainAddress.alamat_lengkap);
+				setLocalCity(mainAddress.kota);
+				setLocalSubdistrict(mainAddress.kecamatan);
+				setLocalLabel(mainAddress.label);
+				setLocalPhone(mainAddress.phone);
+				setCityId(mainAddress.city_id);
+			}
 		}
 	}, [address]);
+
+	useEffect(() => {
+		let weight = 0;
+		cart.forEach((value) => (weight += value.weight * value.qty));
+		if (localCity && localSubdistrict && cityId) {
+			const payload = {
+				weight,
+				city: localCity,
+				subDistrict: localSubdistrict,
+				cityId,
+			};
+			dispatch(nearestWarehouseAction(payload));
+		}
+	}, [openShipping === true]);
+
 	const handleSetToMainAddressBtn = (mainAfterId) => {
 		const payload = {
 			mainBeforeId: mainAddress.id,
@@ -40,10 +102,22 @@ const CheckoutPage = () => {
 	};
 
 	const handleSelectBtn = (value) => {
-		setLocalAddress(value.alamat_detail);
-		setLocalLabel(value.label);
-		setLocalPhone(value.phone);
+		dispatch(currentAddressAction(value));
+		const current_address = JSON.parse(localStorage.getItem("current_address"));
+		setLocalUsername(username);
+		setLocalAddress(current_address.alamat_lengkap);
+		setLocalCity(current_address.kota);
+		setLocalSubdistrict(current_address.kecamatan);
+		setLocalLabel(current_address.label);
+		setLocalPhone(current_address.phone);
 	};
+	console.log(shippingInformation);
+	const handleOngkirBtn = (payload) => {
+		setShippingInformation(payload);
+		setOpenShipping(false);
+	};
+
+	const handleProcessBtn = () => {};
 
 	const renderList = () => {
 		return cart.map((value) => {
@@ -53,21 +127,23 @@ const CheckoutPage = () => {
 						<div
 							style={{
 								width: "15%",
-								height: 100,
-								width: 100,
+								maxHeight: 100,
+								maxWidth: 100,
 								backgroundColor: accentColor,
 								borderRadius: 5,
 							}}
 						>
 							<img
-								src={value.image}
-								alt="file_err"
+								src={value.imagepath}
+								alt={value.imagepath}
 								style={{
 									backgroundColor: accentColor,
 									borderRadius: 5,
 									objectFit: "contain",
 									height: 100,
+									maxHeight: 100,
 									width: 100,
+									maxWidth: 100,
 								}}
 							/>
 						</div>
@@ -97,6 +173,15 @@ const CheckoutPage = () => {
 								<Button
 									style={{ paddingInline: 5, paddingBlock: 0 }}
 									className={styles.primaryBtn}
+									onClick={() =>
+										dispatch(
+											updateCartQty({
+												userId: id,
+												cartId: value.id,
+												qty: value.qty - 1,
+											})
+										)
+									}
 								>
 									<div className={styles.primaryBtnChild}>-</div>
 								</Button>
@@ -106,6 +191,15 @@ const CheckoutPage = () => {
 								<Button
 									style={{ paddingInline: 5, paddingBlock: 0 }}
 									className={styles.primaryBtn}
+									onClick={() =>
+										dispatch(
+											updateCartQty({
+												userId: id,
+												cartId: value.id,
+												qty: value.qty + 1,
+											})
+										)
+									}
 								>
 									<div className={styles.primaryBtnChild}>+</div>
 								</Button>
@@ -166,10 +260,10 @@ const CheckoutPage = () => {
 							)}
 						</div>
 						<div>{value.phone}</div>
-						<div>{value.alamat_detail}</div>
+						<div>{value.alamat_lengkap}</div>
 					</div>
 					<div>
-						{value.alamat_detail === localAddress ? (
+						{value.alamat_lengkap === localAddress ? (
 							<div>
 								<Button className={styles.primaryBtn}>
 									<div className={styles.primaryBtnChild}>selected</div>
@@ -203,17 +297,149 @@ const CheckoutPage = () => {
 		});
 	};
 
-	const toggleDrawer = (event, isOpen) => {
+	const renderCourier = () => {
+		let courierLogo;
+		if (Object.keys(courier).length !== 0) {
+			if (isLoading) return <Loader type="TailSpin" />;
+			return courier.results.map((value, index) => {
+				if (value.code === "jne")
+					courierLogo = "https://i.imgur.com/jPd0DaH.png";
+				if (value.code === "pos")
+					courierLogo = "https://i.imgur.com/yJ7HlFZ.png";
+				if (value.code === "tiki")
+					courierLogo = "https://i.imgur.com/amM6lgA.png";
+				return (
+					<div key={index} style={{}}>
+						<div style={{ marginBottom: 0 }}>
+							<div>
+								<div
+									style={{
+										display: "flex",
+										justifyContent: "space-between",
+									}}
+								>
+									<div
+										style={{
+											paddingInline: 5,
+											display: "flex",
+											justifyContent: "center",
+											alignItems: "center",
+											width: "30%",
+										}}
+									>
+										<img
+											src={courierLogo}
+											alt="file_err"
+											style={{ height: 50, width: 100, objectFit: "contain" }}
+										/>
+									</div>
+									<div
+										style={{
+											width: "65%",
+											display: "flex",
+											flexDirection: "column",
+										}}
+									>
+										{value.costs.map((item) => {
+											return (
+												<Button
+													className={styles.whiteBtn}
+													style={{ marginBlock: 2 }}
+													onClick={() =>
+														handleOngkirBtn({
+															courier: value.code,
+															service: item.service,
+															description: item.description,
+															cost: item.cost[0].value,
+															etd: item.cost[0].etd,
+														})
+													}
+												>
+													<div className={styles.whiteBtnChild}>
+														<div>
+															<span style={{ textTransform: "uppercase" }}>
+																{value.code}
+															</span>
+															<span>{" - "}</span>
+															<span>{item.service}</span>
+														</div>
+														<div>{item.cost[0].value.toLocaleString()}</div>
+														<div>estimasi {item.cost[0].etd} hari</div>
+													</div>
+												</Button>
+											);
+										})}
+									</div>
+								</div>
+							</div>
+							<div className={styles.divider}></div>
+						</div>
+					</div>
+				);
+			});
+		}
+		return null;
+	};
+
+	const renderSubTotal = () => {
+		let subTotal = 0;
+		cart.forEach((value) => {
+			subTotal += value.price * value.qty;
+		});
+		return subTotal;
+	};
+
+	const renderTotalWeight = () => {
+		let weight = 0;
+		let qty = 0;
+		cart.forEach((value) => {
+			weight += value.weight * value.qty;
+			qty += value.qty;
+		});
+		return `${weight.toLocaleString()} gr / ${qty} items`;
+	};
+
+	const renderBilling = () => {
+		let bill = 0;
+		if (shippingInformation) {
+			bill += renderSubTotal() + shippingInformation.cost;
+		} else {
+			bill += renderSubTotal();
+		}
+		return bill;
+	};
+
+	const toggleDrawerAddress = (event, isOpen) => {
 		if (
 			event.type === "keydown" &&
 			(event.key === "Tab" || event.key === "Shift")
 		) {
 			return;
 		}
-
-		setOpen(isOpen);
+		setOpenAddress(isOpen);
 	};
 
+	const toggleDrawerShipping = (event, isOpen) => {
+		if (
+			event.type === "keydown" &&
+			(event.key === "Tab" || event.key === "Shift")
+		) {
+			return;
+		}
+		setOpenShipping(isOpen);
+	};
+
+	const toggleDrawerPayment = (event, isOpen) => {
+		if (
+			event.type === "keydown" &&
+			(event.key === "Tab" || event.key === "Shift")
+		) {
+			return;
+		}
+		setOpenPayment(isOpen);
+	};
+
+	if (!isLogin && username === "") return <Redirect to="/login" />;
 	if (isLoading) return <LoaderPage />;
 
 	return (
@@ -284,7 +510,7 @@ const CheckoutPage = () => {
 								<div style={{ display: "flex" }}>
 									<Button
 										className={styles.whiteBtn}
-										onClick={(e) => toggleDrawer(e, true)}
+										onClick={(e) => toggleDrawerAddress(e, true)}
 									>
 										<div className={styles.whiteBtnChildChangeAddress}>
 											change address
@@ -292,8 +518,8 @@ const CheckoutPage = () => {
 									</Button>
 									<Drawer
 										anchor="right"
-										open={open}
-										onClose={(e) => toggleDrawer(e, false)}
+										open={openAddress}
+										onClose={(e) => toggleDrawerAddress(e, false)}
 									>
 										<div
 											style={{
@@ -350,11 +576,20 @@ const CheckoutPage = () => {
 									style={{
 										display: "flex",
 										justifyContent: "space-between",
-										fontWeight: 600,
+										alignItems: "center",
 									}}
 								>
-									<div>Subtotal</div>
-									<div>Rp9090909</div>
+									<div>
+										<div style={{ fontWeight: 600 }}>Subtotal</div>
+										<div style={{ fontSize: 13, paddingLeft: 20 }}>
+											{renderTotalWeight()}
+										</div>
+									</div>
+									<div>
+										<div style={{ fontSize: 20, fontWeight: 600 }}>
+											{renderSubTotal()}
+										</div>
+									</div>
 								</div>
 							</div>
 						</div>
@@ -373,6 +608,8 @@ const CheckoutPage = () => {
 							boxShadow: "0 0 5px 0 rgba(0,0,0,0.15)",
 							borderRadius: 10,
 							height: "100%",
+							position: "sticky",
+							top: 50,
 						}}
 					>
 						<div
@@ -385,14 +622,101 @@ const CheckoutPage = () => {
 							}}
 						>
 							<div style={{ marginBottom: 5 }}>
-								<Button style={{ width: "100%" }} className={styles.whiteBtn2}>
+								<Button
+									style={{ width: "100%" }}
+									className={styles.whiteBtn2}
+									onClick={(e) => toggleDrawerShipping(e, true)}
+								>
 									<div className={styles.whiteBtnChild}>Shipping</div>
 								</Button>
+								<Drawer
+									anchor="right"
+									open={openShipping}
+									onClose={(e) => toggleDrawerShipping(e, false)}
+								>
+									{isLoading ? (
+										<Loader type="Plane" />
+									) : (
+										<div
+											style={{
+												width: "400px",
+											}}
+										>
+											<div
+												style={{
+													backgroundColor: primaryColor,
+													display: "flex",
+													justifyContent: "center",
+													paddingBlock: 20,
+													boxShadow: "0 0 10px 1px rgba(0,0,0,0.3)",
+													fontWeight: 600,
+													fontSize: 18,
+													marginBottom: 20,
+												}}
+											>
+												<div>Shipping</div>
+											</div>
+											<div style={{ padding: 0 }}>{renderCourier()}</div>
+										</div>
+									)}
+								</Drawer>
 							</div>
 							<div>
-								<Button style={{ width: "100%" }} className={styles.whiteBtn2}>
+								<Button
+									style={{ width: "100%" }}
+									className={styles.whiteBtn2}
+									onClick={(e) => toggleDrawerPayment(e, true)}
+								>
 									<div className={styles.whiteBtnChild}>Payment Method</div>
 								</Button>
+								<Drawer
+									anchor="right"
+									open={openPayment}
+									onClose={(e) => toggleDrawerPayment(e, false)}
+								>
+									<div
+										style={{
+											width: "400px",
+										}}
+									>
+										<div
+											style={{
+												backgroundColor: primaryColor,
+												display: "flex",
+												justifyContent: "center",
+												paddingBlock: 20,
+												boxShadow: "0 0 10px 1px rgba(0,0,0,0.3)",
+												fontWeight: 600,
+												fontSize: 18,
+												// marginBottom: 100,
+											}}
+										>
+											<div>Change Address</div>
+										</div>
+										<div style={{ padding: 20 }}>{renderAddress()}</div>
+										<div style={{ paddingTop: 32 }}>
+											<div
+												style={{
+													position: "fixed",
+													bottom: 0,
+													width: "400px",
+													backgroundColor: "red",
+													color: "white",
+													textAlign: "center",
+												}}
+											>
+												<Button
+													className={styles.primaryBtn}
+													style={{ width: "100%", borderRadius: 0 }}
+												>
+													<div className={styles.primaryBtnChild}>
+														+ Add New Address
+													</div>
+												</Button>
+											</div>
+										</div>
+									</div>
+								</Drawer>
 							</div>
 						</div>
 						<div
@@ -413,18 +737,22 @@ const CheckoutPage = () => {
 								}}
 							>
 								<div>total price</div>
-								<div>rp1232123</div>
+								<div>Rp{renderSubTotal()}</div>
 							</div>
-							<div
-								style={{
-									display: "flex",
-									justifyContent: "space-between",
-									lineHeight: 1.7,
-									fontSize: 14,
-								}}
-							>
-								<div>shipping cost</div>
-								<div>rp123</div>
+							<div>
+								{shippingInformation ? (
+									<div
+										style={{
+											display: "flex",
+											justifyContent: "space-between",
+											lineHeight: 1.7,
+											fontSize: 14,
+										}}
+									>
+										<div>shipping cost</div>
+										<div>Rp{shippingInformation.cost.toLocaleString()}</div>
+									</div>
+								) : null}
 							</div>
 							<div className={styles.divider}></div>
 							<div
@@ -442,11 +770,15 @@ const CheckoutPage = () => {
 										color: "rgba(250, 89, 29)",
 									}}
 								>
-									Rp700000
+									Rp{renderBilling().toLocaleString()}
 								</div>
 							</div>
 							<div>
-								<Button style={{ width: "100%" }} className={styles.primaryBtn}>
+								<Button
+									style={{ width: "100%" }}
+									className={styles.primaryBtn}
+									onClick={handleProcessBtn}
+								>
 									<div className={styles.primaryBtnChild}>Process</div>
 								</Button>
 							</div>

@@ -37,6 +37,7 @@ const getCartByUserId = async (req, res, next) => {
 				id: val.id,
 				product_id: val.product.id,
 				name: val.product.name,
+				weight: val.product.weight,
 				price: val.product.price,
 				category: val.product.category.category,
 				description: val.product.description,

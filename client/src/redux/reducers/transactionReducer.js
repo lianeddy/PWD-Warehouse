@@ -2,18 +2,20 @@ import {
 	API_LOADING_ERROR,
 	API_LOADING_START,
 	API_LOADING_SUCCESS,
-	GET_CART,
 	NULLIFY_ERROR,
+	NEAREST_WAREHOUSE,
+	GET_COURIER,
 } from "../types";
 
 const INITIAL_STATE = {
-	cart: [],
 	isLoading: false,
 	isError: false,
 	errorMessage: "",
+	nearestWarehouse: {},
+	courier: {},
 };
 
-const cartReducer = (state = INITIAL_STATE, action) => {
+const transactionReducer = (state = INITIAL_STATE, action) => {
 	switch (action.type) {
 		case API_LOADING_START:
 			return {
@@ -28,25 +30,29 @@ const cartReducer = (state = INITIAL_STATE, action) => {
 		case API_LOADING_ERROR:
 			return {
 				...state,
-				errorMessage: action.payload,
-				isError: true,
 				isLoading: false,
+				isError: true,
+				errorMessage: action.payload,
 			};
 		case NULLIFY_ERROR:
 			return {
 				...state,
-				errorMessage: "",
 				isError: false,
+				errorMessage: "",
 			};
-
-		case GET_CART:
+		case NEAREST_WAREHOUSE:
 			return {
 				...state,
-				cart: action.payload,
+				nearestWarehouse: action.payload,
+			};
+		case GET_COURIER:
+			return {
+				...state,
+				courier: action.payload,
 			};
 		default:
 			return state;
 	}
 };
 
-export { cartReducer };
+export { transactionReducer };

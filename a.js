@@ -19,3 +19,10 @@ if (res) {
 let a = "kocak banget";
 let b = a.replace(" ", "%20");
 console.log(b);
+
+let c = {};
+if (Object.keys(c).length !== 0) {
+	console.log(c);
+} else {
+	console.log("ea");
+}

@@ -55,13 +55,10 @@ const loginAction = (data) => {
 				},
 			});
 			dispatch(cartGetAction(id));
-			dispatch(getDashboard());
 			dispatch({ type: API_LOADING_SUCCESS });
 		} catch (err) {
-			dispatch({
-				type: API_LOADING_ERROR,
-				payload: err.response.data.message,
-			});
+			if (!err.response) return dispatch({ type: API_LOADING_ERROR });
+			dispatch({ type: API_LOADING_ERROR, payload: err.response.data.message });
 			Swal.fire({
 				title: "Your Email or Password is Wrong!",
 				text: `${err.response.data.message}`,
@@ -121,14 +118,12 @@ const keepLoginAction = () => {
 				},
 			});
 			dispatch(cartGetAction(id));
-			// await dispatch(getDashboard());
 			dispatch({
 				type: API_LOADING_SUCCESS,
 			});
 		} catch (err) {
-			dispatch({
-				type: API_LOADING_SUCCESS,
-			});
+			if (!err.response) return dispatch({ type: API_LOADING_ERROR });
+			dispatch({ type: API_LOADING_ERROR, payload: err.response.data.message });
 		}
 	};
 };
@@ -168,6 +163,7 @@ const authRegisterAction = (payload) => {
 			});
 			dispatch({ type: API_LOADING_SUCCESS });
 		} catch (err) {
+			if (!err.response) return dispatch({ type: API_LOADING_ERROR });
 			dispatch({ type: API_LOADING_ERROR, payload: err.response.data.message });
 		}
 	};
@@ -220,7 +216,8 @@ const emailVerificationSuccessAction = (payload) => {
 			});
 			dispatch({ type: API_LOADING_SUCCESS });
 		} catch (err) {
-			dispatch({ type: API_LOADING_ERROR, payload: err.response.data.error });
+			if (!err.response) return dispatch({ type: API_LOADING_ERROR });
+			dispatch({ type: API_LOADING_ERROR, payload: err.response.data.message });
 		}
 	};
 };
@@ -254,11 +251,10 @@ const authRegisteredCheck = (payload) => {
 			});
 
 			dispatch({ type: WANT_TO_CHANGE_PASS });
+			dispatch({ type: API_LOADING_SUCCESS });
 		} catch (err) {
-			dispatch({
-				type: API_LOADING_ERROR,
-				payload: err.response.data.message,
-			});
+			if (!err.response) return dispatch({ type: API_LOADING_ERROR });
+			dispatch({ type: API_LOADING_ERROR, payload: err.response.data.message });
 		}
 	};
 };
@@ -313,10 +309,8 @@ const authChangePasswordEmailRequest = (payload) => {
 				type: API_LOADING_SUCCESS,
 			});
 		} catch (err) {
-			dispatch({
-				type: API_LOADING_ERROR,
-				payload: err.response.data.message,
-			});
+			if (!err.response) return dispatch({ type: API_LOADING_ERROR });
+			dispatch({ type: API_LOADING_ERROR, payload: err.response.data.message });
 		}
 	};
 };
@@ -343,10 +337,8 @@ const getChangePasswordUserData = (payload) => {
 				payload: { id, email, wantToChangePass: true, registered: true },
 			});
 		} catch (err) {
-			dispatch({
-				type: API_LOADING_ERROR,
-				payload: err.response.data.message,
-			});
+			if (!err.response) return dispatch({ type: API_LOADING_ERROR });
+			dispatch({ type: API_LOADING_ERROR, payload: err.response.data.message });
 		}
 	};
 };
@@ -389,10 +381,8 @@ const authChangePassword = (payload) => {
 				type: RESET_INITIAL_STATE,
 			});
 		} catch (err) {
-			dispatch({
-				type: API_LOADING_ERROR,
-				payload: err.response.data.message,
-			});
+			if (!err.response) return dispatch({ type: API_LOADING_ERROR });
+			dispatch({ type: API_LOADING_ERROR, payload: err.response.data.message });
 		}
 	};
 };
@@ -446,6 +436,7 @@ const changeMainAddressAction = (payload) => {
 			});
 			dispatch({ type: API_LOADING_SUCCESS });
 		} catch (err) {
+			if (!err.response) return dispatch({ type: API_LOADING_ERROR });
 			dispatch({ type: API_LOADING_ERROR, payload: err.response.data.message });
 		}
 	};

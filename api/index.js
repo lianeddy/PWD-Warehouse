@@ -2,10 +2,11 @@ const express = require("express");
 const cors = require("cors");
 const { errorHandler } = require("./handlers");
 const {
-  userRouters,
-  productRouters,
-  adminRouters,
-  cartRouters,
+	userRouters,
+	productRouters,
+	adminRouters,
+	cartRouters,
+	transactionRouters,
 } = require("./routers");
 const bearerToken = require("express-bearer-token");
 
@@ -21,6 +22,7 @@ app.get("/", (req, res) => res.status(200).send("nature goods api"));
 app.use("/user", userRouters);
 app.use("/product", productRouters);
 app.use("/cart", cartRouters);
+app.use("/transaction", transactionRouters);
 app.use("/admin", adminRouters);
 
 app.use(errorHandler);
