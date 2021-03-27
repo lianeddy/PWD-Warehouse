@@ -194,17 +194,17 @@ const getDashboard = async (req, res, next) => {
 		});
 
 		const monthlyReport = {
-			range: rangeMonthly,
+			range: rangeMonthly ? rangeMonthly : null,
 			profit: parseInt(monthlyProfit),
 			transaction: monthlyTransaction,
 		};
 		const weeklyReport = {
-			range: rangeWeekly,
+			range: rangeWeekly ? rangeWeekly : null,
 			profit: parseInt(weeklyProfit),
 			transaction: weeklyTransaction,
 		};
 		const dailyReport = {
-			range: rangeDaily,
+			range: rangeDaily ? rangeDaily : null,
 			profit: parseInt(dailyProfit),
 			transaction: dailyTransaction,
 		};

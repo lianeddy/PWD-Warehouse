@@ -4,6 +4,7 @@ import { productReducer } from "./productReducer";
 import { cartReducer } from "./cartReducer";
 import { adminReducer } from "./adminReducer";
 import { transactionReducer } from "./transactionReducer";
+import { daerahReducer } from "./daerahReducer";
 
 export default combineReducers({
 	authReducer,
@@ -11,4 +12,5 @@ export default combineReducers({
 	cartReducer,
 	adminReducer,
 	transactionReducer,
+	daerahReducer,
 });

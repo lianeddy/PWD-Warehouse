@@ -1,197 +1,424 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
+import { accentColor, primaryColor, surfaceColor } from "../../helpers";
+import { ResponsiveLine } from "@nivo/line";
 import { useDispatch, useSelector } from "react-redux";
 import { LoaderPage } from "../../components";
 import { Redirect } from "react-router-dom";
-import { accentColor, primaryColor, surfaceColor } from "../../helpers";
-import { makeStyles } from "@material-ui/core";
-import { Fade } from "react-reveal";
-import {
-	HomeAdminPage,
-	InvoiceAdminPage,
-	ProductAdminPage,
-	ProfileAdminPage,
-} from ".";
-import { getDashboard, logoutAction } from "../../redux/actions";
-import Swal from "sweetalert2";
 
-const menusSideBar = [
-	{ icon: "bi bi-house", value: "Dashboard" },
-	{ icon: "bi bi-hdd", value: "Product" },
-	{ icon: "bi bi-journal-text", value: "Invoice" },
-];
+const HomeAdminPage = ({ current }) => {
+	const {
+		totalProfit,
+		totalClient,
+		totalOrder,
+		dailyReport,
+		weeklyReport,
+		monthlyReport,
+		anualReport,
+	} = useSelector((state) => state.adminReducer.dashboard);
+	const { isLoading, isLogin } = useSelector((state) => state.authReducer);
 
-const Dashboard = () => {
-	const styles = useStyles();
-	const dispatch = useDispatch();
-	const { isLogin, isLoading, username, roleId } = useSelector(
-		(state) => state.authReducer
-	);
-
-	const [current, setCurrent] = useState(0);
-
-	useEffect(() => {
-		dispatch(getDashboard());
-	}, []);
-
-	const handleLogoutBtn = () => {
-		Swal.fire({
-			title: "Logout",
-			text: "You will be returned to home page",
-			icon: "warning",
-			showCancelButton: true,
-			confirmButtonColor: "#3085d6",
-			cancelButtonColor: "#d33",
-			confirmButtonText: "Sure",
-		}).then((result) => {
-			if (result.isConfirmed) {
-				dispatch(logoutAction());
-				return <Redirect to="/" />;
-			}
-		});
-	};
-
-	if (isLoading) return <LoaderPage />;
-	if (isLogin && roleId === 2) return <Redirect to="/login" />;
+	console.log(isLogin);
 	if (!isLogin) return <Redirect to="/login" />;
-
-	const renderMenuSideBar = () => {
-		return menusSideBar.map((menu, index) => {
-			return (
-				<div
-					className={styles.menuListItem}
-					key={menu.value}
-					onClick={(e) => setCurrent(index)}
-				>
-					<i
-						className={menu.icon}
-						style={{ fontSize: 20, marginRight: 15 }}
-					></i>
-					<div style={{ fontSize: 15 }}>{menu.value}</div>
-				</div>
-			);
-		});
-	};
+	if (isLoading) return <LoaderPage />;
 
 	return (
-		<div className="d-flex" style={{ maxWidth: "100wh" }}>
+		<div
+			style={{
+				minHeight: "100vh",
+				backgroundColor: primaryColor,
+				paddingBlock: 20,
+				paddingInline: 30,
+				// display: current === 0 ? "block" : "none",
+			}}
+		>
 			<div
-				style={{
-					width: "30%",
-					maxWidth: 300,
-					minWidth: 300,
-					minHeight: "100vh",
-					boxShadow: "1px 0 10px 1px rgba(0,0,0,0.3)",
-					zIndex: 1,
-				}}
+				className="d-flex justify-content-between"
+				style={{ marginBottom: 20 }}
 			>
 				<div
 					style={{
-						backgroundImage: 'url("https://i.imgur.com/bNGZmNQ.jpg")',
-						height: 125,
-						display: "flex",
-						alignItems: "flex-end",
-						padding: 20,
+						height: 200,
+						backgroundColor: accentColor,
+						borderRadius: 10,
+						width: "32.5%",
+						boxShadow: "0 0 10px 1px rgba(0,0,0,0.3)",
 					}}
 				>
-					<div className="d-flex align-items-end">
-						<div className="mr-3">
-							<img
-								src="https://icon-library.com/images/avatar-icon-images/avatar-icon-images-4.jpg"
-								alt="file_err"
-								width="50"
-								height="50"
+					<div
+						className="d-flex justify-content-between"
+						style={{ height: "100%", padding: 20 }}
+					>
+						<div className="d-flex align-items-center">
+							<div
 								style={{
-									objectFit: "contain",
-									backgroundColor: primaryColor,
+									display: "flex",
+									justifyContent: "center",
+									alignItems: "center",
+									width: 60,
+									height: 60,
 									borderRadius: 50,
+									backgroundColor: "rgba(0,0,0,0.15)",
 								}}
-							/>
+							>
+								<i
+									className="bi bi-cart3"
+									style={{
+										fontSize: 25,
+										color: "white",
+									}}
+								></i>
+							</div>
 						</div>
-						<div>
-							<div>{username}</div>
-							<div style={{ fontSize: 12, color: "gray" }}>Administrator</div>
+						<div
+							style={{
+								display: "flex",
+								flexDirection: "column",
+								justifyContent: "space-evenly",
+								alignItems: "flex-end",
+							}}
+						>
+							<div className="d-flex flex-column align-items-end">
+								<div
+									style={{
+										fontSize: 22,
+										color: "white",
+									}}
+								>
+									Orders
+								</div>
+								<div
+									style={{ backgroundColor: "white", width: 30, height: 3 }}
+								></div>
+							</div>
+							<div style={{ fontSize: 16, color: "white" }}>
+								{totalOrder ? totalOrder.toLocaleString() : 0}
+							</div>
 						</div>
 					</div>
 				</div>
-				<div>
-					<div style={{ marginBottom: 10, paddingInline: 20, paddingTop: 20 }}>
+				<div
+					style={{
+						height: 200,
+						backgroundColor: accentColor,
+						borderRadius: 10,
+						width: "32.5%",
+						boxShadow: "0 0 10px 1px rgba(0,0,0,0.3)",
+					}}
+				>
+					<div
+						className="d-flex justify-content-between"
+						style={{ height: "100%", padding: 20 }}
+					>
+						<div className="d-flex align-items-center">
+							<div
+								style={{
+									display: "flex",
+									justifyContent: "center",
+									alignItems: "center",
+									width: 60,
+									height: 60,
+									borderRadius: 50,
+									backgroundColor: "rgba(0,0,0,0.15)",
+								}}
+							>
+								<i
+									className="bi bi-people"
+									style={{
+										fontSize: 25,
+										color: "white",
+									}}
+								></i>
+							</div>
+						</div>
 						<div
 							style={{
-								textTransform: "uppercase",
-								fontWeight: 600,
-								color: "gray",
+								display: "flex",
+								flexDirection: "column",
+								justifyContent: "space-evenly",
+								alignItems: "flex-end",
 							}}
 						>
-							authentication
+							<div className="d-flex flex-column align-items-end">
+								<div
+									style={{
+										fontSize: 22,
+										color: "white",
+									}}
+								>
+									Client
+								</div>
+								<div
+									style={{ backgroundColor: "white", width: 30, height: 3 }}
+								></div>
+							</div>
+							<div style={{ fontSize: 16, color: "white" }}>
+								{totalClient ? totalClient.toLocaleString() : 0}
+							</div>
 						</div>
 					</div>
-					<div>
-						<div className={styles.menuListItem} onClick={(e) => setCurrent(3)}>
-							<i
-								className="bi bi-emoji-smile"
-								style={{ fontSize: 20, marginRight: 15 }}
-							></i>
-							<div style={{ fontSize: 15 }}>Profile</div>
+				</div>
+				<div
+					style={{
+						height: 200,
+						backgroundColor: accentColor,
+						borderRadius: 10,
+						width: "32.5%",
+						boxShadow: "0 0 10px 1px rgba(0,0,0,0.3)",
+					}}
+				>
+					<div
+						className="d-flex justify-content-between"
+						style={{ height: "100%", padding: 20 }}
+					>
+						<div className="d-flex align-items-center">
+							<div
+								style={{
+									display: "flex",
+									justifyContent: "center",
+									alignItems: "center",
+									width: 60,
+									height: 60,
+									borderRadius: 50,
+									backgroundColor: "rgba(0,0,0,0.15)",
+								}}
+							>
+								<i
+									className="bi bi-wallet2"
+									style={{
+										fontSize: 25,
+										color: "white",
+									}}
+								></i>
+							</div>
 						</div>
-						<div className={styles.menuListItem} onClick={handleLogoutBtn}>
-							<i
-								className="bi bi-key"
-								style={{ fontSize: 20, marginRight: 15 }}
-							></i>
-							<div style={{ fontSize: 15 }}>Logout</div>
-						</div>
-					</div>
-					<div style={{ marginBottom: 10, paddingInline: 20, paddingTop: 20 }}>
 						<div
 							style={{
-								textTransform: "uppercase",
-								fontWeight: 600,
-								color: "gray",
+								display: "flex",
+								flexDirection: "column",
+								justifyContent: "space-evenly",
+								alignItems: "flex-end",
 							}}
 						>
-							Menu
+							<div className="d-flex flex-column align-items-end">
+								<div
+									style={{
+										fontSize: 22,
+										color: "white",
+									}}
+								>
+									Profit
+								</div>
+								<div
+									style={{ backgroundColor: "white", width: 30, height: 3 }}
+								></div>
+							</div>
+							<div style={{ fontSize: 16, color: "white" }}>
+								{totalProfit ? totalProfit.toLocaleString() : 0} IDR
+							</div>
 						</div>
 					</div>
-					<div>{renderMenuSideBar()}</div>
 				</div>
 			</div>
 			<div
 				style={{
-					width: "100%",
-					backgroundColor: accentColor,
-					minHeight: "100vh",
+					display: "flex",
+					justifyContent: "space-between",
+					height: 400,
 				}}
 			>
-				<Fade bottom collapse duration={500} when={current === 0}>
-					<HomeAdminPage current={current} />
-				</Fade>
-				<div>
-					<Fade bottom collapse duration={500} when={current === 1}>
-						<ProductAdminPage current={current} />
-					</Fade>
+				<div
+					style={{
+						width: "65%",
+						backgroundColor: "white",
+						borderRadius: 10,
+						boxShadow: "0 0 10px 1px rgba(0,0,0,0.3)",
+					}}
+				>
+					<ResponsiveLine
+						data={anualReport}
+						margin={{ top: 50, right: 100, bottom: 50, left: 100 }}
+						xScale={{ type: "point" }}
+						yScale={{
+							type: "linear",
+							min: 0,
+							max: "auto",
+							stacked: true,
+							reverse: false,
+						}}
+						min={-1000}
+						// yFormat=" >-.0f"
+						curve="catmullRom"
+						colors={{ scheme: "dark2" }}
+						lineWidth={5}
+						enableArea={true}
+						areaBaselineValue={10}
+						areaBlendMode="multiply"
+						areaOpacity={0.5}
+						axisTop={null}
+						axisLeft={{
+							orient: "left",
+							tickSize: 0,
+							tickPadding: 20,
+							tickRotation: 0,
+							legend: "order",
+							legendOffset: -60,
+							legendPosition: "middle",
+						}}
+						axisRight={null}
+						pointSize={20}
+						pointColor={{ theme: "background" }}
+						pointBorderWidth={3}
+						pointBorderColor={{ from: "color", modifier: [] }}
+						pointLabelYOffset={-12}
+						enableGridX={false}
+						enableGridY={false}
+						useMesh={true}
+						enableSlices="x"
+						animate={false}
+						enableCrosshair={false}
+						isInteractive={true}
+						legends={[
+							{
+								anchor: "top-right",
+								direction: "column",
+								justify: true,
+								translateX: 50,
+								translateY: 0,
+								itemsSpacing: 0,
+								itemDirection: "left-to-right",
+								itemWidth: 50,
+								itemHeight: 18,
+								itemOpacity: 0.75,
+								symbolSize: 20,
+								symbolShape: "circle",
+								symbolBorderColor: "rgba(0, 0, 0, .5)",
+								effects: [
+									{
+										on: "hover",
+										style: {
+											itemBackground: "rgba(0, 0, 0, .03)",
+											itemOpacity: 1,
+										},
+									},
+								],
+							},
+						]}
+					/>
 				</div>
-				<Fade bottom collapse duration={500} when={current === 2}>
-					<InvoiceAdminPage current={current} />
-				</Fade>
-				<Fade bottom collapse duration={500} when={current === 3}>
-					<ProfileAdminPage current={current} />
-				</Fade>
+				<div
+					style={{
+						width: "34%",
+						height: "100%",
+						backgroundColor: surfaceColor,
+						borderRadius: 10,
+						boxShadow: "0 0 10px 1px rgba(0,0,0,0.3)",
+						padding: 20,
+					}}
+				>
+					<div
+						className="d-flex justify-content-between align-items-center"
+						style={{
+							backgroundColor: primaryColor,
+							borderRadius: 10,
+							marginBottom: 5,
+							padding: 10,
+						}}
+					>
+						<div>
+							<div>Today</div>
+							<div>
+								{dailyReport.range ? (
+									<div style={{ fontSize: 10, color: "gray" }}>
+										{dailyReport.range.to_dayname}, {dailyReport.range.to_date}{" "}
+										{dailyReport.range.to_monthname} {dailyReport.range.to_year}
+									</div>
+								) : null}
+							</div>
+						</div>
+						<div>
+							<div>Earn</div>
+							<div>
+								{dailyReport.profit ? dailyReport.profit.toLocaleString() : 0}{" "}
+								IDR
+							</div>
+						</div>
+					</div>
+					<div
+						className="d-flex justify-content-between align-items-center"
+						style={{
+							backgroundColor: primaryColor,
+							borderRadius: 10,
+							marginBottom: 5,
+							padding: 10,
+						}}
+					>
+						<div>
+							<div>Weekly</div>
+							<div>
+								{weeklyReport.range ? (
+									weeklyReport.range.from_monthname !==
+									weeklyReport.range.to_monthname ? (
+										<div style={{ fontSize: 10, color: "gray" }}>
+											{weeklyReport.range.from_date}{" "}
+											{weeklyReport.range.from_monthname} -{" "}
+											{weeklyReport.range.to_date}{" "}
+											{weeklyReport.range.to_monthname}{" "}
+											{weeklyReport.range.to_year}
+										</div>
+									) : (
+										<div style={{ fontSize: 10, color: "gray" }}>
+											{weeklyReport.range.from_date} -{" "}
+											{weeklyReport.range.to_date}{" "}
+											{weeklyReport.range.to_monthname}{" "}
+											{weeklyReport.range.to_year}
+										</div>
+									)
+								) : null}
+							</div>
+						</div>
+						<div>
+							<div>Earning</div>
+							<div className="d-flex justify-content-end">
+								<div>
+									{weeklyReport.profit
+										? weeklyReport.profit.toLocaleString()
+										: 0}{" "}
+									IDR
+								</div>
+							</div>
+						</div>
+					</div>
+					<div>
+						{monthlyReport.range ? (
+							<div
+								className="d-flex justify-content-between align-items-center"
+								style={{
+									backgroundColor: primaryColor,
+									borderRadius: 10,
+									marginBottom: 5,
+									padding: 10,
+								}}
+							>
+								<div>
+									<div>Monthly</div>
+									<div>{monthlyReport.range.to_monthname}</div>
+								</div>
+								<div>
+									<div>Earn</div>
+									<div>
+										{monthlyReport.profit
+											? monthlyReport.profit.toLocaleString()
+											: null}{" "}
+										IDR
+									</div>
+								</div>
+							</div>
+						) : null}
+					</div>
+				</div>
 			</div>
 		</div>
 	);
 };
 
-const useStyles = makeStyles({
-	menuListItem: {
-		display: "flex",
-		alignItems: "center",
-		lineHeight: 2,
-		cursor: "pointer",
-		paddingLeft: 20,
-		"&:hover": {
-			backgroundColor: "rgba(97, 177, 90, 0.3)",
-		},
-	},
-});
-
-export default Dashboard;
+export default HomeAdminPage;

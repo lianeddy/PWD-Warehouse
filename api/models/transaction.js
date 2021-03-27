@@ -17,6 +17,7 @@ const transaction = sequelize.define(
 		order_status_id: DataTypes.TINYINT,
 		warehouse_id: DataTypes.TINYINT,
 		payment_method_id: DataTypes.TINYINT,
+		bill_imagepath: DataTypes.STRING,
 	},
 	{
 		timestamps: false,

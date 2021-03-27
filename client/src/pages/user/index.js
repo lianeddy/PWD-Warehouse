@@ -6,6 +6,7 @@ import CartPage from "./CartPage";
 import EmailRedirectPage from "./EmailRedirectPage";
 import DetailProductPage from "./DetailProductPage";
 import CheckoutPage from "./CheckoutPage";
+import ProfilePage from "./ProfilePage";
 
 export {
 	ForgetPasswordPage,
@@ -16,4 +17,5 @@ export {
 	EmailRedirectPage,
 	DetailProductPage,
 	CheckoutPage,
+	ProfilePage,
 };
