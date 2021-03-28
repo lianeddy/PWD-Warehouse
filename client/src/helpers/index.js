@@ -17,8 +17,12 @@ const accentColor = "#F0A500";
 const matrixAPI_url = "https://api.distancematrix.ai/maps/api/distancematrix";
 const matrixAPI_key = "8V2fGfu36JumHiAyuQFhXuBy3f55K";
 const rajaOngkirAPI_url = "https://api.rajaongkir.com/starter/cost";
-const rajaOngkirAPI_url2 = "https://api.rajaongkir.com/starter/city";
 const rajaOngkirAPI_key = "26023f8ea5be1470c6017085882ead8d";
+const apiDaerah = `https://dev.farizdotid.com/api/daerahindonesia/`;
+const apiDaerah_provinsi = `${apiDaerah}/provinsi`;
+const apiDaerah_kota = `${apiDaerah}/kota`;
+const apiDaerah_kecamatan = `${apiDaerah}/kecamatan`;
+const apiDaerah_kelurahan = `${apiDaerah}/kelurahan`;
 
 export {
   apiUrl,

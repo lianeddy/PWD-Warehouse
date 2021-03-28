@@ -6,7 +6,6 @@ const InvoiceAdminPage = ({ current }) => {
 			style={{
 				minHeight: "100vh",
 				backgroundColor: "pink",
-				display: current === 2 ? "block" : "none",
 			}}
 		>
 			<div>invoice</div>

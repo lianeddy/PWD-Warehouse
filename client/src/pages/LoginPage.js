@@ -46,7 +46,7 @@ const LoginPage = () => {
 		setPasswordShown(passwordShown ? false : true);
 	};
 
-	if (isLogin && roleId === 1) return <Redirect to="/admin" />;
+	if (isLogin && roleId === 1) return <Redirect to="/admin/dashboard" />;
 	if (isLogin && roleId === 2) return <Redirect to="/products" />;
 
 	if (!isLogin) {

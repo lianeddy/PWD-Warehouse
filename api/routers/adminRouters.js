@@ -6,6 +6,8 @@ const {
 	addProductByWarehouse,
 	editProduct,
 	deleteProduct,
+	stockMonitoring,
+	sentPackage,
 } = require("../controllers/adminControllers");
 const { getDashboard } = require("../controllers/adminControllers");
 
@@ -15,5 +17,7 @@ router.post("/add-product/:id", addProductByWarehouse);
 router.get("/dashboard", getDashboard);
 router.patch("/edit-product/:id", editProduct);
 router.delete("/delete/:id", deleteProduct);
+router.get("/monitoring", stockMonitoring);
+router.get("/sent-package", sentPackage);
 
 module.exports = router;

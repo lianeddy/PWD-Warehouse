@@ -6,7 +6,6 @@ const ProductAdminPage = ({ current }) => {
 			style={{
 				minHeight: "100vh",
 				backgroundColor: "teal",
-				display: current === 1 ? "block" : "none",
 			}}
 		>
 			<div>product</div>

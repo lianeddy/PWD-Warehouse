@@ -6,7 +6,6 @@ import {
 	matrixAPI_key,
 	rajaOngkirAPI_url,
 	rajaOngkirAPI_key,
-	rajaOngkirAPI_url2,
 } from "../../helpers";
 import {
 	API_LOADING_ERROR,
@@ -16,6 +15,7 @@ import {
 	GET_COURIER,
 	NEAREST_WAREHOUSE,
 	NULLIFY_ERROR,
+	INSERT_TRANSACTION_DATA,
 } from "../types";
 import { cartGetAction } from "./cartActions";
 
@@ -24,10 +24,10 @@ const currentAddressAction = (payload) => {
 		try {
 			dispatch({ type: NULLIFY_ERROR });
 			dispatch({ type: API_LOADING_START });
+			dispatch({ type: RESET_TRANSACTION });
 			localStorage.setItem("current_address", JSON.stringify(payload));
 			dispatch({ type: API_LOADING_SUCCESS });
 		} catch (err) {
-			console.log(err.response);
 			if (!err.response) return dispatch({ type: API_LOADING_ERROR });
 			dispatch({ type: API_LOADING_ERROR, payload: err.response.data.message });
 		}
@@ -69,7 +69,7 @@ const nearestWarehouseAction = (payload) => {
 				});
 				dispatch({
 					type: NEAREST_WAREHOUSE,
-					payload: distancesUserByWarehouse[0],
+					payload: distancesUserByWarehouse,
 				});
 				const headers = {
 					headers: {
@@ -120,7 +120,6 @@ const nearestWarehouseAction = (payload) => {
 				dispatch({ type: API_LOADING_SUCCESS });
 			}, 3000);
 		} catch (err) {
-			console.log(err.response);
 			if (!err.response) return dispatch({ type: API_LOADING_ERROR });
 			dispatch({ type: API_LOADING_ERROR, payload: err.response.data.message });
 		}
@@ -132,6 +131,7 @@ const postTransaction = (payload) => {
 		try {
 			dispatch({ type: NULLIFY_ERROR });
 			dispatch({ type: API_LOADING_START });
+			localStorage.removeItem("current_address", JSON.stringify(payload));
 			await axios.post(`${apiUrl_transaction}/${payload.userId}`, payload);
 			Swal.fire({
 				icon: "success",
@@ -147,4 +147,69 @@ const postTransaction = (payload) => {
 	};
 };
 
-export { nearestWarehouseAction, currentAddressAction, postTransaction };
+const getTransaction = (userId) => {
+	return async (dispatch) => {
+		try {
+			dispatch({
+				type: NULLIFY_ERROR,
+			});
+
+			dispatch({
+				type: API_LOADING_START,
+			});
+
+			const response = await axios.get(`${apiUrl_transaction}/${userId}`);
+			dispatch({
+				type: INSERT_TRANSACTION_DATA,
+				payload: response.data,
+			});
+
+			dispatch({
+				type: API_LOADING_SUCCESS,
+			});
+		} catch (err) {
+			dispatch({
+				type: API_LOADING_ERROR,
+				payload: err.response.data.message,
+			});
+		}
+	};
+};
+
+const postPaymentBill = (transactionId, imagefile, userId) => {
+	return async (dispatch) => {
+		try {
+			dispatch({ type: NULLIFY_ERROR });
+			dispatch({ type: API_LOADING_START });
+			let form_data = new FormData();
+			const headers = {
+				headers: {
+					"Content-Type": "application/form-data",
+				},
+			};
+			form_data.append("image", imagefile);
+			await axios.post(
+				`${apiUrl_transaction}/bill-of-payment/${transactionId}`,
+				form_data,
+				headers
+			);
+			Swal.fire({
+				icon: "success",
+				title: "we are checking out your payment bill as soon",
+			});
+			dispatch(getTransaction(userId));
+			dispatch({ type: API_LOADING_SUCCESS });
+		} catch (err) {
+			if (!err.response) return dispatch({ type: API_LOADING_ERROR });
+			dispatch({ type: API_LOADING_ERROR, payload: err.response.data.message });
+		}
+	};
+};
+
+export {
+	nearestWarehouseAction,
+	currentAddressAction,
+	postTransaction,
+	getTransaction,
+	postPaymentBill,
+};

@@ -79,6 +79,8 @@ const getProducts = async (req, res, next) => {
 				"name",
 				"price",
 				"weight",
+				"is_available",
+				"is_available_all",
 				"description",
 				"category.category",
 			],
@@ -89,6 +91,29 @@ const getProducts = async (req, res, next) => {
 				},
 			],
 		};
+		const checkProductsStock = await product.findAll({
+			include: [{ model: inventory }, { model: category }],
+		});
+		let getIndex = [];
+		checkProductsStock.forEach((value) => {
+			if (
+				value.inventories[0].stock === 0 &&
+				value.inventories[1].stock === 0 &&
+				value.inventories[2].stock === 0
+			) {
+				getIndex.push(value.id);
+			}
+		});
+		await product.update(
+			{ is_available: 0 },
+			{
+				where: {
+					id: {
+						[Op.in]: getIndex,
+					},
+				},
+			}
+		);
 		const getProducts = await product.findAll(query);
 		const productImg = await productImage.findAll();
 		const getInventory = await inventory.findAll();

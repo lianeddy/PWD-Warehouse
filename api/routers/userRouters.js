@@ -45,6 +45,11 @@ router.patch(
   changePassword
 );
 router.patch("/change-main-address", decryptToken, setMainAddress);
+router.post("/add-address", addAddress);
+router.patch("/edit-address", editAddress);
+router.patch("/edit-profile", editProfile);
+router.patch("/edit-profile-pic/:user_id", editProfilePic);
+router.delete("/delete-address/:id", deleteAddress);
 
 router.post("/add-address", addAddress);
 router.patch("/edit-address", editAddress);

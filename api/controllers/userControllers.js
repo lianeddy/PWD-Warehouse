@@ -465,6 +465,173 @@ const setMainAddress = async (req, res, next) => {
 	}
 };
 
+const addAddress = async (req, res, next) => {
+	const {
+		label,
+		provinsi,
+		kota,
+		kecamatan,
+		kelurahan,
+		alamatLengkap,
+		kodePos,
+		userId,
+		lat,
+		lng,
+		phone,
+	} = req.body;
+
+	try {
+		await userAddress.create({
+			label,
+			provinsi,
+			kota,
+			kecamatan,
+			kelurahan,
+			alamat_lengkap: alamatLengkap,
+			kode_pos: kodePos,
+			user_id: userId,
+			latitude: lat,
+			longitude: lng,
+			phone,
+		});
+
+		res.status(200).send({
+			message: "Added",
+		});
+	} catch (err) {
+		next(err);
+	}
+};
+
+const editAddress = async (req, res, next) => {
+	const {
+		id,
+		label,
+		provinsi,
+		kota,
+		kecamatan,
+		kelurahan,
+		alamatLengkap,
+		kodePos,
+		userId,
+		lat,
+		lng,
+		phone,
+	} = req.body;
+
+	try {
+		await userAddress.update(
+			{
+				label,
+				provinsi,
+				kota,
+				kecamatan,
+				kelurahan,
+				alamat_lengkap: alamatLengkap,
+				kode_pos: kodePos,
+				latitude: lat,
+				longitude: lng,
+				phone,
+			},
+			{
+				where: {
+					id,
+					user_id: userId,
+				},
+			}
+		);
+
+		res.status(200).send({
+			message: "Edited",
+		});
+	} catch (err) {
+		next(err);
+	}
+};
+
+const deleteAddress = async (req, res, next) => {
+	const { id } = req.params;
+
+	try {
+		await userAddress.destroy({
+			where: {
+				id,
+			},
+		});
+
+		res.status(200).send({
+			message: "Deleted",
+		});
+	} catch (err) {
+		next(err);
+	}
+};
+
+const editProfile = async (req, res, next) => {
+	const { username, email, phone, fullName, userId } = req.body;
+
+	try {
+		await user.update(
+			{
+				full_name: fullName,
+				username,
+				email,
+				phone,
+			},
+			{
+				where: {
+					id: userId,
+				},
+			}
+		);
+		res.status(200).send({
+			message: "Edited",
+		});
+	} catch (err) {
+		next(err);
+	}
+};
+
+const editProfilePic = async (req, res, next) => {
+	const { user_id } = req.params;
+
+	const path = "/profile";
+	const upload = pify(uploader(path, "PP").fields([{ name: "image" }]));
+
+	try {
+		const getData = await user.findOne({
+			where: {
+				id: parseInt(user_id),
+			},
+		});
+
+		const oldImagePath = getData.imagepath;
+
+		await upload(req, res);
+
+		await user.update(
+			{
+				imagepath: `${path}/${req.files.image[0].filename}`,
+			},
+			{
+				where: {
+					id: parseInt(user_id),
+				},
+			}
+		);
+
+		if (oldImagePath !== null) {
+			fs.unlinkSync(`public${oldImagePath}`);
+		}
+
+		res.status(200).send({
+			message: "Uploaded",
+		});
+	} catch (err) {
+		next(err);
+	}
+};
+
 module.exports = {
 	register,
 	getSecurityQuestion,
@@ -481,4 +648,9 @@ module.exports = {
 	editProfilePic,
 	deleteAddress,
 	setMainAddress,
+	addAddress,
+	editAddress,
+	editProfile,
+	editProfilePic,
+	deleteAddress,
 };

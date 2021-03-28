@@ -14,6 +14,7 @@ const transactionItem = require("./transactionItem");
 const orderStatus = require("./orderStatus");
 const monthly_report = require("./monthlyReport");
 const userAddress = require("./userAddress");
+const invoice = require("./invoice");
 
 module.exports = {
 	role,
@@ -32,4 +33,5 @@ module.exports = {
 	orderStatus,
 	monthly_report,
 	userAddress,
+	invoice,
 };

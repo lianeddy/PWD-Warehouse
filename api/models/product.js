@@ -14,8 +14,9 @@ const product = sequelize.define(
 		weight: DataTypes.INTEGER,
 		description: DataTypes.STRING,
 		category_id: DataTypes.TINYINT,
-		is_available: DataTypes.TINYINT,
+		is_available_all: DataTypes.TINYINT,
 		created_at: DataTypes.DATE,
+		is_available: DataTypes.TINYINT,
 	},
 	{
 		timestamps: false,

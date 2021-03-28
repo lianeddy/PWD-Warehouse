@@ -63,7 +63,6 @@ const cartGetAction = (userId) => {
 				type: GET_CART,
 				payload: response.data,
 			});
-			dispatch({ type: RESET_TRANSACTION });
 			dispatch({ type: API_LOADING_SUCCESS });
 		} catch (err) {
 			if (!err.response) return dispatch({ type: API_LOADING_ERROR });

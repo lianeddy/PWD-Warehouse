@@ -36,4 +36,4 @@ const uploader = (destination, fileNamePrefix) => {
 	});
 };
 
-module.exports = uploader;
+module.exports = { uploader };

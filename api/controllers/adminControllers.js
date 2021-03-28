@@ -1,3 +1,4 @@
+const { response } = require("express");
 const { Op } = require("sequelize");
 const sequelize = require("../database");
 const fs = require("fs");
@@ -415,17 +416,17 @@ const getDashboard = async (req, res, next) => {
 		});
 
 		const monthlyReport = {
-			range: rangeMonthly,
+			range: rangeMonthly ? rangeMonthly : null,
 			profit: parseInt(monthlyProfit),
 			transaction: monthlyTransaction,
 		};
 		const weeklyReport = {
-			range: rangeWeekly,
+			range: rangeWeekly ? rangeWeekly : null,
 			profit: parseInt(weeklyProfit),
 			transaction: weeklyTransaction,
 		};
 		const dailyReport = {
-			range: rangeDaily,
+			range: rangeDaily ? rangeDaily : null,
 			profit: parseInt(dailyProfit),
 			transaction: dailyTransaction,
 		};
@@ -467,6 +468,48 @@ const getDashboard = async (req, res, next) => {
 	}
 };
 
+const stockMonitoring = async (req, res, next) => {
+	try {
+		const getProducts = await product.findAll({
+			include: [{ model: inventory }, { model: category }],
+		});
+		let getIndex;
+		getProducts.forEach((value) => {
+			value.inventories.forEach((item) => {
+				if (item.stock === 0) {
+					getIndex = value.id;
+				}
+			});
+		});
+		await product.update(
+			{ is_available_all: 0 },
+			{
+				where: {
+					id: getIndex,
+				},
+			}
+		);
+		const response = await product.findAll({
+			include: [{ model: inventory }, { model: category }],
+			order: [
+				[{ model: inventory }, "warehouse_id", "ASC"],
+				["is_available_all", "ASC"],
+			],
+		});
+		return res.status(200).send(response);
+	} catch (err) {
+		next(err);
+	}
+};
+
+const sentPackage = async (req, res, next) => {
+	try {
+		return res.status(200).send(response);
+	} catch (err) {
+		next(err);
+	}
+};
+
 module.exports = {
 	getWarehouse,
 	getProductsByWarehouse,
@@ -474,4 +517,6 @@ module.exports = {
 	getDashboard,
 	editProduct,
 	deleteProduct,
+	stockMonitoring,
+	sentPackage,
 };

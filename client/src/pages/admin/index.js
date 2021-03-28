@@ -1,13 +1,13 @@
 import Dashboard from "./Dashboard";
-import HomeAdminPage from "./HomeAdminPage";
-import InvoiceAdminPage from "./InvoiceAdminPage";
+import TransactionAdminPage from "./TransactionAdminPage";
 import ProductAdminPage from "./ProductAdminPage";
 import ProfileAdminPage from "./ProfileAdminPage";
+import MonitoringPage from "./MonitoringPage";
 
 export {
 	Dashboard,
-	HomeAdminPage,
-	InvoiceAdminPage,
+	TransactionAdminPage,
 	ProductAdminPage,
 	ProfileAdminPage,
+	MonitoringPage,
 };

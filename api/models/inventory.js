@@ -6,6 +6,7 @@ const inventory = sequelize.define(
 	{
 		stock: DataTypes.INTEGER,
 		operational_stock: DataTypes.INTEGER,
+		booked_stock: DataTypes.INTEGER,
 		warehouse_id: DataTypes.SMALLINT,
 		product_id: DataTypes.INTEGER,
 		updated_at: DataTypes.DATE,
