@@ -464,7 +464,7 @@ const CheckoutPage = () => {
 			cartItems: cart,
 		};
 		console.log(payload);
-		// dispatch(postTransaction(payload));
+		dispatch(postTransaction(payload));
 	};
 
 	const toggleDrawerAddress = (event, isOpen) => {
