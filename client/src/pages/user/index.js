@@ -7,16 +7,15 @@ import EmailRedirectPage from "./EmailRedirectPage";
 import DetailProductPage from "./DetailProductPage";
 import ProfilePage from "./ProfilePage";
 import CheckoutPage from "./CheckoutPage";
-import ProfilePage from "./ProfilePage";
 
 export {
-  ForgetPasswordPage,
-  ChangePasswordPage,
-  RedirectPage,
-  ProductPage,
-  CartPage,
-  EmailRedirectPage,
-  DetailProductPage,
-  ProfilePage,
-  CheckoutPage,
+	ForgetPasswordPage,
+	ChangePasswordPage,
+	RedirectPage,
+	ProductPage,
+	CartPage,
+	EmailRedirectPage,
+	DetailProductPage,
+	ProfilePage,
+	CheckoutPage,
 };

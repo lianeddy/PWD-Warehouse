@@ -2,6 +2,7 @@ import {
 	API_LOADING_ERROR,
 	API_LOADING_START,
 	API_LOADING_SUCCESS,
+	FILL_TRANSACTION_DATA,
 	GET_DASHBOARD,
 	MONITORING,
 	NULLIFY_ERROR,
@@ -13,6 +14,7 @@ const INITIAL_STATE = {
 	errorMessage: false,
 	dashboard: {},
 	monitoring: [],
+	transactionData: [],
 };
 
 const adminReducer = (state = INITIAL_STATE, action) => {
@@ -49,6 +51,11 @@ const adminReducer = (state = INITIAL_STATE, action) => {
 			return {
 				...state,
 				monitoring: action.payload,
+			};
+		case FILL_TRANSACTION_DATA:
+			return {
+				...state,
+				transactionData: action.payload,
 			};
 		default:
 			return state;

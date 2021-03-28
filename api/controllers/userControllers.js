@@ -1,7 +1,6 @@
 const { user, securityQuestion, userAddress } = require("../models");
 const { encryptToken } = require("../middlewares");
 const { encryptHandler, emailHandler } = require("../handlers");
-const userAddress = require("../models/userAddress");
 
 const multer = require("multer");
 const uploader = require("../handlers/uploader");
@@ -86,10 +85,15 @@ const login = async (req, res, next) => {
 				password: encryptHandler(req.body.password),
 			},
 			attributes: { exclude: "password" },
-			include: {
-				model: userAddress,
-				as: "user_address",
-			},
+			include: [
+				{
+					model: userAddress,
+					as: "user_address",
+				},
+				{
+					model: securityQuestion,
+				},
+			],
 			order: [[{ model: userAddress, as: "user_address" }, "is_main", "ASC"]],
 		});
 		if (getUser.length === 0) {
@@ -115,7 +119,15 @@ const keepLogin = async (req, res, next) => {
 			where: {
 				id,
 			},
-			include: [{ model: userAddress }],
+			include: [
+				{
+					model: userAddress,
+					as: "user_address",
+				},
+				{
+					model: securityQuestion,
+				},
+			],
 		});
 		return res.status(200).send(getUser);
 	} catch (err) {
@@ -250,174 +262,6 @@ const changePassword = async (req, res, next) => {
 	}
 };
 
-const addAddress = async (req, res, next) => {
-	const {
-		label,
-		provinsi,
-		kota,
-		kecamatan,
-		kelurahan,
-		alamatLengkap,
-		kodePos,
-		userId,
-		lat,
-		lng,
-		phone,
-	} = req.body;
-
-	console.log(req.body);
-
-	try {
-		await userAddress.create({
-			label,
-			provinsi,
-			kota,
-			kecamatan,
-			kelurahan,
-			alamat_lengkap: alamatLengkap,
-			kode_pos: kodePos,
-			user_id: userId,
-			latitude: lat,
-			longitude: lng,
-			phone,
-		});
-
-		res.status(200).send({
-			message: "Added",
-		});
-	} catch (err) {
-		next(err);
-	}
-};
-
-const editAddress = async (req, res, next) => {
-	const {
-		id,
-		label,
-		provinsi,
-		kota,
-		kecamatan,
-		kelurahan,
-		alamatLengkap,
-		kodePos,
-		userId,
-		lat,
-		lng,
-		phone,
-	} = req.body;
-
-	conso;
-
-	try {
-		await userAddress.update(
-			{
-				label,
-				provinsi,
-				kota,
-				kecamatan,
-				kelurahan,
-				alamat_lengkap: alamatLengkap,
-				kode_pos: kodePos,
-				latitude: lat,
-				longitude: lng,
-				phone,
-			},
-			{
-				where: {
-					id,
-					user_id: userId,
-				},
-			}
-		);
-
-		res.status(200).send({
-			message: "Edited",
-		});
-	} catch (err) {
-		next(err);
-	}
-};
-
-const deleteAddress = async (req, res, next) => {
-	const { id } = req.params;
-
-	try {
-		await userAddress.destroy({
-			where: {
-				id,
-			},
-		});
-
-		res.status(200).send({
-			message: "Deleted",
-		});
-	} catch (err) {
-		next(err);
-	}
-};
-
-const editProfile = async (req, res, next) => {
-	const { username, email, phone, fullName, userId } = req.body;
-
-	try {
-		await user.update(
-			{
-				full_name: fullName,
-				username,
-				email,
-				phone,
-			},
-			{
-				where: {
-					id: userId,
-				},
-			}
-		);
-		res.status(200).send({
-			message: "Edited",
-		});
-	} catch (err) {
-		next(err);
-	}
-};
-
-const editProfilePic = async (req, res, next) => {
-	const { user_id } = req.params;
-
-	console.log(req.files);
-
-	const path = "/profile";
-	const upload = pify(uploader(path, "PP").fields([{ name: "image" }]));
-
-	try {
-		const getData = await user.findOne({
-			where: {
-				id: parseInt(user_id),
-			},
-		});
-
-		const oldImagePath = getData.imagepath;
-
-		await upload(req, res);
-
-		await user.update(
-			{
-				imagepath: `${path}/${req.files.image[0].filename}`,
-			},
-			{
-				where: {
-					id: parseInt(user_id),
-				},
-			}
-		);
-
-		if (oldImagePath !== null) {
-			fs.unlinkSync(`public${oldImagePath}`);
-		}
-
-		res.status(200).send({
-			message: "Uploaded",
-		});
 const setMainAddress = async (req, res, next) => {
 	try {
 		if (req.body.mainBeforeId) {
@@ -490,9 +334,10 @@ const addAddress = async (req, res, next) => {
 			alamat_lengkap: alamatLengkap,
 			kode_pos: kodePos,
 			user_id: userId,
-			latitude: lat,
-			longitude: lng,
+			long: lng,
+			lat: lat,
 			phone,
+			city_id: 0,
 		});
 
 		res.status(200).send({
@@ -529,9 +374,10 @@ const editAddress = async (req, res, next) => {
 				kelurahan,
 				alamat_lengkap: alamatLengkap,
 				kode_pos: kodePos,
-				latitude: lat,
-				longitude: lng,
+				long: lng,
+				lat: lat,
 				phone,
+				city_id: 0,
 			},
 			{
 				where: {

@@ -1,4 +1,3 @@
-const { response } = require("express");
 const { Op } = require("sequelize");
 const sequelize = require("../database");
 const fs = require("fs");
@@ -510,6 +509,82 @@ const sentPackage = async (req, res, next) => {
 	}
 };
 
+const approveBukti = async (req, res, next) => {
+	const { transactionId } = req.params;
+	try {
+		await transaction.update(
+			{
+				order_status_id: 4,
+			},
+			{ where: { id: transactionId } }
+		);
+
+		res.status(200).send({ message: "Updated" });
+	} catch (err) {
+		next(err);
+	}
+};
+
+const rejectBukti = async (req, res, next) => {
+	const { transactionId } = req.params;
+	try {
+		await transaction.update(
+			{
+				order_status_id: 3,
+			},
+			{ where: { id: transactionId } }
+		);
+
+		res.status(200).send({ message: "Updated" });
+	} catch (err) {
+		next(err);
+	}
+};
+
+const kirimBarang = async (req, res, next) => {
+	const { transactionId } = req.params;
+
+	try {
+		await transaction.update(
+			{
+				order_status_id: 5,
+			},
+			{ where: { id: transactionId } }
+		);
+
+		req.body.map((val) => {
+			const { stock_gateway, product_id } = val;
+
+			stock_gateway.map(async (val) => {
+				const { warehouse_id, qty } = val;
+
+				const getData = await inventory.findOne({
+					where: {
+						[Op.and]: [{ product_id }, { warehouse_id }],
+					},
+				});
+
+				const bookedStock = getData.booked_stock;
+
+				await inventory.update(
+					{
+						booked_stock: bookedStock - qty,
+					},
+					{
+						where: {
+							[Op.and]: [{ product_id }, { warehouse_id }],
+						},
+					}
+				);
+			});
+		});
+
+		res.status(200).send({ message: "Updated" });
+	} catch (err) {
+		next(err);
+	}
+};
+
 module.exports = {
 	getWarehouse,
 	getProductsByWarehouse,
@@ -519,4 +594,7 @@ module.exports = {
 	deleteProduct,
 	stockMonitoring,
 	sentPackage,
+	approveBukti,
+	rejectBukti,
+	kirimBarang
 };

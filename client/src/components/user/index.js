@@ -6,16 +6,20 @@ import AddressCard from "./AddressCard";
 import GeneralProfile from "./GeneralProfile";
 import NewAddress from "./NewAddress";
 import ProfilePic from "./ProfilePic";
-import TransactionItemModal from "./TransactionItemModal";
+import UserDetailTransactionModal from "./UserDetailTransactionModal";
+import UserTransactionCard from "./UserTransactionCard";
+import ReviewModal from "./ReviewModal";
 
 export {
-  CardProduct,
-  UserFooter,
-  ProcessCartCard,
-  CartCard,
-  AddressCard,
-  GeneralProfile,
-  NewAddress,
-  ProfilePic,
-  TransactionItemModal,
+	CardProduct,
+	UserFooter,
+	ProcessCartCard,
+	CartCard,
+	AddressCard,
+	GeneralProfile,
+	NewAddress,
+	ProfilePic,
+	UserTransactionCard,
+	ReviewModal,
+	UserDetailTransactionModal,
 };

@@ -16,8 +16,10 @@ import {
 	NEAREST_WAREHOUSE,
 	NULLIFY_ERROR,
 	INSERT_TRANSACTION_DATA,
+	RESET_TRANSACTION,
 } from "../types";
 import { cartGetAction } from "./cartActions";
+import { keepLoginAction } from "./authActions";
 
 const currentAddressAction = (payload) => {
 	return async (dispatch) => {
@@ -206,10 +208,85 @@ const postPaymentBill = (transactionId, imagefile, userId) => {
 	};
 };
 
+const cancelTransaction = (payload) => {
+	const { transactionId } = payload;
+	return async (dispatch) => {
+		try {
+			console.log(transactionId);
+			dispatch({
+				type: NULLIFY_ERROR,
+			});
+
+			dispatch({
+				type: API_LOADING_START,
+			});
+
+			await axios.patch(
+				`${apiUrl_transaction}/cancel-transaction/${transactionId}`
+			);
+
+			dispatch(keepLoginAction());
+		} catch (err) {
+			if (!err.response) return dispatch({ type: API_LOADING_ERROR });
+			dispatch({ type: API_LOADING_ERROR, payload: err.response.data.message });
+		}
+	};
+};
+
+const barangSampai = (payload) => {
+	const { transactionId } = payload;
+	return async (dispatch) => {
+		try {
+			console.log(transactionId);
+			dispatch({
+				type: NULLIFY_ERROR,
+			});
+
+			dispatch({
+				type: API_LOADING_START,
+			});
+
+			await axios.patch(`${apiUrl_transaction}/barang-sampai/${transactionId}`);
+
+			dispatch(keepLoginAction());
+		} catch (err) {
+			if (!err.response) return dispatch({ type: API_LOADING_ERROR });
+			dispatch({ type: API_LOADING_ERROR, payload: err.response.data.message });
+		}
+	};
+};
+
+const kirimReview = (payload) => {
+	const { review, transactionId } = payload;
+	return async (dispatch) => {
+		try {
+			dispatch({
+				type: NULLIFY_ERROR,
+			});
+
+			dispatch({
+				type: API_LOADING_START,
+			});
+
+			await axios.patch(`${apiUrl_transaction}/kirim-review/${transactionId}`, {
+				review,
+			});
+
+			dispatch(keepLoginAction());
+		} catch (err) {
+			if (!err.response) return dispatch({ type: API_LOADING_ERROR });
+			dispatch({ type: API_LOADING_ERROR, payload: err.response.data.message });
+		}
+	};
+};
+
 export {
 	nearestWarehouseAction,
 	currentAddressAction,
 	postTransaction,
 	getTransaction,
 	postPaymentBill,
+	cancelTransaction,
+	barangSampai,
+	kirimReview,
 };

@@ -6,7 +6,6 @@ import {
 	authSecurityAnswerCheck,
 	authChangePasswordEmailRequest,
 } from "../../redux/actions/authActions";
-import { RESET_INITIAL_STATE } from "../../redux/types";
 
 const ForgetPasswordPage = () => {
 	const [email, setEmail] = useState("");
@@ -22,21 +21,13 @@ const ForgetPasswordPage = () => {
 		isLogin,
 	} = useSelector((state) => state.authReducer);
 
-	useEffect(() => {
-		dispatch({
-			type: RESET_INITIAL_STATE,
-		});
-	}, []);
-
-	if (isLogin) {
-		return <Redirect to="/" />;
-	}
+	const emailLogin = useSelector((state) => state.authReducer.email);
 
 	if (changePermitted) {
 		return <Redirect to="/change-password" />;
 	}
 
-	const part1 = () => {
+	const emailCheck = () => {
 		return (
 			<>
 				<div style={{ margin: "8px 0 18px 0" }}>Masukkan email anda</div>
@@ -58,7 +49,7 @@ const ForgetPasswordPage = () => {
 		);
 	};
 
-	const part2 = () => {
+	const securityAnswerCheck = () => {
 		return (
 			<>
 				<div style={{ margin: "8px 0 0px 0" }}>Security Question:</div>
@@ -72,14 +63,22 @@ const ForgetPasswordPage = () => {
 				/>
 				<div style={{ margin: "0 0 12px 0" }}>{errorMessage}</div>
 				<button
-					onClick={() =>
-						dispatch(
+					onClick={() => {
+						if (email) {
+							return dispatch(
+								authSecurityAnswerCheck({
+									email,
+									answer,
+								})
+							);
+						}
+						return dispatch(
 							authSecurityAnswerCheck({
-								email,
+								email: emailLogin,
 								answer,
 							})
-						)
-					}
+						);
+					}}
 					style={{ margin: "0 0 18px 0" }}
 				>
 					Confirm
@@ -87,13 +86,19 @@ const ForgetPasswordPage = () => {
 				<div>
 					Lupa jawabannya? Klik&nbsp;
 					<span
-						onClick={() => dispatch(authChangePasswordEmailRequest({ email }))}
-						style={{ fontWeight: "bold" }}
+						onClick={() => {
+							dispatch(authChangePasswordEmailRequest({ email }));
+						}}
+						style={{ fontWeight: "bold", cursor: "pointer" }}
 					>
 						disini
 					</span>
 				</div>
-				<div>
+				<div
+					style={{
+						textAlign: "center",
+					}}
+				>
 					{isLoading ? "Mengirim link ganti password ke email anda..." : null}
 				</div>
 			</>
@@ -111,7 +116,7 @@ const ForgetPasswordPage = () => {
 				>
 					Forget Password
 				</div>
-				<>{!id ? part1() : part2()}</>
+				<>{!id ? emailCheck() : securityAnswerCheck()}</>
 			</div>
 		</div>
 	);
