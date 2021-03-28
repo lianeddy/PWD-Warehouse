@@ -3,7 +3,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { LoaderPage } from "..";
 import { Link, Redirect } from "react-router-dom";
 import { accentColor, primaryColor, surfaceColor } from "../../helpers";
-import { makeStyles } from "@material-ui/core";
+import {
+	Accordion,
+	AccordionDetails,
+	AccordionSummary,
+	makeStyles,
+} from "@material-ui/core";
 import { Fade } from "react-reveal";
 import {
 	HomeAdminPage,
@@ -13,6 +18,12 @@ import {
 } from "../../pages/admin";
 import { getDashboard, logoutAction } from "../../redux/actions";
 import Swal from "sweetalert2";
+import {
+	Dropdown,
+	DropdownItem,
+	DropdownMenu,
+	DropdownToggle,
+} from "reactstrap";
 
 const menusSideBar = [
 	{ icon: "bi bi-house", value: "Dashboard", link: "/admin/dashboard" },
@@ -36,6 +47,7 @@ const Dashboard = () => {
 	);
 
 	const [current, setCurrent] = useState(0);
+	const [openProduct, setOpenProduct] = useState(false);
 
 	useEffect(() => {
 		dispatch(getDashboard());
@@ -60,10 +72,58 @@ const Dashboard = () => {
 
 	// if (isLoading) return <LoaderPage />;
 	// if (isLogin && roleId === 2) return <Redirect to="/login" />;
+	const handleOpenDropProduct = () => setOpenProduct((prevState) => !prevState);
+
 	if (!isLogin) return <Redirect to="/login" />;
 
 	const renderMenuSideBar = () => {
 		return menusSideBar.map((menu, index) => {
+			if (menu.value === "Products")
+				return (
+					<div key={menu.value}>
+						<div
+							onClick={() => setOpenProduct((prevState) => !prevState)}
+							className={styles.menuListItem}
+							style={{ justifyContent: "space-between", paddingInline: 20 }}
+						>
+							<div style={{ display: "flex", alignItems: "center" }}>
+								<i
+									className={menu.icon}
+									style={{ fontSize: 20, marginRight: 15 }}
+								></i>
+								<div style={{ fontSize: 15 }}>{menu.value}</div>
+							</div>
+							<div>
+								<i className="bi bi-caret-down-fill"></i>
+							</div>
+						</div>
+						<div>
+							<Fade bottom when={openProduct} duration={100} collapse>
+								<div
+									className={styles.menuListItem}
+									style={{ paddingLeft: 25 }}
+								>
+									<i
+										className="bi bi-caret-right-fill"
+										style={{ marginRight: 15 }}
+									></i>
+									<div>Product List</div>
+								</div>
+								<Link
+									to="/admin/monitoring"
+									className={styles.menuListItem}
+									style={{ paddingLeft: 25 }}
+								>
+									<i
+										className="bi bi-caret-right-fill"
+										style={{ marginRight: 15 }}
+									></i>
+									<div>Monitoring</div>
+								</Link>
+							</Fade>
+						</div>
+					</div>
+				);
 			return (
 				<Link to={menu.link} key={menu.value} className={styles.menuListItem}>
 					<i
@@ -169,6 +229,9 @@ const Dashboard = () => {
 					</div>
 					<div>{renderMenuSideBar()}</div>
 				</div>
+				<div
+					style={{ marginBottom: 10, paddingInline: 20, paddingTop: 20 }}
+				></div>
 			</div>
 		</div>
 	);

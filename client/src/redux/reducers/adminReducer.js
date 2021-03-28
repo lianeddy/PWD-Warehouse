@@ -3,7 +3,7 @@ import {
 	API_LOADING_START,
 	API_LOADING_SUCCESS,
 	GET_DASHBOARD,
-	GET_PRODUCTS,
+	MONITORING,
 	NULLIFY_ERROR,
 } from "../types";
 
@@ -12,6 +12,7 @@ const INITIAL_STATE = {
 	isError: false,
 	errorMessage: false,
 	dashboard: {},
+	monitoring: [],
 };
 
 const adminReducer = (state = INITIAL_STATE, action) => {
@@ -43,6 +44,11 @@ const adminReducer = (state = INITIAL_STATE, action) => {
 			return {
 				...state,
 				dashboard: action.payload,
+			};
+		case MONITORING:
+			return {
+				...state,
+				monitoring: action.payload,
 			};
 		default:
 			return state;

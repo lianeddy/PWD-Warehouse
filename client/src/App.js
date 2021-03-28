@@ -19,6 +19,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { keepLoginAction } from "./redux/actions";
 import {
 	Dashboard,
+	MonitoringPage,
 	ProductAdminPage,
 	ProfileAdminPage,
 	TransactionAdminPage,
@@ -59,6 +60,7 @@ const App = () => {
 									component={TransactionAdminPage}
 								/>
 								<Route path="/admin/profile" component={ProfileAdminPage} />
+								<Route path="/admin/monitoring" component={MonitoringPage} />
 							</div>
 						</div>
 					</>

@@ -122,9 +122,7 @@ const keepLoginAction = () => {
 					address: user_address,
 				},
 			});
-			console.log(role_id);
 			if (role_id === 1) {
-				console.log("ea");
 				dispatch(getDashboard());
 			} else {
 				dispatch(cartGetAction(id));
@@ -586,8 +584,6 @@ const editProfile = (payload) => {
 
 const uploadProfilePic = (payload) => {
 	const { image, userId } = payload;
-
-	console.log(image);
 
 	let formData = new FormData();
 	formData.append("image", image.imageFile);

@@ -6,6 +6,7 @@ const transactionItem = require("./transactionItem");
 const product = require("./product");
 const warehouse = require("./warehouse");
 const paymentMethod = require("./paymentMethod");
+const invoice = require("./invoice");
 
 const transaction = sequelize.define(
 	"transaction",
@@ -18,12 +19,20 @@ const transaction = sequelize.define(
 		warehouse_id: DataTypes.TINYINT,
 		payment_method_id: DataTypes.TINYINT,
 		bill_imagepath: DataTypes.STRING,
+		warehouse_log: DataTypes.STRING,
 	},
 	{
 		timestamps: false,
 		freezeTableName: true,
 	}
 );
+
+transaction.hasOne(invoice, {
+	foreignKey: "transaction_id",
+});
+invoice.belongsTo(transaction, {
+	foreignKey: "transaction_id",
+});
 
 // transaction.belongsTo(paymentMethod, {
 // 	foreignKey: "payment_method_id",

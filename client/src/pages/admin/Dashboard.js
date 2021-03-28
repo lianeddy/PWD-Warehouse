@@ -17,7 +17,6 @@ const HomeAdminPage = ({ current }) => {
 	} = useSelector((state) => state.adminReducer.dashboard);
 	const { isLoading, isLogin } = useSelector((state) => state.authReducer);
 
-	console.log(isLogin);
 	if (!isLogin) return <Redirect to="/login" />;
 	if (isLoading) return <LoaderPage />;
 

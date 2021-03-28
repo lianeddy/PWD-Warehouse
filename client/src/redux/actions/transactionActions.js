@@ -24,10 +24,10 @@ const currentAddressAction = (payload) => {
 		try {
 			dispatch({ type: NULLIFY_ERROR });
 			dispatch({ type: API_LOADING_START });
+			dispatch({ type: RESET_TRANSACTION });
 			localStorage.setItem("current_address", JSON.stringify(payload));
 			dispatch({ type: API_LOADING_SUCCESS });
 		} catch (err) {
-			console.log(err.response);
 			if (!err.response) return dispatch({ type: API_LOADING_ERROR });
 			dispatch({ type: API_LOADING_ERROR, payload: err.response.data.message });
 		}
@@ -69,7 +69,7 @@ const nearestWarehouseAction = (payload) => {
 				});
 				dispatch({
 					type: NEAREST_WAREHOUSE,
-					payload: distancesUserByWarehouse[0],
+					payload: distancesUserByWarehouse,
 				});
 				const headers = {
 					headers: {
@@ -120,7 +120,6 @@ const nearestWarehouseAction = (payload) => {
 				dispatch({ type: API_LOADING_SUCCESS });
 			}, 3000);
 		} catch (err) {
-			console.log(err.response);
 			if (!err.response) return dispatch({ type: API_LOADING_ERROR });
 			dispatch({ type: API_LOADING_ERROR, payload: err.response.data.message });
 		}
@@ -132,6 +131,7 @@ const postTransaction = (payload) => {
 		try {
 			dispatch({ type: NULLIFY_ERROR });
 			dispatch({ type: API_LOADING_START });
+			localStorage.removeItem("current_address", JSON.stringify(payload));
 			await axios.post(`${apiUrl_transaction}/${payload.userId}`, payload);
 			Swal.fire({
 				icon: "success",
@@ -159,7 +159,6 @@ const getTransaction = (userId) => {
 			});
 
 			const response = await axios.get(`${apiUrl_transaction}/${userId}`);
-			console.log(response.data);
 			dispatch({
 				type: INSERT_TRANSACTION_DATA,
 				payload: response.data,

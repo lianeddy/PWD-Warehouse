@@ -114,7 +114,6 @@ const CheckoutPage = () => {
 		setLocalLabel(current_address.label);
 		setLocalPhone(current_address.phone);
 	};
-	console.log(shippingInformation);
 	const handleOngkirBtn = (payload) => {
 		setShippingInformation(payload);
 		setOpenShipping(false);
@@ -122,13 +121,18 @@ const CheckoutPage = () => {
 
 	const handleProcessBtn = () => {
 		const payload = {
+			shipping: {
+				name: localUsername,
+				phone: localPhone,
+				address: localAddress,
+				courier: shippingInformation,
+			},
 			userId: id,
 			amount: renderBilling(),
-			warehouseId: nearestWarehouse.warehouse.id,
+			nearestWarehouse,
 			paymentMethodId: 1,
 			cartItems: cart,
 		};
-		console.log(payload);
 		dispatch(postTransaction(payload));
 	};
 

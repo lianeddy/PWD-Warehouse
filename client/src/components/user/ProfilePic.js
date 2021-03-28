@@ -7,8 +7,6 @@ const ProfilePic = ({ imagepath, noProfilePic, userId }) => {
 	const [image, setImage] = useState({});
 
 	const uploadImage = (e) => {
-		console.log(e.target.files[0]);
-
 		if (e.target.files[0]) {
 			setImage({
 				imageFile: e.target.files[0],

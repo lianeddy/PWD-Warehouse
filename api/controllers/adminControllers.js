@@ -1,3 +1,4 @@
+const { response } = require("express");
 const { Op } = require("sequelize");
 const sequelize = require("../database");
 const {
@@ -7,6 +8,8 @@ const {
 	product,
 	warehouse,
 	inventory,
+	category,
+	userAddress,
 } = require("../models");
 
 const getWarehouse = async (req, res, next) => {
@@ -246,8 +249,52 @@ const getDashboard = async (req, res, next) => {
 	}
 };
 
+const stockMonitoring = async (req, res, next) => {
+	try {
+		const getProducts = await product.findAll({
+			include: [{ model: inventory }, { model: category }],
+		});
+		let getIndex;
+		getProducts.forEach((value) => {
+			value.inventories.forEach((item) => {
+				if (item.stock === 0) {
+					getIndex = value.id;
+				}
+			});
+		});
+		await product.update(
+			{ is_available_all: 0 },
+			{
+				where: {
+					id: getIndex,
+				},
+			}
+		);
+		const response = await product.findAll({
+			include: [{ model: inventory }, { model: category }],
+			order: [
+				[{ model: inventory }, "warehouse_id", "ASC"],
+				["is_available_all", "ASC"],
+			],
+		});
+		return res.status(200).send(response);
+	} catch (err) {
+		next(err);
+	}
+};
+
+const sentPackage = async (req, res, next) => {
+	try {
+		return res.status(200).send(response);
+	} catch (err) {
+		next(err);
+	}
+};
+
 module.exports = {
 	getWarehouse,
 	getProductsByWarehouse,
 	getDashboard,
+	stockMonitoring,
+	sentPackage,
 };

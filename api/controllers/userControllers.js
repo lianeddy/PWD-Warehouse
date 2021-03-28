@@ -303,8 +303,6 @@ const addAddress = async (req, res, next) => {
 		phone,
 	} = req.body;
 
-	console.log(req.body);
-
 	try {
 		await userAddress.create({
 			label,
@@ -419,8 +417,6 @@ const editProfile = async (req, res, next) => {
 
 const editProfilePic = async (req, res, next) => {
 	const { user_id } = req.params;
-
-	console.log(req.files);
 
 	const path = "/profile";
 	const upload = pify(uploader(path, "PP").fields([{ name: "image" }]));
