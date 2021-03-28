@@ -26,8 +26,6 @@ const ProfilePage = (props) => {
 	const dispatch = useDispatch();
 
 	const uploadImage = (e) => {
-		console.log(e.target.files[0]);
-
 		if (e.target.files[0]) {
 			setImage({
 				imageFile: e.target.files[0],

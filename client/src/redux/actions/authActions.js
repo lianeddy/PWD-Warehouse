@@ -53,6 +53,14 @@ const loginAction = (data) => {
 					userAddress: user_addresses,
 				},
 			});
+			if (response.status === 202) {
+				dispatch({ type: API_LOADING_SUCCESS });
+				return Swal.fire({
+					icon: "error",
+					title: "You can not login",
+					text: `because ${response.data.message}`,
+				});
+			}
 			dispatch(cartGetAction(id));
 			dispatch(getDashboard());
 			dispatch({ type: API_LOADING_SUCCESS });
@@ -60,17 +68,6 @@ const loginAction = (data) => {
 			dispatch({
 				type: API_LOADING_ERROR,
 				payload: err.response.data.message,
-			});
-			Swal.fire({
-				title: "Your Email or Password is Wrong!",
-				text: `${err.response.data.message}`,
-				icon: "error",
-				confirmButtonColor: "#3085d6",
-				confirmButtonText: "Ok",
-			}).then((result) => {
-				if (result.isConfirmed) {
-					dispatch({ type: NULLIFY_ERROR });
-				}
 			});
 		}
 	};
@@ -535,13 +532,10 @@ const editProfile = (payload) => {
 const uploadProfilePic = (payload) => {
 	const { image, userId } = payload;
 
-	console.log(image);
-
 	let formData = new FormData();
 	formData.append("image", image.imageFile);
 
 	return async (dispatch) => {
-		console.log(payload);
 		try {
 			dispatch({
 				type: NULLIFY_ERROR,

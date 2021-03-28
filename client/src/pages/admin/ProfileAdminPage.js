@@ -6,7 +6,6 @@ const ProfileAdminPage = ({ current }) => {
 			style={{
 				minHeight: "100vh",
 				backgroundColor: "red",
-				display: current === 3 ? "block" : "none",
 			}}
 		>
 			<div>profile</div>

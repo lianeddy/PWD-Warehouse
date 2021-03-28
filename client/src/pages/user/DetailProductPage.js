@@ -11,6 +11,7 @@ import { Button } from "reactstrap";
 import Fade from "react-reveal/Fade";
 import { Link, Redirect } from "react-router-dom";
 import Swal from "sweetalert2";
+import { surfaceColor } from "../../helpers";
 
 class DetailProductPage extends Component {
 	state = {
@@ -106,9 +107,10 @@ class DetailProductPage extends Component {
 			id,
 			name,
 			price,
-			image,
+			imagepath,
 			description,
 			stock,
+			category,
 		} = this.props.productById;
 		const { cart } = this.props;
 		let res = cart.find((val) => {
@@ -117,52 +119,68 @@ class DetailProductPage extends Component {
 
 		return (
 			<div className="container">
-				<div>
-					<Link to="/">Home </Link>
-					<span>/</span>
-					<Link to="/products">Products </Link>
-					<span>/</span>
-					{name}
+				<div style={{ height: "50px", marginTop: 30 }}>
+					<Link style={{ backgroundColor: "lightgrey" }} to="/">
+						Home
+					</Link>
+					<span style={{ backgroundColor: "lightgrey" }}>/</span>
+					<Link style={{ backgroundColor: "lightgrey" }} to="/products">
+						Products
+					</Link>
+					<span style={{ backgroundColor: "lightgrey" }}>/</span>
+					<span style={{ backgroundColor: "lightgrey" }}>{category}</span>
+					<span style={{ backgroundColor: "lightgrey" }}>/</span>
+					<span style={{ backgroundColor: "lightgrey" }}>{name}</span>
 				</div>
 				<div className="row">
 					<div className="col-4">
 						<div>
-							<Fade bottom>
-								<img src={image} alt={`${name}.jpg`} height="300px" />
+							<Fade left>
+								<img
+									src={`http://localhost:2000/${imagepath}`}
+									alt={`${name}.jpg`}
+									height="300px"
+									width="300px"
+								/>
 							</Fade>
 						</div>
 					</div>
 					<div className="col-8">
-						<div>
-							<h1>{name}</h1>
-						</div>
-						<div>
-							<h4>Rp. {price ? price.toLocaleString() : null}</h4>
-						</div>
-						<div>Available: {stock}</div>
-						<div>{description}</div>
-						<div>
-							<Button
-								color="info"
-								onClick={this.decreaseQty}
-								disabled={this.state.qtySelected === 1}
-							>
-								-
-							</Button>
-							<span className="mx-2">{this.state.qtySelected}</span>
-							<Button
-								color="info"
-								onClick={this.increaseQty}
-								disabled={stockMinCart === this.state.qtySelected}
-							>
-								+
-							</Button>
-						</div>
-						<div>
-							<Button onClick={this.addToCart} color="info">
-								Add to Cart
-							</Button>
-						</div>
+						<Fade right>
+							<div>
+								<h1>{name}</h1>
+							</div>
+							<div>
+								<h4>Rp. {price ? price.toLocaleString() : null}</h4>
+							</div>
+							<div>
+								<h4>{category}</h4>
+							</div>
+							<div>Available: {stock}</div>
+							<div style={{ marginTop: 5, marginBottom: 5 }}>{description}</div>
+							<div>
+								<Button
+									color="info"
+									onClick={this.decreaseQty}
+									disabled={this.state.qtySelected === 1}
+								>
+									-
+								</Button>
+								<span className="mx-2">{this.state.qtySelected}</span>
+								<Button
+									color="info"
+									onClick={this.increaseQty}
+									disabled={stockMinCart === this.state.qtySelected}
+								>
+									+
+								</Button>
+							</div>
+							<div style={{ marginTop: 15 }}>
+								<Button onClick={this.addToCart} color="info">
+									Add to Cart
+								</Button>
+							</div>
+						</Fade>
 					</div>
 				</div>
 			</div>

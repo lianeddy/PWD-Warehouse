@@ -85,11 +85,11 @@ const login = async (req, res, next) => {
 				email: req.body.email,
 				password: encryptHandler(req.body.password),
 			},
-			include: [
-				{
-					model: userAddress,
-				},
-			],
+			// include: [
+			// 	{
+			// 		model: userAddress,
+			// 	},
+			// ],
 		});
 		if (getUser.length === 0) {
 			return res.status(404).send({
@@ -114,7 +114,7 @@ const keepLogin = async (req, res, next) => {
 			where: {
 				id,
 			},
-			include: [{ model: userAddress }],
+			// include: [{ model: userAddress }],
 		});
 		return res.status(200).send(getUser);
 	} catch (err) {
@@ -263,8 +263,6 @@ const addAddress = async (req, res, next) => {
 		lng,
 		phone,
 	} = req.body;
-
-	console.log(req.body);
 
 	try {
 		await userAddress.create({

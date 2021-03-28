@@ -149,7 +149,6 @@ const getKelurahan = (payload) => {
 };
 
 const resetData = () => {
-	console.log("a");
 	return async (dispatch) => {
 		try {
 			dispatch({

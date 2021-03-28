@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { loginAction } from "../redux/actions";
 import { Spinner } from "reactstrap";
@@ -26,7 +26,9 @@ import {
 	CRow,
 } from "@coreui/react";
 import logo from "../assets/logo.png";
-import { surfaceColor } from "../helpers";
+import { primaryColor, surfaceColor } from "../helpers";
+import { makeStyles } from "@material-ui/core";
+import { InputToolTip } from "../components";
 
 const eye = <FontAwesomeIcon icon={faEye} />;
 const eyeSlash = <FontAwesomeIcon icon={faEyeSlash} />;
@@ -34,6 +36,7 @@ const user = <FontAwesomeIcon icon={faUser} />;
 const lock = <FontAwesomeIcon icon={faLock} />;
 
 const LoginPage = () => {
+	const styles = useStyles();
 	const dispatch = useDispatch();
 	const { isLoading, isLogin, roleId, wantToChangePass } = useSelector(
 		(state) => state.authReducer
@@ -41,9 +44,35 @@ const LoginPage = () => {
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 	const [passwordShown, setPasswordShown] = useState(false);
+	const [isValidEmail, setIsValidEmail] = useState(true);
+	const [isValidPassword, setIsValidPassword] = useState(true);
 
 	const togglePasswordVisibility = () => {
 		setPasswordShown(passwordShown ? false : true);
+	};
+
+	useEffect(() => {
+		if (email.length > 0) checkEmail(email);
+		if (password.length > 0) checkPassword(password);
+	}, [email, password]);
+
+	const emailRegex = /^[\w\-\.]+(@[\w\-\.]+\.)+[\w\-\.]{2,4}$/;
+	const passwordRegex = /^(?=.*[\d])(?=.*[A-Z])(?=.*[!@#$%^&*\-\_=<>,\.?]).{8,16}$/;
+
+	const checkEmail = (str) => {
+		if (str.match(emailRegex)) {
+			setIsValidEmail(true);
+		} else {
+			setIsValidEmail(false);
+		}
+	};
+
+	const checkPassword = (str) => {
+		if (str.match(passwordRegex)) {
+			setIsValidPassword(true);
+		} else {
+			setIsValidPassword(false);
+		}
 	};
 
 	if (isLogin && roleId === 1) return <Redirect to="/admin" />;
@@ -83,9 +112,16 @@ const LoginPage = () => {
 											</CInputGroupPrepend>
 											<CInput
 												name="email"
+												className={styles.inputForm}
 												onChange={(e) => setEmail(e.target.value)}
 												type="text"
 												placeholder="email"
+												id="email"
+											/>
+											<InputToolTip
+												when={!isValidEmail}
+												target="email"
+												title="Please enter a valid email address"
 											/>
 										</CInputGroup>
 										<CInputGroup className="mb-3">
@@ -96,9 +132,19 @@ const LoginPage = () => {
 											</CInputGroupPrepend>
 											<CInput
 												placeholder="Password"
+												className={styles.inputInGroupForm}
 												onChange={(e) => setPassword(e.target.value)}
 												name="password"
 												type={passwordShown ? "text" : "password"}
+												id="password"
+											/>
+											<InputToolTip
+												when={!isValidPassword}
+												target="password"
+												title="Unvalid Password"
+												text="Password must be 8-16 characters and at least
+														contain an uppercase letter, a numbers, special
+														character"
 											/>
 											<CInputGroupPrepend>
 												<CInputGroupText>
@@ -175,6 +221,49 @@ const LoginPage = () => {
 			</CContainer>
 		</div>
 	);
+};
+
+const useStyles = makeStyles({
+	inputForm: {
+		borderRadius: 10,
+		paddingInline: 20,
+		paddingBlock: 25,
+		borderWidth: 0,
+		backgroundColor: primaryColor,
+		boxShadow: "0 0 10px 1px rgba(0, 0, 0, 0.15)",
+	},
+	inputGroupForm: {
+		borderRadius: 10,
+		borderWidth: 0,
+		backgroundColor: primaryColor,
+		boxShadow: "0 0 10px 1px rgba(0, 0, 0, 0.15)",
+	},
+	inputInGroupForm: {
+		borderRadius: 10,
+		paddingInline: 20,
+		paddingBlock: 25,
+		borderWidth: 0,
+		backgroundColor: primaryColor,
+		// boxShadow: "0 0 10px 1px rgba(0, 0, 0, 0.15)",
+	},
+});
+
+const selectStyles = {
+	option: (provided, state) => ({
+		...provided,
+		borderBottom: "1px dotted pink",
+		color: state.isSelected ? "red" : "blue",
+		padding: 10,
+	}),
+	control: () => ({
+		borderRadius: 10,
+		paddingInline: 10,
+		paddingBlock: 7,
+		borderWidth: 0,
+		backgroundColor: primaryColor,
+		boxShadow: "0 0 10px 1px rgba(0, 0, 0, 0.15)",
+		display: "flex",
+	}),
 };
 
 export default LoginPage;

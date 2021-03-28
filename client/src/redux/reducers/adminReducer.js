@@ -3,8 +3,9 @@ import {
 	API_LOADING_START,
 	API_LOADING_SUCCESS,
 	GET_DASHBOARD,
-	GET_PRODUCTS,
+	GET_ADMIN_PRODUCTS,
 	NULLIFY_ERROR,
+	GET_WAREHOUSE,
 } from "../types";
 
 const INITIAL_STATE = {
@@ -12,6 +13,11 @@ const INITIAL_STATE = {
 	isError: false,
 	errorMessage: false,
 	dashboard: {},
+	warehouse: [],
+	categories: [],
+	Warehouse1: null,
+	Warehouse2: null,
+	Warehouse3: null,
 };
 
 const adminReducer = (state = INITIAL_STATE, action) => {
@@ -43,6 +49,16 @@ const adminReducer = (state = INITIAL_STATE, action) => {
 			return {
 				...state,
 				dashboard: action.payload,
+			};
+		case GET_ADMIN_PRODUCTS:
+			return {
+				...state,
+				...action.payload,
+			};
+		case GET_WAREHOUSE:
+			return {
+				...state,
+				categories: action.payload,
 			};
 		default:
 			return state;
