@@ -1,4 +1,5 @@
 const {
+	user,
 	warehouse,
 	transaction,
 	transactionItem,
@@ -11,7 +12,13 @@ const {
 } = require("../models");
 const pify = require("pify");
 const fs = require("fs");
-const { uploader } = require("../handlers");
+const {
+	uploader,
+	addDateHandler,
+	generatePdfHandler,
+	emailHandler,
+} = require("../handlers");
+const path = require("path");
 
 const getWarehouse = async (req, res, next) => {
 	try {
@@ -31,7 +38,7 @@ const postTransaction = async (req, res, next) => {
 			amount,
 			shipping,
 		} = req.body;
-
+		const current_time = Date.now();
 		const stock_gateway = [];
 		const getInventory = await inventory.findAll({
 			attributes: [
@@ -196,7 +203,6 @@ const postTransaction = async (req, res, next) => {
 				});
 			}
 		});
-
 		let weight = 0;
 		cartItems.forEach(async (value) => {
 			weight += value.weight * value.qty;
@@ -210,27 +216,61 @@ const postTransaction = async (req, res, next) => {
 			warehouse_log: JSON.stringify(nearestWarehouse),
 			stock_gateway: JSON.stringify(stock_gateway),
 		});
-		await invoice.create({
-			invoice: `ING/${Date.now()}`,
+		const postInvoice = await invoice.create({
+			invoice: `ING${current_time}`,
 			note: "",
 			shipping: JSON.stringify(shipping),
 			transaction_id: post.id,
+			due_on: addDateHandler(2),
+			invoicepath: `/invoices/${current_time}.pdf`,
 		});
+		const getUser = await user.findByPk(req.params.id);
+		const data = {
+			logo: require("../resources/img/logo_full_vertical.png"),
+			title: "Nature Goods",
+			invoice: postInvoice.invoice,
+			cart: cartItems,
+			shipping,
+			due_on: postInvoice.due_on,
+			amount,
+			weight,
+			nearestWarehouse,
+		};
+		generatePdfHandler("Invoice", data, postInvoice.invoice);
+
+		const mailOption = {
+			from: "Admin <nature.goods.official@no-reply.com>",
+			to: getUser.email,
+			subject: "Invoice",
+			// template: "Invoice",
+			html: `
+        <div>
+          <p>Thank you</p>
+        </div>`,
+			attachments: [
+				{
+					filename: `${postInvoice.invoice}.pdf`,
+					path: path.resolve("public/invoices/", `${postInvoice.invoice}.pdf`),
+					// path: `../public/invoices/${postInvoice.invoice}.pdf`,
+				},
+			],
+		};
+		await emailHandler(mailOption);
 		getInventory.forEach((inv) => {
-			cartItems.forEach(async (cart) => {
+			cartItems.forEach(async (cartItem) => {
 				await transactionItem.create({
-					qty: cart.qty,
-					product_id: cart.product_id,
+					qty: cartItem.qty,
+					product_id: cartItem.product_id,
 					transaction_id: post.id,
 				});
 				await cart.destroy({
 					where: {
-						id: value.id,
+						id: cartItem.id,
 					},
 				});
 			});
 		});
-
+		console.log("success");
 		return res.status(200).send(stock_gateway);
 	} catch (err) {
 		next(err);
@@ -288,7 +328,7 @@ const postPaymentBill = async (req, res, next) => {
 		await transaction.update(
 			{
 				order_status_id: 2,
-				bill_imagepath: req.files.image[0].filename,
+				bill_imagepath: `${path}/${req.files.image[0].filename}`,
 			},
 			{
 				where: {
@@ -305,9 +345,30 @@ const postPaymentBill = async (req, res, next) => {
 	}
 };
 
+const viewInvoice = async (req, res, next) => {
+	try {
+		const data = {
+			title: "NATURE GOODS",
+			date: "05/12/2018",
+			name: "Rodolfo Luis Marcos",
+			age: 28,
+			birthdate: "12/07/1990",
+			course: "Computer Science",
+			obs:
+				"Graduated in 2014 by Federal University of Lavras, work with Full-Stack development and E-commerce.",
+		};
+		// console.log(postInvoice.invoice);
+		generatePdfHandler("Invoice", data, "123123dfmk");
+		return res.status(200).send("e");
+	} catch (err) {
+		next(err);
+	}
+};
+
 module.exports = {
 	getWarehouse,
 	postTransaction,
 	getTransaction,
 	postPaymentBill,
+	viewInvoice,
 };

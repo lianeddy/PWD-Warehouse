@@ -1,24 +1,43 @@
+import { makeStyles } from "@material-ui/core";
 import React, { useState } from "react";
+import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import { Card, CardImg, Button } from "reactstrap";
 import { accentColor, surfaceColor } from "../../helpers";
+import { addToCartAction } from "../../redux/actions";
 
-const CardProduct = ({ id, name, price, stock }) => {
+const CardProduct = ({ id, name, price, stock, image, userId }) => {
+	const styles = useStyles();
+	const dispatch = useDispatch();
+	const handleAddToCartBtn = () => {
+		const payload = {
+			productId: id,
+			qty: 1,
+			userId,
+		};
+		dispatch(addToCartAction(payload));
+	};
 	return (
 		<Card
 			style={{
+				marginBottom: 5,
+				marginInline: 2,
 				height: 300,
 				maxHeight: 300,
 				borderWidth: 0,
-				boxShadow: "0 0 12px 2px rgba(0,0,0,0.1)",
+				boxShadow: "0 1px 12px 0px rgba(0,0,0,0.2)",
 			}}
 		>
 			<CardImg
-				style={{ backgroundColor: accentColor }}
+				style={{ backgroundColor: accentColor, objectFit: "cover" }}
 				top
 				width="100%"
 				height="175"
-				src="/assets/318x180.svg"
+				src={
+					image
+						? image
+						: "https://www.grinvirobiotekno.com/images/product/No-image-available.jpg"
+				}
 				alt="Card image cap"
 			/>
 			<div
@@ -32,7 +51,6 @@ const CardProduct = ({ id, name, price, stock }) => {
 				}}
 			>
 				<div>
-					{/* <input type="checkbox" onClick={(e) => setCek(!cek)} /> */}
 					<div>{name}</div>
 					<div tag="h6" className="mb-2 text-muted">
 						Rp{price.toLocaleString()}
@@ -40,7 +58,10 @@ const CardProduct = ({ id, name, price, stock }) => {
 				</div>
 				<div style={{ display: "flex", justifyContent: "flex-end" }}>
 					{stock === 0 ? null : (
-						<Button style={{ borderWidth: 0, backgroundColor: surfaceColor }}>
+						<Button
+							style={{ borderWidth: 0, backgroundColor: surfaceColor }}
+							onClick={handleAddToCartBtn}
+						>
 							<i class="bi bi-cart-plus" style={{ color: "white" }}></i>
 						</Button>
 					)}
@@ -52,7 +73,9 @@ const CardProduct = ({ id, name, price, stock }) => {
 						}}
 					>
 						<div style={{ color: "black" }}>
-							<Link to={`/detail?id=${id}`}>Details</Link>
+							<Link to={`/detail?id=${id}`} className={styles.link}>
+								Details
+							</Link>
 						</div>
 					</Button>
 				</div>
@@ -60,5 +83,14 @@ const CardProduct = ({ id, name, price, stock }) => {
 		</Card>
 	);
 };
+
+const useStyles = makeStyles({
+	link: {
+		color: "white",
+		"&:hover": {
+			textDecoration: "none",
+		},
+	},
+});
 
 export default CardProduct;

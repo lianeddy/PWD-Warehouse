@@ -5,7 +5,6 @@ import {
 	API_LOADING_SUCCESS,
 	GET_CART,
 	NULLIFY_ERROR,
-	RESET_TRANSACTION,
 } from "../types";
 import { apiUrl_cart } from "../../helpers";
 import Swal from "sweetalert2";

@@ -14,7 +14,6 @@ import { accentColor, apiUrl_product } from "../../helpers";
 import Paginate from "react-reactstrap-pagination";
 import { CardProduct, UserFooter } from "../../components/user";
 import { RESET_INITIAL_STATE } from "../../redux/types";
-import { Link, Redirect } from "react-router-dom";
 
 const sortBy = [
 	{ value: 1, label: "Default sorting" },
@@ -33,9 +32,8 @@ const ProductPage = () => {
 	const [sort, setSort] = useState(1);
 	const [keyword, setKeyword] = useState("");
 	const [currentPage, setCurrentPage] = useState(0);
-	const [queryUrl, setQueryUrl] = useState("");
 
-	const { wantToChangePass } = useSelector((state) => state.authReducer);
+	const { wantToChangePass, id } = useSelector((state) => state.authReducer);
 
 	if (wantToChangePass) {
 		dispatch({
@@ -55,22 +53,6 @@ const ProductPage = () => {
 		dispatch(getProductsAction(query));
 	}, [sort, category]);
 
-	useEffect(() => {
-		setQueryUrl(`
-			category=${category}
-			&sort=${sort}
-			${keyword !== "" ? `&keyword=` + keyword : ""}
-			${
-				maximum !== "" && minimum !== ""
-					? `&minimum=` + minimum + `&maximum=` + maximum
-					: ""
-			}
-			${maximum === "" && minimum !== "" ? `&minimum=` + minimum : ""}
-			${maximum !== "" && minimum === "" ? `&maximum=` + maximum : ""}
-			
-			`);
-	}, [minimum, maximum, keyword]);
-
 	const totalItem = products.length;
 	const limit = 12;
 	const offset = currentPage * limit;
@@ -88,11 +70,12 @@ const ProductPage = () => {
 					}}
 				>
 					<CardProduct
+						userId={id}
 						id={value.id}
 						name={value.name}
 						price={value.price}
 						stock={value.stock}
-						// image={value.image[0].imagepath}
+						image={value.image[0].imagepath}
 					/>
 				</div>
 			);
@@ -249,13 +232,6 @@ const ProductPage = () => {
 								</div>
 							</div>
 							<div>
-								{/* <Link
-								// to={
-								// 	queryUrl === ""
-								// 		? "products/search?all=true"
-								// 		: `products/search?${queryUrl}`
-								// }
-								> */}
 								<Button
 									onClick={handlerFilterBtn}
 									style={{
@@ -266,7 +242,6 @@ const ProductPage = () => {
 								>
 									filter
 								</Button>
-								{/* </Link> */}
 							</div>
 						</div>
 						<div>
@@ -305,22 +280,12 @@ const ProductPage = () => {
 							style={{
 								display: "flex",
 								flexWrap: "wrap",
-								justifyContent: "space-evenly",
+								justifyContent: "flex-end",
 								marginBottom: 50,
 								minHeight: 580,
 							}}
 						>
-							{products.length === 0 ? (
-								<div>
-									<img
-										src="https://www.interno-eg.com/resources/assets/front/images/no-product-found.png"
-										alt="file_err"
-										width="600px"
-									/>
-								</div>
-							) : (
-								renderCard()
-							)}
+							{renderCard()}
 						</div>
 						<div style={{ display: "flex", justifyContent: "flex-end" }}>
 							{products.length === 0 ? null : (

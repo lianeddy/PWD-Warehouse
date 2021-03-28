@@ -7,11 +7,13 @@ import {
 	GET_PRODUCTS,
 	GET_PRODUCTS_ID,
 	NULLIFY_ERROR,
+	RESET_TRANSACTION,
 } from "../types";
 
 const getProductsAction = (query = "") => {
 	return async (dispatch) => {
 		try {
+			dispatch({ type: RESET_TRANSACTION });
 			dispatch({ type: NULLIFY_ERROR });
 			dispatch({ type: API_LOADING_START });
 			const response = await axios.get(

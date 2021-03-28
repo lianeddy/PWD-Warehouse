@@ -29,8 +29,6 @@ const App = () => {
 	const dispatch = useDispatch();
 	const { roleId } = useSelector((state) => state.authReducer);
 
-	const token = localStorage.getItem("token");
-
 	useEffect(() => {
 		dispatch(keepLoginAction());
 	}, []);
