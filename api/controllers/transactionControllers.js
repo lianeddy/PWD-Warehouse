@@ -208,7 +208,7 @@ const postTransaction = async (req, res, next) => {
 			warehouse_id: nearestWarehouse[0].warehouse.id,
 			payment_method_id: paymentMethodId,
 			warehouse_log: JSON.stringify(nearestWarehouse),
-			stock_gateway: JSON.stringify(nearestWarehouse),
+			stock_gateway: JSON.stringify(stock_gateway),
 		});
 		await invoice.create({
 			invoice: `ING/${Date.now()}`,
