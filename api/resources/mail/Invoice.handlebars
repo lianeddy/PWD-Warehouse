@@ -2259,17 +2259,6 @@ table th, table td {
             <th>Qty</th>
             <th>Sub Total</th>
           </tr>
-					{{#each cartItems}}
-          <tr>
-            <td>{{index}}</td> <!-- Don't remove this column as it's needed for the row commands -->
-            <td>{{imagepath}}</td>
-            <td>{{name}}</td>
-            <td>{{price}}</td>
-            <td>{{qty}}</td>
-            <td>{{price*qty}}</td>
-          </tr>
-					
-					{{/each}}
           <tr>
             <td></td> <!-- Don't remove this column as it's needed for the row commands -->
             <td></td>
