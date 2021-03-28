@@ -226,7 +226,6 @@ const postTransaction = async (req, res, next) => {
 		});
 		const getUser = await user.findByPk(req.params.id);
 		const data = {
-			logo: require("../resources/img/logo_full_vertical.png"),
 			title: "Nature Goods",
 			invoice: postInvoice.invoice,
 			cart: cartItems,
