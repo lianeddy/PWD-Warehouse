@@ -24,7 +24,8 @@
 		"nodemailer-express-handlebars": "^4.0.0",
 		"path": "^0.12.7",
 		"pify": "^5.0.0",
-		"puppeteer": "^1.11.0-next.1547527073587",
+		"request": "^2.88.2",
+		"request-promise": "^4.2.6",
 		"sequelize": "^6.5.0"
 	}
 }
