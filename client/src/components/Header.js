@@ -149,12 +149,6 @@ const Header = () => {
 						<Link to="/products" className={styles.navItemContainer}>
 							<div className={styles.textLink}>products</div>
 						</Link>
-						<Link to="/products" className={styles.navItemContainer}>
-							<div className={styles.textLink}>dummy1</div>
-						</Link>
-						<Link to="/products" className={styles.navItemContainer}>
-							<div className={styles.textLink}>dummy2</div>
-						</Link>
 					</div>
 					<div className="d-flex align-items-center">
 						<div
@@ -252,12 +246,6 @@ const Header = () => {
 					</Link>
 					<Link to="/products" className={styles.navItemContainer}>
 						<div className={styles.textLink}>products</div>
-					</Link>
-					<Link to="/products" className={styles.navItemContainer}>
-						<div className={styles.textLink}>dummy1</div>
-					</Link>
-					<Link to="/products" className={styles.navItemContainer}>
-						<div className={styles.textLink}>dummy2</div>
 					</Link>
 				</div>
 				<div className="d-flex">

@@ -94,7 +94,7 @@ const CheckoutPage = () => {
 			};
 			dispatch(nearestWarehouseAction(payload));
 		}
-	}, [dispatch]);
+	}, [dispatch, openShipping]);
 
 	const handleSetToMainAddressBtn = (mainAfterId) => {
 		const payload = {
@@ -554,8 +554,13 @@ const CheckoutPage = () => {
 							<div>
 								<div style={{ fontWeight: "bold" }}>Shipping Address</div>
 								<div className={styles.divider}></div>
+
 								{localAddress === "" ? (
 									<Loader type="ThreeDots" />
+								) : !localAddress ? (
+									<Button className={styles.whiteBtn}>
+										<div className={styles.whiteBtnChild}>Add Address</div>
+									</Button>
 								) : (
 									<div>
 										<div
@@ -569,6 +574,7 @@ const CheckoutPage = () => {
 										<div className={styles.smallText}>{localAddress}</div>
 									</div>
 								)}
+
 								<div className={styles.divider}></div>
 								<div style={{ display: "flex" }}>
 									<Button

@@ -147,12 +147,14 @@ const RegisterPage = () => {
 						}}
 					>
 						<div className="mb-5">
-							<img
-								src="https://i.imgur.com/69bOytv.png"
-								alt="file_err"
-								width="auto"
-								height="300"
-							/>
+							<Link to="/">
+								<img
+									src="https://i.imgur.com/69bOytv.png"
+									alt="file_err"
+									width="auto"
+									height="300"
+								/>
+							</Link>
 						</div>
 						<div>
 							<Link to="/login">
@@ -396,7 +398,7 @@ const selectStyles = {
 	option: (provided, state) => ({
 		...provided,
 		borderBottom: "1px dotted pink",
-		color: state.isSelected ? "red" : "blue",
+		color: state.isSelected ? "white" : "black",
 		padding: 10,
 	}),
 	control: () => ({

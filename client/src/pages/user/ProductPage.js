@@ -17,7 +17,7 @@ import { RESET_INITIAL_STATE } from "../../redux/types";
 
 const sortBy = [
 	{ value: 1, label: "Default sorting" },
-	{ value: 2, label: "Sort by latest" },
+	{ value: 2, label: "Sort by oldest" },
 	{ value: 3, label: "Sort by low price" },
 	{ value: 4, label: "Sort by high price" },
 ];

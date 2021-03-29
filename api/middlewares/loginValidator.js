@@ -3,6 +3,7 @@ const loginValidator = async (req, res, next) => {
 		const { email, password } = req.body;
 		const emailRegex = /^[\w-\.]+(@[\w-\.]+\.)+[\w-\.]{2,4}$/;
 		const passwordRegex = /^(?=.*[\d])(?=.*[A-Z])(?=.*[!@#$%^&*\-\_=<>,\.?]).{8,16}$/;
+		// console.log(email, password);
 		if (!email.match(emailRegex))
 			return res
 				.status(202)

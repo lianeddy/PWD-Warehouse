@@ -1,15 +1,23 @@
 import { makeStyles } from "@material-ui/core";
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { Card, CardImg, Button } from "reactstrap";
+import Swal from "sweetalert2";
 import { accentColor, surfaceColor } from "../../helpers";
 import { addToCartAction } from "../../redux/actions";
 
 const CardProduct = ({ id, name, price, stock, image, userId }) => {
 	const styles = useStyles();
 	const dispatch = useDispatch();
+	const { isLogin } = useSelector((state) => state.authReducer);
 	const handleAddToCartBtn = () => {
+		if (!isLogin)
+			return Swal.fire({
+				icon: "info",
+				title: "Oopss..!!",
+				text: "You must login first",
+			});
 		const payload = {
 			productId: id,
 			qty: 1,

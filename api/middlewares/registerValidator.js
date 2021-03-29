@@ -22,7 +22,7 @@ const registerValidator = async (req, res, next) => {
 				message: "Username already exists",
 			});
 		const getUserByEmail = await user.findAll({
-			where: { email, role_id: 1 },
+			where: { email, role_id: 2 },
 		});
 		if (getUserByEmail.length !== 0)
 			return res
