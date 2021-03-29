@@ -81,11 +81,4 @@ orderStatus.hasOne(transaction, {
 	foreignKey: "order_status_id",
 });
 
-transaction.belongsTo(userAddress, {
-	foreignKey: "address_id",
-});
-userAddress.hasMany(transaction, {
-	foreignKey: "address_id",
-});
-
 module.exports = transaction;
