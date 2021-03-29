@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { loginAction } from "../redux/actions";
 import { Spinner } from "reactstrap";
@@ -27,6 +27,7 @@ import {
 } from "@coreui/react";
 import logo from "../assets/logo.png";
 import { surfaceColor } from "../helpers";
+import { InputToolTip } from "../components";
 
 const eye = <FontAwesomeIcon icon={faEye} />;
 const eyeSlash = <FontAwesomeIcon icon={faEyeSlash} />;
@@ -41,6 +42,32 @@ const LoginPage = () => {
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 	const [passwordShown, setPasswordShown] = useState(false);
+	const [isValidEmail, setIsValidEmail] = useState(true);
+	const [isValidPassword, setIsValidPassword] = useState(true);
+
+	useEffect(() => {
+		if (email.length > 0) checkEmail(email);
+		if (password.length > 0) checkPassword(password);
+	}, [email, password]);
+
+	const passwordRegex = /^(?=.*[\d])(?=.*[A-Z])(?=.*[!@#$%^&*\-\_=<>,\.?]).{8,16}$/;
+	const emailRegex = /^[\w\-\.]+(@[\w\-\.]+\.)+[\w\-\.]{2,4}$/;
+
+	const checkEmail = (str) => {
+		if (str.match(emailRegex)) {
+			setIsValidEmail(true);
+		} else {
+			setIsValidEmail(false);
+		}
+	};
+
+	const checkPassword = (str) => {
+		if (str.match(passwordRegex)) {
+			setIsValidPassword(true);
+		} else {
+			setIsValidPassword(false);
+		}
+	};
 
 	const togglePasswordVisibility = () => {
 		setPasswordShown(passwordShown ? false : true);
@@ -82,10 +109,16 @@ const LoginPage = () => {
 												</CInputGroupText>
 											</CInputGroupPrepend>
 											<CInput
+												id="email"
 												name="email"
 												onChange={(e) => setEmail(e.target.value)}
 												type="text"
 												placeholder="email"
+											/>
+											<InputToolTip
+												when={!isValidEmail}
+												target="email"
+												title="Please enter a valid email address"
 											/>
 										</CInputGroup>
 										<CInputGroup className="mb-3">
@@ -95,10 +128,19 @@ const LoginPage = () => {
 												</CInputGroupText>
 											</CInputGroupPrepend>
 											<CInput
+												id="password"
 												placeholder="Password"
 												onChange={(e) => setPassword(e.target.value)}
 												name="password"
 												type={passwordShown ? "text" : "password"}
+											/>
+											<InputToolTip
+												when={!isValidPassword}
+												target="password"
+												title="Unvalid Password"
+												text="Password must be 8-16 characters and at least
+														contain an uppercase letter, a numbers, special
+														character"
 											/>
 											<CInputGroupPrepend>
 												<CInputGroupText>

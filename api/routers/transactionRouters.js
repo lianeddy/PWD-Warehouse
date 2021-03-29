@@ -1,12 +1,12 @@
 const {
-	getWarehouse,
-	postTransaction,
-	getTransaction,
-	postPaymentBill,
-	getAllTransaction,
-	barangSampai,
-	kirimReview,
-	cancelTransaction,
+  getWarehouse,
+  postTransaction,
+  getTransaction,
+  postPaymentBill,
+  getAllTransaction,
+  barangSampai,
+  kirimReview,
+  cancelTransaction,
 } = require("../controllers/transactionControllers");
 
 const router = require("express").Router();

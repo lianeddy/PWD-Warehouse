@@ -13,17 +13,17 @@ import {
 	updateCartQty,
 } from "../../redux/actions";
 import Loader from "react-loader-spinner";
-import { Redirect } from "react-router-dom";
+import { Link, Redirect } from "react-router-dom";
 
 const CheckoutPage = () => {
 	const styles = useStyles();
 	const dispatch = useDispatch();
-	const { id, address, username, isLoading, isLogin } = useSelector(
+	const { id, address, username, isLogin } = useSelector(
 		(state) => state.authReducer
 	);
 	const { cart } = useSelector((state) => state.cartReducer);
 	const mainAddress = address.find((value) => value.is_main === 1);
-	const { courier, nearestWarehouse, isSuccess } = useSelector(
+	const { courier, nearestWarehouse, isLoading, isSuccess } = useSelector(
 		(state) => state.transactionReducer
 	);
 
@@ -94,7 +94,7 @@ const CheckoutPage = () => {
 			};
 			dispatch(nearestWarehouseAction(payload));
 		}
-	}, [openShipping === true]);
+	}, [dispatch]);
 
 	const handleSetToMainAddressBtn = (mainAfterId) => {
 		const payload = {
@@ -119,22 +119,41 @@ const CheckoutPage = () => {
 		setOpenShipping(false);
 	};
 
-	const handleProcessBtn = () => {
-		const payload = {
-			shipping: {
-				name: localUsername,
-				phone: localPhone,
-				address: localAddress,
-				courier: shippingInformation,
-			},
-			userId: id,
-			amount: renderBilling(),
-			nearestWarehouse,
-			paymentMethodId: 1,
-			cartItems: cart,
-		};
-		dispatch(postTransaction(payload));
-	};
+	if (!isLogin) return <Redirect to="/login" />;
+	if (isLoading) return <LoaderPage />;
+
+	if (isSuccess)
+		return (
+			<div>
+				<div
+					className="d-flex align-items-center justify-content-center"
+					style={{ backgroundColor: primaryColor, minHeight: "100vh" }}
+				>
+					<div>
+						<div>
+							<img
+								src="https://www.pikpng.com/pngl/b/59-597243_thank-you-for-coming-png-calligraphy-clipart.png"
+								alt="file_err"
+								style={{ width: "500px" }}
+							/>
+						</div>
+						<div className="d-flex justify-content-center mt-5">
+							<Button className={styles.primaryBtn} style={{ marginInline: 5 }}>
+								<Link to="/">
+									<div className={styles.primaryBtnChild}>Home</div>
+								</Link>
+							</Button>
+							<Button className={styles.primaryBtn} style={{ marginInline: 5 }}>
+								<Link to="/profile">
+									<div className={styles.primaryBtnChild}>Transaction</div>
+								</Link>
+							</Button>
+						</div>
+					</div>
+				</div>
+				<UserFooter />
+			</div>
+		);
 
 	const renderList = () => {
 		return cart.map((value) => {
@@ -151,7 +170,11 @@ const CheckoutPage = () => {
 							}}
 						>
 							<img
-								src={value.imagepath}
+								src={
+									value.imagepath
+										? value.imagepath
+										: "https://www.grinvirobiotekno.com/images/product/No-image-available.jpg"
+								}
 								alt={value.imagepath}
 								style={{
 									backgroundColor: accentColor,
@@ -426,6 +449,24 @@ const CheckoutPage = () => {
 		return bill;
 	};
 
+	const handleProcessBtn = () => {
+		const payload = {
+			shipping: {
+				name: localUsername,
+				phone: localPhone,
+				address: localAddress,
+				courier: shippingInformation,
+			},
+			userId: id,
+			amount: renderBilling(),
+			nearestWarehouse,
+			paymentMethodId: 1,
+			cartItems: cart,
+		};
+		console.log(payload);
+		dispatch(postTransaction(payload));
+	};
+
 	const toggleDrawerAddress = (event, isOpen) => {
 		if (
 			event.type === "keydown" &&
@@ -456,10 +497,6 @@ const CheckoutPage = () => {
 		setOpenPayment(isOpen);
 	};
 
-	if (isSuccess) return <Redirect to="/" />;
-	if (!isLogin && username === "") return <Redirect to="/login" />;
-	if (isLoading) return <LoaderPage />;
-
 	return (
 		<div>
 			<div
@@ -477,7 +514,15 @@ const CheckoutPage = () => {
 					}}
 				>
 					<div style={{ fontSize: 20, color: "gray" }}>
-						Your Cart {">"} Checkout {">"} Process
+						<Link to="/cart" className={styles.link}>
+							Your Cart
+						</Link>
+						<span className="mx-4">{">"}</span>
+						<span>
+							<b>Checkout</b>
+						</span>
+						<span className="mx-4">{">"}</span>
+						<span>Process</span>
 					</div>
 				</div>
 				<div style={{ display: "flex", justifyContent: "space-between" }}>
@@ -681,60 +726,14 @@ const CheckoutPage = () => {
 							</div>
 							<div>
 								<Button
+									disabled={true}
 									style={{ width: "100%" }}
 									className={styles.whiteBtn2}
 									onClick={(e) => toggleDrawerPayment(e, true)}
 								>
 									<div className={styles.whiteBtnChild}>Payment Method</div>
+									<div className={styles.whiteBtnChild}>Transfer Bank</div>
 								</Button>
-								<Drawer
-									anchor="right"
-									open={openPayment}
-									onClose={(e) => toggleDrawerPayment(e, false)}
-								>
-									<div
-										style={{
-											width: "400px",
-										}}
-									>
-										<div
-											style={{
-												backgroundColor: primaryColor,
-												display: "flex",
-												justifyContent: "center",
-												paddingBlock: 20,
-												boxShadow: "0 0 10px 1px rgba(0,0,0,0.3)",
-												fontWeight: 600,
-												fontSize: 18,
-												// marginBottom: 100,
-											}}
-										>
-											<div>Change Address</div>
-										</div>
-										<div style={{ padding: 20 }}>{renderAddress()}</div>
-										<div style={{ paddingTop: 32 }}>
-											<div
-												style={{
-													position: "fixed",
-													bottom: 0,
-													width: "400px",
-													backgroundColor: "red",
-													color: "white",
-													textAlign: "center",
-												}}
-											>
-												<Button
-													className={styles.primaryBtn}
-													style={{ width: "100%", borderRadius: 0 }}
-												>
-													<div className={styles.primaryBtnChild}>
-														+ Add New Address
-													</div>
-												</Button>
-											</div>
-										</div>
-									</div>
-								</Drawer>
 							</div>
 						</div>
 						<div
@@ -755,7 +754,7 @@ const CheckoutPage = () => {
 								}}
 							>
 								<div>total price</div>
-								<div>Rp{renderSubTotal()}</div>
+								<div>Rp{renderSubTotal().toLocaleString()}</div>
 							</div>
 							<div>
 								{shippingInformation ? (
@@ -856,6 +855,12 @@ const useStyles = makeStyles({
 		color: "black",
 		fontSize: 14,
 		fontWeight: 600,
+	},
+	link: {
+		color: "gray",
+		"&:hover": {
+			textDecoration: "none",
+		},
 	},
 });
 

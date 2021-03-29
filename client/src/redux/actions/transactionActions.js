@@ -26,7 +26,6 @@ const currentAddressAction = (payload) => {
 		try {
 			dispatch({ type: NULLIFY_ERROR });
 			dispatch({ type: API_LOADING_START });
-			dispatch({ type: RESET_TRANSACTION });
 			localStorage.setItem("current_address", JSON.stringify(payload));
 			dispatch({ type: API_LOADING_SUCCESS });
 		} catch (err) {
@@ -120,7 +119,7 @@ const nearestWarehouseAction = (payload) => {
 				};
 				dispatch({ type: GET_COURIER, payload: courier });
 				dispatch({ type: API_LOADING_SUCCESS });
-			}, 3000);
+			}, 5000);
 		} catch (err) {
 			if (!err.response) return dispatch({ type: API_LOADING_ERROR });
 			dispatch({ type: API_LOADING_ERROR, payload: err.response.data.message });
