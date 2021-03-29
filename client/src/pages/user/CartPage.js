@@ -35,7 +35,7 @@ const CartPage = (props) => {
 		setProcess(true);
 	};
 
-	// if (!isLogin) return <Redirect to="/products" />;
+	console.log(cart);
 
 	return (
 		<div
@@ -53,7 +53,35 @@ const CartPage = (props) => {
 					flexDirection: "column",
 				}}
 			>
-				<CartCard cart={cart} userId={id} />
+				{cart.length >= 1 ? (
+					<CartCard cart={cart} userId={id} />
+				) : (
+					<div
+						style={{
+							display: "flex",
+							justifyContent: "center",
+							alignItems: "center",
+							flexDirection: "column",
+						}}
+					>
+						<div
+							style={{
+								fontSize: "24px",
+								// fontWeight: "bold",
+							}}
+						>
+							Cart anda masih kosong
+						</div>
+						<div
+							style={{
+								fontSize: "24px",
+								// fontWeight: "bold",
+							}}
+						>
+							Silahkan masukkan barang terlebih dahulu
+						</div>
+					</div>
+				)}
 			</div>
 			<div>
 				<div

@@ -12,7 +12,7 @@ import {
 } from "../../redux/actions";
 import { RESET_DAERAH_INITIAL_STATE } from "../../redux/types";
 
-const AddressCard = ({ userAddress, userId }) => {
+const AddressCard = () => {
 	const [edit, setEdit] = useState(null);
 	const [showAddress, setShowAddress] = useState(null);
 
@@ -29,7 +29,7 @@ const AddressCard = ({ userAddress, userId }) => {
 		(state) => state.daerahReducer
 	);
 
-	const { isFinished } = useSelector((state) => state.authReducer);
+	const { isFinished, address, id } = useSelector((state) => state.authReducer);
 
 	const dispatch = useDispatch();
 
@@ -64,13 +64,13 @@ const AddressCard = ({ userAddress, userId }) => {
 		}
 	}, [selectedKecamatan]);
 
-	if (!userAddress) {
+	if (!address) {
 		return <div></div>;
 	}
 
 	return (
 		<div>
-			{userAddress.map((val) => {
+			{address.map((val, i) => {
 				if (val.id === edit) {
 					const defaultProvinsi = val.provinsi;
 
@@ -169,10 +169,12 @@ const AddressCard = ({ userAddress, userId }) => {
 									>
 										Alamat Lengkap
 									</div>
-									<input
+									<textarea
+										rows="4"
+										cols="50"
 										value={alamatLengkap}
 										onChange={(e) => setAlamatLengkap(e.target.value)}
-									/>
+									></textarea>
 									<div
 										style={{
 											margin: "5px 0 6px 0",
@@ -227,7 +229,7 @@ const AddressCard = ({ userAddress, userId }) => {
 													kelurahan: selectedKelurahan,
 													alamatLengkap,
 													kodePos,
-													userId,
+													userId: id,
 													phone: phoneNum,
 												})
 											);
@@ -266,38 +268,38 @@ const AddressCard = ({ userAddress, userId }) => {
 					<>
 						<div
 							style={{
-								margin: "0 0 6px 0",
+								display: "flex",
+								alignItems: "center",
+								// backgroundColor: "red",
+								margin: "0 0 24px 0",
 							}}
 						>
-							{val.label}
-						</div>
-						<button
-							style={{
-								margin: "0 0 12px 0",
-							}}
-							onClick={() => {
-								if (isFinished) {
-									if (!showAddress || showAddress !== val.id) {
-										return setShowAddress(val.id);
+							<div style={{ fontSize: "24px" }}>{`${i + 1}. ${val.label}`}</div>
+							<button
+								style={{
+									margin: "0 24px 0px 24px",
+								}}
+								onClick={() => {
+									if (isFinished) {
+										if (!showAddress || showAddress !== val.id) {
+											return setShowAddress(val.id);
+										}
+
+										return setShowAddress(null);
 									}
-
-									return setShowAddress(null);
-								} else {
-									console.log("hello");
-								}
-							}}
-						>
-							{!showAddress || showAddress !== val.id ? "Show" : "Hide"}
-						</button>
-						<button
-							style={{
-								margin: "0 0 12px 0",
-							}}
-							onClick={() => dispatch(deleteAddress({ id: val.id }))}
-						>
-							Delete
-						</button>
-
+								}}
+							>
+								{!showAddress || showAddress !== val.id ? "Show" : "Hide"}
+							</button>
+							<button
+								style={{
+									margin: "0 0 0px 0",
+								}}
+								onClick={() => dispatch(deleteAddress({ id: val.id }))}
+							>
+								Delete
+							</button>
+						</div>
 						{showAddress === val.id ? (
 							<div
 								style={{
@@ -346,7 +348,12 @@ const AddressCard = ({ userAddress, userId }) => {
 									>
 										Alamat Lengkap
 									</div>
-									<input value={val.alamat_lengkap} disabled={true} />
+									<textarea
+										rows="4"
+										cols="50"
+										value={val.alamat_lengkap}
+										disabled={true}
+									></textarea>
 									<div
 										style={{
 											margin: "5px 0 6px 0",
@@ -370,13 +377,6 @@ const AddressCard = ({ userAddress, userId }) => {
 									}}
 									onClick={() => {
 										setEdit(val.id);
-
-										// if (
-										// 	selectedProvinsi === val.label ||
-										// 	selectedProvinsi === ""
-										// ) {
-										// 	setSelectedProvinsi(val.provinsi);
-										// }
 
 										if (
 											alamatLengkap === val.alamat_lengkap ||

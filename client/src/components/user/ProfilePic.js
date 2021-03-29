@@ -7,6 +7,8 @@ const ProfilePic = ({ imagepath, noProfilePic, userId }) => {
 	const [image, setImage] = useState({});
 
 	const uploadImage = (e) => {
+		console.log(e.target.files[0]);
+
 		if (e.target.files[0]) {
 			setImage({
 				imageFile: e.target.files[0],
@@ -25,15 +27,6 @@ const ProfilePic = ({ imagepath, noProfilePic, userId }) => {
 
 	return (
 		<>
-			<div
-				style={{
-					fontWeight: "bold",
-					fontSize: "24px",
-					margin: "14px 0 0 0",
-				}}
-			>
-				Profile Picture
-			</div>
 			<div
 				style={{
 					margin: "14px 0 12px 0",

@@ -183,11 +183,13 @@ const NewAddress = ({ id, provinsi, kota, kecamatan, kelurahan }) => {
 						>
 							Alamat Lengkap
 						</div>
-						<input
+						<textarea
+							rows="4"
+							cols="50"
 							value={alamatLengkap}
 							placeholder={"Alamat Lengkap"}
 							onChange={(e) => setAlamatLengkap(e.target.value)}
-						/>
+						></textarea>
 						<div
 							style={{
 								margin: "6px 0 5px 0",

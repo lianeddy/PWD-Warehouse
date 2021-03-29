@@ -8,6 +8,7 @@ const invoice = sequelize.define(
 		note: DataTypes.STRING,
 		shipping: DataTypes.STRING,
 		transaction_id: DataTypes.INTEGER,
+		invoicepath: DataTypes.STRING,
 	},
 	{
 		timestamps: false,

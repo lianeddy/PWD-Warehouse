@@ -35,7 +35,7 @@ const GeneralProfile = ({ name, username, email, phone }) => {
 			<>
 				<div
 					style={{
-						fontSize: "24px",
+						fontSize: "36px",
 						fontWeight: "bold",
 					}}
 				>
@@ -115,7 +115,7 @@ const GeneralProfile = ({ name, username, email, phone }) => {
 		<>
 			<div
 				style={{
-					fontSize: "24px",
+					fontSize: "36px",
 					fontWeight: "bold",
 				}}
 			>

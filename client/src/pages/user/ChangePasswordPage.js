@@ -19,9 +19,9 @@ const ChangePasswordPage = (props) => {
 
 	const dispatch = useDispatch();
 
-	useEffect(() => {
-		setMessage(errorMessage);
-	}, [errorMessage]);
+	// useEffect(() => {
+	// 	setMessage(errorMessage);
+	// }, [errorMessage]);
 
 	useEffect(() => {
 		if (newPassword.length > 0) checkPassword(newPassword);

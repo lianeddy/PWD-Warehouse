@@ -6,6 +6,8 @@ const {
 	orderStatus,
 	product,
 	productImage,
+	userAddress,
+	user,
 	invoice,
 	inventory,
 } = require("../models");
@@ -237,26 +239,49 @@ const postTransaction = async (req, res, next) => {
 	}
 };
 
-const getTransaction = async (req, res, next) => {
-	const { user_id } = req.params;
+const getAllTransaction = async (req, res, next) => {
+	const { clickLoad } = req.params;
 	try {
 		const getData = await transaction.findAll({
-			where: {
-				user_id,
-			},
 			include: [
-				{ model: orderStatus },
-				{ model: product, include: [{ model: productImage }] },
+				{ model: orderStatus, attributes: ["order_status"] },
+				{
+					model: product,
+					attributes: ["id", "name", "price"],
+					include: [{ model: productImage, attributes: ["imagepath"] }],
+				},
+				{
+					model: invoice,
+					attributes: ["invoice", "note", "shipping", "invoicepath"],
+				},
 			],
+			attributes: [
+				"id",
+				"amount",
+				"created_at",
+				"warehouse_log",
+				"stock_gateway",
+				"bill_imagepath",
+				"review",
+			],
+			limit: 5 * clickLoad + 5,
 		});
+
 		const response = getData.map((val) => {
 			return {
-				warehouse_log: JSON.parse(val.warehouse_log),
 				transactionId: val.id,
-				amount: val.amount,
 				date: val.created_at,
+				amount: val.amount,
 				orderStatus: val.order_status.order_status,
-				addressiD: val.address_id,
+				review: val.review,
+				billImagepath: val.bill_imagepath,
+				warehouseLog: JSON.parse(val.warehouse_log),
+				stockGateway: JSON.parse(val.stock_gateway),
+				invoice: {
+					code: val.invoice.invoice,
+					invoicepath: val.invoice.invoicepath,
+					shipping: JSON.parse(val.invoice.shipping),
+				},
 				products: val.products.map((val) => {
 					return {
 						productId: val.id,
@@ -268,6 +293,59 @@ const getTransaction = async (req, res, next) => {
 				}),
 			};
 		});
+		res.status(200).send(response);
+	} catch (err) {
+		next(err);
+	}
+};
+
+const getTransaction = async (req, res, next) => {
+	const { user_id } = req.params;
+	try {
+		const getData = await transaction.findAll({
+			where: {
+				user_id,
+			},
+			include: [
+				{ model: orderStatus, attributes: ["order_status"] },
+				{
+					model: product,
+					attributes: ["id", "name", "price"],
+					include: [{ model: productImage, attributes: ["imagepath"] }],
+				},
+				{
+					model: invoice,
+					attributes: ["invoice", "note", "shipping", "invoicepath"],
+				},
+			],
+			attributes: ["id", "amount", "created_at", "warehouse_log", "review"],
+		});
+
+		const response = getData.map((val) => {
+			return {
+				transactionId: val.id,
+				date: val.created_at,
+				amount: val.amount,
+				orderStatus: val.order_status.order_status,
+				review: val.review,
+				warehouseLog: JSON.parse(val.warehouse_log),
+				invoice: {
+					code: val.invoice.invoice,
+					invoicepath: val.invoice.invoicepath,
+					shipping: JSON.parse(val.invoice.shipping),
+				},
+				products: val.products.map((val) => {
+					return {
+						productId: val.id,
+						name: val.name,
+						price: val.price,
+						qty: val.transaction_item.qty,
+						imagepath: val.product_images[0].imagepath,
+					};
+				}),
+			};
+		});
+
 		res.status(200).send(response);
 	} catch (err) {
 		next(err);
@@ -305,9 +383,77 @@ const postPaymentBill = async (req, res, next) => {
 	}
 };
 
+const cancelTransaction = async (req, res, next) => {
+	const { id } = req.params;
+
+	try {
+		await transaction.update(
+			{
+				order_status_id: 7,
+			},
+			{
+				where: {
+					id,
+				},
+			}
+		);
+
+		return res.status(200).send({ message: "updated" });
+	} catch {
+		next(err);
+	}
+};
+
+const barangSampai = async (req, res, next) => {
+	const { id } = req.params;
+
+	try {
+		await transaction.update(
+			{
+				order_status_id: 6,
+			},
+			{
+				where: {
+					id,
+				},
+			}
+		);
+
+		return res.status(200).send({ message: "updated" });
+	} catch {
+		next(err);
+	}
+};
+
+const kirimReview = async (req, res, next) => {
+	const { id } = req.params;
+	const { review } = req.body;
+
+	try {
+		await transaction.update(
+			{
+				review,
+			},
+			{
+				where: {
+					id,
+				},
+			}
+		);
+
+		return res.status(200).send({ message: "updated" });
+	} catch (err) {
+		next(err);
+	}
+};
+
 module.exports = {
 	getWarehouse,
 	postTransaction,
 	getTransaction,
 	postPaymentBill,
+	getAllTransaction,
+	cancelTransaction,
+	barangSampai,
+	kirimReview
 };

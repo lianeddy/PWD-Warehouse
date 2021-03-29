@@ -20,7 +20,7 @@ const useStyles = makeStyles((theme) => ({
 	},
 }));
 
-const TransactionItemModal = ({ lihatItem, toggle, data, selected }) => {
+const UserDetailTransactionModal = ({ lihatItem, toggle, data, selected }) => {
 	const classes = useStyles();
 	const [open, setOpen] = useState(false);
 
@@ -66,13 +66,13 @@ const TransactionItemModal = ({ lihatItem, toggle, data, selected }) => {
 									flex: "5",
 								}}
 							>
-								<div>Nama Penerima:</div>
+								<div>Nama Pembeli:</div>
 								<div
 									style={{
 										margin: "0 0 12px 0",
 									}}
 								>
-									Luthfi Ahmad Robbaniy
+									{data[selected] ? data[selected].invoice.shipping.name : "-"}
 								</div>
 								<div>Tanggal Transaksi:</div>
 								<div
@@ -83,9 +83,20 @@ const TransactionItemModal = ({ lihatItem, toggle, data, selected }) => {
 									{data[selected] ? data[selected].date.split("T")[0] : "-"}
 								</div>
 								<div>Alamat Pengiriman:</div>
+								<div
+									style={{
+										margin: "0 0 12px 0",
+									}}
+								>
+									{data[selected]
+										? data[selected].invoice.shipping.address
+										: "-"}
+								</div>
+								<div>Dikirim dari:</div>
 								<div>
-									Perumahan Karawang Indah, Jl. Merpati 2 Blok J/5, Kabupaten
-									Karawang, Jawa Barat
+									{data[selected]
+										? `Gudang ${data[selected].warehouseLog[0].warehouse.warehouse} (${data[selected].warehouseLog[0].warehouse.alamat_lengkap})`
+										: "-"}
 								</div>
 							</div>
 							<div
@@ -114,7 +125,29 @@ const TransactionItemModal = ({ lihatItem, toggle, data, selected }) => {
 										Transfer Bank
 									</div>
 									<div>Status Transaksi:</div>
-									<div>{data[selected] ? data[selected].orderStatus : "-"}</div>
+									<div
+										style={{
+											margin: "0 0 12px 0",
+										}}
+									>
+										{data[selected] ? data[selected].orderStatus : "-"}
+									</div>
+									<div>Invoice:</div>
+									<a
+										style={{
+											cursor: "pointer",
+											fontWeight: "bold",
+											fontStyle: "italic",
+										}}
+										href={
+											data[selected]
+												? `${apiUrl}${data[selected].invoice.invoicepath}`
+												: null
+										}
+										download
+									>
+										Lihat Invoice
+									</a>
 								</div>
 							</div>
 						</div>
@@ -185,6 +218,15 @@ const TransactionItemModal = ({ lihatItem, toggle, data, selected }) => {
 								  })
 								: null}
 						</div>
+						<div
+							style={{
+								display: "flex",
+								justifyContent: "flex-end",
+								margin: "24px 0 0 0",
+							}}
+						>
+							<button onClick={() => toggle()}>Ok</button>
+						</div>
 					</div>
 				</Fade>
 			</Modal>
@@ -192,4 +234,4 @@ const TransactionItemModal = ({ lihatItem, toggle, data, selected }) => {
 	);
 };
 
-export default TransactionItemModal;
+export default UserDetailTransactionModal;
