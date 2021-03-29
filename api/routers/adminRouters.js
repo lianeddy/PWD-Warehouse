@@ -14,7 +14,7 @@ const {
 } = require("../controllers/adminControllers");
 const { getDashboard } = require("../controllers/adminControllers");
 
-router.get("/", getWarehouse);
+router.get("/fetchWarehouse", getWarehouse);
 router.get("/get-by-warehouse/:id", getProductsByWarehouse);
 router.post("/add-product/:id", addProductByWarehouse);
 router.get("/dashboard", getDashboard);

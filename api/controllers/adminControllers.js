@@ -2,7 +2,7 @@ const { Op } = require("sequelize");
 const sequelize = require("../database");
 const fs = require("fs");
 const pify = require("pify");
-const { uploader } = require("../middlewares");
+const { uploader } = require("../handlers");
 
 const {
 	transaction,
@@ -38,22 +38,18 @@ const getProductsByWarehouse = async (req, res, next) => {
 				...query.where,
 				warehouse_id: parseInt(req.query.warehouse.id),
 			};
-		if (req.query.sort === 1)
-			query = { ...query, attributes: ["warehouse"], where: (id = 1) };
-		if (req.query.sort === 2)
-			query = { ...query, attributes: ["warehouse"], where: (id = 2) };
-		if (req.query.sort === 3)
-			query = { ...query, attributes: ["warehouse"], where: (id = 3) };
 		query = {
 			...query,
 			attributes: [
+				"id",
 				"warehouse",
-				"products.id",
+				"products.inventory.product_id",
 				"products.name",
 				"products.price",
+				"products.weight",
 				"products.description",
 				"products.inventory.stock",
-				"products.inventory.operational_stock",
+				"products.inventory.booked_stock",
 				"products.category.category",
 				// "image",
 			],
@@ -88,8 +84,9 @@ const getProductsByWarehouse = async (req, res, next) => {
 		const getProductImg = getWarehouse.map((value) => {
 			return {
 				...value,
+				operationalStock: value.stock + value.booked_stock,
 				image: productImg.filter((item) => {
-					return item.dataValues.product_id === value.id;
+					return item.dataValues.product_id === value.product_id;
 				}),
 			};
 		});
@@ -97,7 +94,7 @@ const getProductsByWarehouse = async (req, res, next) => {
 			Warehouse1: Warehouse1.warehouse,
 			Warehouse2: Warehouse2.warehouse,
 			Warehouse3: Warehouse3.warehouse,
-			products: getProductImg,
+			warehouse: getProductImg,
 		};
 
 		return res.status(200).send(response);
@@ -118,9 +115,10 @@ const addProductByWarehouse = async (req, res, next) => {
 				price,
 				category_id,
 				description,
+				weight,
 				stock,
-				operational_stock,
-			} = req.body;
+				booked_stock,
+			} = JSON.parse(req.body.data);
 			const id = req.params.id;
 			const imagepath = image ? `${path}/${image[0].filename}` : null;
 
@@ -129,12 +127,14 @@ const addProductByWarehouse = async (req, res, next) => {
 				price,
 				category_id,
 				description,
+				weight,
 			});
 			await inventory.create({
 				stock,
-				operational_stock,
+				booked_stock,
 				product_id: newProduct.id,
 				warehouse_id: id,
+				operational_stock: stock + booked_stock,
 			});
 			const newImg = await productImage.create({
 				imagepath: imagepath,
@@ -174,8 +174,8 @@ const editProduct = async (req, res, next) => {
 				category_id,
 				description,
 				stock,
-				operational_stock,
-			} = req.body;
+				booked_stock,
+			} = JSON.parse(req.body.data);
 			const imagepath = image ? `${path}/${image[0].filename}` : oldImagepath;
 
 			await product.update(
@@ -194,7 +194,7 @@ const editProduct = async (req, res, next) => {
 			await inventory.update(
 				{
 					stock,
-					operational_stock,
+					booked_stock,
 				},
 				{
 					where: {
@@ -314,8 +314,6 @@ const getDashboard = async (req, res, next) => {
 				order_status_id: 5,
 			},
 		});
-
-		console.log(dailyProfit, weeklyProfit, monthlyProfit);
 
 		const [[rangeMonthly]] = await sequelize.query(`
 			SELECT

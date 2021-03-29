@@ -6,10 +6,10 @@ const { addDateHandler } = require("./addDateHandler");
 const { generatePdfHandler } = require("./generatePdfHandler");
 
 module.exports = {
-	errorHandler,
-	encryptHandler,
-	emailHandler,
-	uploader,
-	addDateHandler,
-	generatePdfHandler,
+  errorHandler,
+  encryptHandler,
+  emailHandler,
+  uploader,
+  addDateHandler,
+  generatePdfHandler,
 };
